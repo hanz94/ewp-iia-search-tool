@@ -9,6 +9,7 @@ import { useThemeContext } from '../contexts/ThemeContext';
 import { useModalContext } from '../contexts/ModalContext';
 import kulLogoBlack from '../assets/kul_logo-black.jpg';
 
+import Autocomplete from '@mui/material/Autocomplete';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -52,6 +53,14 @@ function SqlApp() {
   const [useDataGrid, setUseDataGrid] = useState(true);  // true - render DataGrid (with filters), false - render Table (without filters)
   const [useGroupBy, setUseGroupBy] = useState(false);
 
+  const [erasmusCodes, setErasmusCodes] = useState([]);
+  const [institutionNames, setInstitutionNames] = useState([]);
+
+  const [selectedErasmusCode, setSelectedErasmusCode] = useState(null);
+  const [selectedInstitutionName, setSelectedInstitutionName] = useState(null);
+  const [dataFiltered, setDataFiltered] = useState([]);
+  const [lastUpdate, setLastUpdate] = useState('');
+
   //remove data after empty rows - fix for group by
 const alasqlRemoveDataAfterFirstEmptyRow = function (rows) {
   // Find the index of the first empty row
@@ -72,9 +81,9 @@ const alasqlRemoveDataAfterFirstEmptyRow = function (rows) {
 
           alasql.promise(alasqlQueryBefore + ' FROM ? ' + alasqlQueryAfter, [tmpData])
           .then((result) => {
-            setData(result);
-            setOriginalData(result);
-            setSlicedData(result);
+            setData(() => result);
+            setOriginalData(() => result);
+            setSlicedData(() => result);
           })
           .catch((error) => {
             console.error('Error fetching data:', error);
@@ -166,6 +175,45 @@ useEffect(() => {
 
 }, [originalData, slicedData, trimRows]);
 
+//fetch file on load
+useEffect(() => {
+  fetch('./umowy.xlsx')
+    .then((response) => response.blob())
+    .then((blob) => {
+      const file = new File([blob], 'umowy.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      handleFileChange(file);
+    })
+    .catch((error) => console.error("Error loading file:", error));
+
+  //fetch last update
+  fetch('./lastupdate.txt')
+    .then((response) => response.text())
+    .then((text) => {
+      setLastUpdate(text);
+    })
+    .catch((error) => console.error("Error loading last update:", error));
+}, []);
+
+//watch for data to update erasmuscodes and institutionnames
+useEffect(() => {
+  alasql.promise('SELECT DISTINCT [KOD ERASMUS] FROM ? ORDER BY [KOD ERASMUS]', [data]).then((codes) => {
+    const newErasmusCodes = codes.map((item) => item["KOD ERASMUS"]);
+    setErasmusCodes(() => newErasmusCodes);
+  });
+
+  alasql.promise('SELECT DISTINCT [NAZWA UCZELNI] FROM ? ORDER BY [NAZWA UCZELNI]', [data]).then((institutions) => {
+    const newInstitutionNames = institutions.map((item) => item["NAZWA UCZELNI"]);
+    setInstitutionNames(() => newInstitutionNames);
+  });
+}, [data])
+
+
+//watch for changes: selectedErasmusCode, selectedInstitutionName
+useEffect(() => {
+  alasql.promise('SELECT [TYP MOBILNOŚCI], [WYJAZD LUB PRZYJAZD], [LICZBA MOBILNOŚCI], [EQF], [STATUS], [OD], [DO], [ZAKRES WSPÓŁPRACY], [OPIS] FROM ? WHERE [KOD ERASMUS] = ?', [data, selectedErasmusCode]).then((result) => {
+    setDataFiltered(() => result);
+  })
+}, [selectedErasmusCode, selectedInstitutionName]);
 
 const handleFileChange = (newInputValue) => {
   const file = newInputValue;
@@ -178,45 +226,54 @@ const handleFileChange = (newInputValue) => {
     reader.onload = (e) => {
       let data = e.target.result; // Binary string or array buffer
       let workbook = XLSX.read(data, { type: 'binary' });
-      // console.log(workbook);
-      setCurrentWorkbook(() => workbook);
 
-      // console.log(workbook.SheetNames);
+      setCurrentWorkbook(() => workbook);
       setAvailableWorkSheets(() => workbook.SheetNames);
 
-      // Set default worksheet as the last sheet
       const defaultSheetName = workbook.SheetNames[workbook.SheetNames.length - 1];
       setCurrentWorksheet(() => defaultSheetName);
 
-      // Get the default worksheet range e.g. A1:H100
       let defaultWorksheetRange = workbook.Sheets[defaultSheetName]["!ref"];
-
-      //Replace A1 with A + rowWithColumnNames
       defaultWorksheetRange = defaultWorksheetRange.replace('A1', `A${rowWithColumnNames}`);
-      // setCurrentWorksheetRange(() => defaultWorksheetRange);
 
-      // console.log(defaultWorksheetRange)
-
-      // Call the new function to update columns based on the default sheet
       updateAvailableColumns(workbook, defaultSheetName, defaultWorksheetRange);
 
-      // Store temporary path for AlaSQL
       let tmppath = URL.createObjectURL(file);
-
-      // let currentRange = workbook.Sheets[defaultSheetName]["!ref"];
 
       setInputFileValue(() => file);
       setAlasqlQueryBefore('SELECT *');
       setAlasqlQuerySource(`FROM ${fileExtension}("${tmppath}", {sheetid: "${defaultSheetName}", autoExt: false, range: "${defaultWorksheetRange}"})`);
       setAlasqlQueryAfter('');
+
+      // Load data into AlaSQL and set state
+      alasql.promise(`SELECT * ${alasqlQuerySource}`).then((result) => {
+        setData(() => result);
+        setOriginalData(() => result);
+        let firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
+        setSlicedData(() => result.slice(0, firstEmptyRowIndex));
+
+        // console.log(result);
+
+        // // Populate Erasmus codes and institution names after data is loaded
+        // alasql.promise('SELECT DISTINCT [KOD ERASMUS] FROM ? ORDER BY [KOD ERASMUS]', [result]).then((codes) => {
+        //   const newErasmusCodes = codes.map((item) => item["KOD ERASMUS"]);
+        //   setErasmusCodes(() => newErasmusCodes);
+        // });
+
+        // alasql.promise('SELECT DISTINCT [NAZWA UCZELNI] FROM ? ORDER BY [NAZWA UCZELNI]', [result]).then((institutions) => {
+        //   const newInstitutionNames = institutions.map((item) => item["NAZWA UCZELNI"]);
+        //   setInstitutionNames(() => newInstitutionNames);
+        // });
+      });
     };
 
-    reader.readAsBinaryString(file); // Read file as binary string
+    reader.readAsBinaryString(file);
   } else {
     setInputFileValue('');
     alert('Invalid file type! Please upload a CSV, XLS, or XLSX file.');
   }
 };
+
 
 const updateAvailableColumns = (workbook, sheetName, range) => {
   const worksheet = workbook.Sheets[sheetName];
@@ -254,7 +311,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
             />
         </Box>
         <Box sx={{width: 116}}>
-          <SettingsIcon sx={{cursor: 'pointer'}} onClick={() => modalOpen(newModalContent.options)} />
+          {/* <SettingsIcon sx={{cursor: 'pointer'}} onClick={() => modalOpen(newModalContent.options)} /> */}
           <DarkModeSwitch checked={mode === 'dark'} onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')} size={24} sunColor='currentColor' moonColor='currentColor'
           style={{position: 'absolute', top: '0px', right: '0px'}}/>
         </Box>
@@ -266,185 +323,81 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       {/* Page App */}
       <Box>
 
-      <MuiFileInput
-        label={inputFileValue ? "Plik CSV/XLS/XLSX" : "Wybierz plik CSV/XLS/XLSX"}
-        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-        value={inputFileValue}
-        onChange={handleFileChange}
-        sx={{
-          mb: 2,
-        }} 
-      />
-
-      {availableWorkSheets.length > 0 && currrentWorksheet && (
+      {erasmusCodes.length > 0 && institutionNames.length > 0 && data.length > 0 && (
         <>
-        <FormControl sx={{ mb: 2, ml: 1, minWidth: 150 }}>
-          <InputLabel id="select-worksheet-label">Arkusz</InputLabel>
-          <Select
-            labelId="select-worksheet-label"
-            id="select-worksheet"
-            value={currrentWorksheet}
-            label="Arkusz"
-            onChange={(e) => setCurrentWorksheet(e.target.value)}
-          >
-            {availableWorkSheets.map((worksheet) => (
-              <MenuItem key={worksheet} value={worksheet}>
-                {worksheet}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
 
-        <Typography>
-          <FormControlLabel control={<Checkbox checked={useDataGrid} onChange={(e) => setUseDataGrid(e.target.checked)} />} label="Filtrowanie zaawansowane" />
-        </Typography>
-        <Typography>
-          <FormControlLabel control={<Checkbox checked={useGroupBy} onChange={(e) => setUseGroupBy(e.target.checked)} />} label="Grupowanie wyników" />
-        </Typography>
+        {console.log(institutionNames)}
 
-        {useGroupBy && (
-          <FormControl sx={{ my: 2, ml: 1, minWidth: 220 }}>
-          <InputLabel id="select-groupby-label">Grupuj według kolumny</InputLabel>
-          <Select
-            labelId="select-groupby-label"
-            id="select-groupby-column"
-            value={currentGroupByColumn}
-            label="Grupuj według kolumny"
-            onChange={(e) => setCurrentGroupByColumn(e.target.value)}
-          >
-            {availableColumns.map((column) => (
-              <MenuItem key={column} value={column}>
-                {column}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        )}
+          <Autocomplete
+          disablePortal
+          value={selectedErasmusCode}
+          options={erasmusCodes}
+          sx={{ width: 300 }}
+          renderInput={(params) => <TextField {...params} label="Kod Erasmus+" />}
+          onChange={(e, value) => {
+            setSelectedErasmusCode(value ? value : null)
+            //find matching institution name
+            alasql.promise(`SELECT DISTINCT [NAZWA UCZELNI] FROM ? WHERE [KOD ERASMUS] = '${value}'`, [data]).then((result) => {
+              if (result.length > 0) {
+                setSelectedInstitutionName(() => result[0]['NAZWA UCZELNI']);
+              }
+            })
+          }}
+        />
 
-        </>
+        <Autocomplete
+          disablePortal
+          value={selectedInstitutionName}
+          options={institutionNames}
+          sx={{ minWidth: 500 }}
+          renderInput={(params) => <TextField {...params} label="Nazwa instytucji" />}
+          onChange={(e, value) => {
+            setSelectedInstitutionName(() => value ? value : null)
+            //find matching erasmus code
+            alasql.promise(`SELECT DISTINCT [KOD ERASMUS] FROM ? WHERE [NAZWA UCZELNI] = '${value}'`, [data]).then((result) => {
+              if (result.length > 0) {
+                setSelectedErasmusCode(() => result[0]['KOD ERASMUS']);
+              }
+            })
+          }}
+        />
+      </>
       )}
 
-      <TextField 
-        fullWidth
-        autoComplete='off'
-        id="outlined-basic"
-        label="SQL Before"
-        variant="outlined"
-        value={alasqlQueryBefore}
-        onChange={(e) => setAlasqlQueryBefore(e.target.value)}
-        sx={{
-          mb: 2,
-        }}
-      />
-      <TextField 
-        disabled
-        autoComplete='off'
-        id="outlined-basic"
-        label="SQL Source"
-        variant="outlined"
-        value={alasqlQuerySource}
-        onChange={(e) => setAlasqlQuerySource(e.target.value)}
-        sx={{
-          mb: 2,
-        }}
-      />
-
-      <TextField 
-        fullWidth
-        autoComplete='off'
-        id="outlined-basic"
-        label="SQL After"
-        variant="outlined"
-        value={alasqlQueryAfter}
-        onChange={(e) => setAlasqlQueryAfter(e.target.value)}
-        sx={{
-          mb: 3,
-        }}
-      />
-
-      {(inputFileValue && data.length > 0 && currrentWorksheet) && (
+      {(selectedErasmusCode || selectedInstitutionName) && dataFiltered.length > 0 && (
         <>
-          <Typography variant="h6" sx={{ mb: 1 }}>{currrentWorksheet}</Typography>
-        </>
-      )}
-
-      <TableContainer component={Paper} sx={{ maxHeight: dataGridTableHeight + 'px', overflow: 'auto' }}>
-
-        {data.length > 0 ? (
-          <>
-            {/* {console.log(data)} */}
-
-            {useDataGrid ? (
-              // Render DataGrid
-              <Paper sx={{ height: dataGridTableHeight + 'px', width: '100%' }}>
-                <DataGrid
-                  localeText={plPL.components.MuiDataGrid.defaultProps.localeText} 
-                  rows={data.map((row, index) => ({ id: index, ...row }))}
-                  columns={
-                    data.length > 0 && data[0]
-                      ? Object.keys(data[0]).map((key) => ({
-                          field: key,
-                          headerName: key,
-                          // flex: 1,
-                          minWidth: dataGridColumnWidth,
-                          valueFormatter: (params) => {
-                            if (typeof params === 'undefined') {
-                              return '(Puste)';
-                            }
-                            return params instanceof Date ? params.toLocaleDateString() : String(params);
-                          },
-                        }))
-                      : [] // Fallback to an empty array if no data is available
-                  }
-                  sx={{
-                    border: 0,
-                    '& .MuiDataGrid-columnHeaderTitle': {
-                      fontWeight: 'bold', // Makes column headers bold
-                    },
-                  }}
-                  // pageSize can exceed 100 only in the Pro or Premium version
-                  // pageSize={data.length}
-                  // pageSizeOptions={[25, 50, 100, data.length]}
-                />
-              </Paper>
-            ) : (
-              // Render Table
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    {Object.keys(data[0]).map((key) => (
-                      <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }} key={key}>
-                        {key}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {data.map((row, rowIndex) => (
-                    <TableRow key={rowIndex}>
-                      {Object.values(row).map((value, colIndex) => (
-                        <TableCell key={colIndex}>
-                          {value instanceof Date ? value.toLocaleDateString() : String(value)}
+          <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>
+            <b>Katolicki Uniwersytet Lubelski Jana Pawła II (PL LUBLIN02)</b> posiada umowę międzyinstytucjonalną z <b>{selectedInstitutionName} ({selectedErasmusCode})</b> w podanym zakresie:
+          </Typography>
+          <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
+            (Stan na {lastUpdate})
+          </Typography>
+          <TableContainer component={Paper} sx={{ maxHeight: dataGridTableHeight + 'px', overflow: 'auto' }}>
+            <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      {Object.keys(dataFiltered[0]).map((key) => (
+                        <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }} key={key}>
+                          {key}
                         </TableCell>
                       ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </>
-        ) : (
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell align="center" colSpan={1}>
-                  {inputFileValue ? 'Invalid SQL Query...' : 'Wybierz plik, aby wyświetlić dane'}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        )}
-      </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {dataFiltered.map((row, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        {Object.values(row).map((value, colIndex) => (
+                          <TableCell key={colIndex}>
+                            {value instanceof Date ? value.toLocaleDateString() : value ? String(value) : "(Brak)"}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+        </>
+      )}
 
       {/* End Page App */}
       </Box>
@@ -452,7 +405,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       {/* Page Footer */}
       <Box>
       <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', my: 1 }}>
-        KUL (Katolicki Uniwersytet Lubelski) - Dział Współpracy Międzynarodowej &copy; 2024-2025 Bartłomiej Pawłowski - ExcelSQL v1.4.3
+        Dział Współpracy Międzynarodowej &copy; 2024-2025 Bartłomiej Pawłowski - ExcelSQL v1.4.3
       </Typography>
       </Box>
 

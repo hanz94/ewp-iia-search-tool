@@ -3,6 +3,7 @@ import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useLocalStorageState } from '@toolpad/core';
 import { lighten, darken } from '@mui/material';
+import { light } from '@mui/material/styles/createPalette';
 
 type ModeType = "light" | "dark" | null;
 interface ThemeContextType {
@@ -23,8 +24,8 @@ interface ThemeContextType {
   const ThemeContext = createContext<ThemeContextType | null>(null);
 
   const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const prefersDarkMode = useMediaQuery<boolean>('(prefers-color-scheme: dark)');
-    const [mode, setMode] = useLocalStorageState<ModeType>('selectedMode', prefersDarkMode ? 'dark' : 'light');
+    // const prefersDarkMode = useMediaQuery<boolean>('(prefers-color-scheme: dark)');
+    const [mode, setMode] = useLocalStorageState<ModeType>('selectedMode', 'light');
 
     //Data Grid / Table - Height (manageable in Options, default 400px)
     const [dataGridTableHeight, setDataGridTableHeight] = useLocalStorageState<number>('dataGridTableHeight', 400);
