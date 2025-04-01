@@ -326,7 +326,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       {erasmusCodes.length > 0 && institutionNames.length > 0 && data.length > 0 && (
         <>
 
-        {console.log(institutionNames)}
+        {/* {console.log(institutionNames)} */}
 
           <Autocomplete
           disablePortal
@@ -337,7 +337,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           onChange={(e, value) => {
             setSelectedErasmusCode(value ? value : null)
             //find matching institution name
-            alasql.promise(`SELECT DISTINCT [NAZWA UCZELNI] FROM ? WHERE [KOD ERASMUS] = '${value}'`, [data]).then((result) => {
+            alasql.promise(`SELECT DISTINCT [NAZWA UCZELNI] FROM ? WHERE [KOD ERASMUS] = ?`, [data, value]).then((result) => {
               if (result.length > 0) {
                 setSelectedInstitutionName(() => result[0]['NAZWA UCZELNI']);
               }
@@ -354,7 +354,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           onChange={(e, value) => {
             setSelectedInstitutionName(() => value ? value : null)
             //find matching erasmus code
-            alasql.promise(`SELECT DISTINCT [KOD ERASMUS] FROM ? WHERE [NAZWA UCZELNI] = '${value}'`, [data]).then((result) => {
+            alasql.promise(`SELECT DISTINCT [KOD ERASMUS] FROM ? WHERE [NAZWA UCZELNI] = ?`, [data, value]).then((result) => {
               if (result.length > 0) {
                 setSelectedErasmusCode(() => result[0]['KOD ERASMUS']);
               }
