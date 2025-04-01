@@ -367,10 +367,11 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       {(selectedErasmusCode || selectedInstitutionName) && dataFiltered.length > 0 && (
         <>
           <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>
-            <b>Katolicki Uniwersytet Lubelski Jana Pawła II (PL LUBLIN02)</b> posiada umowę międzyinstytucjonalną z <b>{selectedInstitutionName} ({selectedErasmusCode})</b> w podanym zakresie:
+            <b>Katolicki&nbsp;Uniwersytet&nbsp;Lubelski&nbsp;Jana&nbsp;Pawła&nbsp;II&nbsp;(PL&nbsp;LUBLIN02)</b> posiada umowę międzyinstytucjonalną z <b>{selectedInstitutionName.replace(/ /g, '\u00A0')} ({selectedErasmusCode.replace(/ /g, '\u00A0')})</b> w podanym zakresie:
           </Typography>
+
           <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
-            (Stan na {lastUpdate})
+            (Stan&nbsp;na&nbsp;{lastUpdate})
           </Typography>
           <TableContainer component={Paper} sx={{ maxHeight: dataGridTableHeight + 'px', overflow: 'auto' }}>
             <Table size="small">
