@@ -210,9 +210,11 @@ useEffect(() => {
 
 //watch for changes: selectedErasmusCode, selectedInstitutionName
 useEffect(() => {
-  alasql.promise('SELECT [TYP MOBILNOŚCI], [WYJAZD LUB PRZYJAZD], [LICZBA MOBILNOŚCI], [EQF], [STATUS], [OD], [DO], [ZAKRES WSPÓŁPRACY], [OPIS] FROM ? WHERE [KOD ERASMUS] = ?', [data, selectedErasmusCode]).then((result) => {
-    setDataFiltered(() => result);
-  })
+  if (selectedErasmusCode && selectedInstitutionName) {
+    alasql.promise('SELECT [TYP MOBILNOŚCI], [WYJAZD LUB PRZYJAZD], [LICZBA MOBILNOŚCI], [EQF], [STATUS], [OD], [DO], [ZAKRES WSPÓŁPRACY], [OPIS] FROM ? WHERE [KOD ERASMUS] = ?', [data, selectedErasmusCode]).then((result) => {
+      setDataFiltered(() => result);
+    })
+  }
 }, [selectedErasmusCode, selectedInstitutionName]);
 
 const handleFileChange = (newInputValue) => {
@@ -336,12 +338,20 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           renderInput={(params) => <TextField {...params} label="Kod Erasmus+" />}
           onChange={(e, value) => {
             setSelectedErasmusCode(value ? value : null)
-            //find matching institution name
-            alasql.promise(`SELECT DISTINCT [NAZWA UCZELNI] FROM ? WHERE [KOD ERASMUS] = ?`, [data, value]).then((result) => {
-              if (result.length > 0) {
-                setSelectedInstitutionName(() => result[0]['NAZWA UCZELNI']);
-              }
-            })
+            if (value) {
+              //find matching institution name
+              alasql.promise(`SELECT DISTINCT [NAZWA UCZELNI] FROM ? WHERE [KOD ERASMUS] = ?`, [data, value]).then((result) => {
+                if (result.length > 0) {
+                  setSelectedInstitutionName(() => result[0]['NAZWA UCZELNI']);
+                }
+                else {
+                  setSelectedInstitutionName(() => null);
+                }
+              })
+            }
+            else {
+              setSelectedInstitutionName(() => null);
+            }
           }}
         />
 
@@ -352,13 +362,19 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           sx={{ minWidth: 500 }}
           renderInput={(params) => <TextField {...params} label="Nazwa instytucji" />}
           onChange={(e, value) => {
-            setSelectedInstitutionName(() => value ? value : null)
-            //find matching erasmus code
-            alasql.promise(`SELECT DISTINCT [KOD ERASMUS] FROM ? WHERE [NAZWA UCZELNI] = ?`, [data, value]).then((result) => {
-              if (result.length > 0) {
-                setSelectedErasmusCode(() => result[0]['KOD ERASMUS']);
-              }
-            })
+            setSelectedInstitutionName(value ? value : null);
+            if (value) {
+              // find matching Erasmus code
+              alasql.promise(`SELECT DISTINCT [KOD ERASMUS] FROM ? WHERE [NAZWA UCZELNI] = ?`, [data, value]).then((result) => {
+                if (result.length > 0) {
+                  setSelectedErasmusCode(() => result[0]['KOD ERASMUS']);
+                } else {
+                  setSelectedErasmusCode(() => null);
+                }
+              });
+            } else {
+              setSelectedErasmusCode(() => null);
+            }
           }}
         />
       </>
@@ -367,7 +383,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       {(selectedErasmusCode || selectedInstitutionName) && dataFiltered.length > 0 && (
         <>
           <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>
-            <b>Katolicki&nbsp;Uniwersytet&nbsp;Lubelski&nbsp;Jana&nbsp;Pawła&nbsp;II&nbsp;(PL&nbsp;LUBLIN02)</b> posiada umowę międzyinstytucjonalną z <b>{selectedInstitutionName.replace(/ /g, '\u00A0')} ({selectedErasmusCode.replace(/ /g, '\u00A0')})</b> w podanym zakresie:
+            <b>Katolicki&nbsp;Uniwersytet&nbsp;Lubelski&nbsp;Jana&nbsp;Pawła&nbsp;II&nbsp;(PL&nbsp;LUBLIN02)</b> posiada umowę międzyinstytucjonalną z <b>{selectedInstitutionName && selectedInstitutionName.replace(/ /g, '\u00A0')} ({selectedErasmusCode && selectedErasmusCode.replace(/ /g, '\u00A0')})</b> w podanym zakresie:
           </Typography>
 
           <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
