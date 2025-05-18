@@ -306,7 +306,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
         <Box>
           <img
             src={kulLogoBlack}
-            style={{position: 'absolute', top: '0px', left: '0px', width: 105, height: 32, cursor: 'pointer'}}
+            style={{position: 'relative', top: '0px', left: '0px', width: 105, height: 32, cursor: 'pointer'}}
             onClick={() => window.location.reload()}
             />
         </Box>
