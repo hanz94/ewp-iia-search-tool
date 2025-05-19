@@ -63,6 +63,8 @@ function SqlApp() {
   const [dataFiltered, setDataFiltered] = useState([]);
   const [lastUpdate, setLastUpdate] = useState('');
 
+  const [ewpModuleSwitch, setEwpModuleSwitch] = useState(false);
+
   //remove data after empty rows - fix for group by
 const alasqlRemoveDataAfterFirstEmptyRow = function (rows) {
   // Find the index of the first empty row
@@ -316,11 +318,11 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
 
           <FormGroup>
             <FormControlLabel
-              control={<Switch />}
+              control={<Switch checked={ewpModuleSwitch} onChange={(e) => setEwpModuleSwitch(e.target.checked)} />}
               label="EWP Dashboard"
               sx={{ 
                 '& .MuiFormControlLabel-label': {
-                  fontWeight: 'bold',
+                  fontWeight: ewpModuleSwitch ? 'bold' : 'normal',
                   fontSize: '0.875rem', // Adjust as needed
                 }
               }}
