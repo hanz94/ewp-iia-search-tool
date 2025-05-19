@@ -196,12 +196,12 @@ useEffect(() => {
 
 //watch for data to update erasmuscodes and institutionnames
 useEffect(() => {
-  alasql.promise('SELECT DISTINCT [KOD ERASMUS] FROM ? ORDER BY [KOD ERASMUS]', [data]).then((codes) => {
+  alasql.promise('SELECT DISTINCT [KOD ERASMUS] FROM ? WHERE [STATUS] != "Szkic" ORDER BY [KOD ERASMUS]', [data]).then((codes) => {
     const newErasmusCodes = codes.map((item) => item["KOD ERASMUS"]);
     setErasmusCodes(() => newErasmusCodes);
   });
 
-  alasql.promise('SELECT DISTINCT [NAZWA UCZELNI] FROM ? ORDER BY [NAZWA UCZELNI]', [data]).then((institutions) => {
+  alasql.promise('SELECT DISTINCT [NAZWA UCZELNI] FROM ? WHERE [STATUS] != "Szkic" ORDER BY [NAZWA UCZELNI]', [data]).then((institutions) => {
     const newInstitutionNames = institutions.map((item) => item["NAZWA UCZELNI"]);
     setInstitutionNames(() => newInstitutionNames);
   });
@@ -211,7 +211,7 @@ useEffect(() => {
 //watch for changes: selectedErasmusCode, selectedInstitutionName
 useEffect(() => {
   if (selectedErasmusCode && selectedInstitutionName) {
-    alasql.promise('SELECT [TYP MOBILNOŚCI], [WYJAZD LUB PRZYJAZD], [LICZBA MOBILNOŚCI], [EQF], [STATUS], [OD], [DO], [ZAKRES WSPÓŁPRACY], [OPIS] FROM ? WHERE [KOD ERASMUS] = ?', [data, selectedErasmusCode]).then((result) => {
+    alasql.promise('SELECT [TYP MOBILNOŚCI], [WYJAZD LUB PRZYJAZD], [LICZBA MOBILNOŚCI], [EQF], [STATUS], [OD], [DO], [ZAKRES WSPÓŁPRACY], [OPIS] FROM ? WHERE [KOD ERASMUS] = ? AND [STATUS] != "Szkic"', [data, selectedErasmusCode]).then((result) => {
       setDataFiltered(() => result);
     })
   }
