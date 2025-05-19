@@ -315,8 +315,19 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
             />
 
           <FormGroup>
-            <FormControlLabel control={<Switch />} label="EWP Dashboard" />
+            <FormControlLabel
+              control={<Switch />}
+              label="EWP Dashboard"
+              sx={{ 
+                '& .MuiFormControlLabel-label': {
+                  fontWeight: 'bold',
+                  fontSize: '0.875rem', // Adjust as needed
+                }
+              }}
+            />
           </FormGroup>
+
+
 
         </Box>
         <Box sx={{width: 116}}>
