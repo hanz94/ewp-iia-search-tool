@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import '../App.css';
-import { FormControl, InputLabel, Select, MenuItem, TextField, Typography, Checkbox, Box, FormControlLabel } from '@mui/material';
+import { FormGroup, FormControl, InputLabel, Select, MenuItem, TextField, Typography, Checkbox, Box, FormControlLabel } from '@mui/material';
 import * as alasql from 'alasql';
 import * as XLSX from 'xlsx';
 import { MuiFileInput } from 'mui-file-input';
 import { useThemeContext } from '../contexts/ThemeContext';
 import { useModalContext } from '../contexts/ModalContext';
 import kulLogoBlack from '../assets/kul_logo-black.jpg';
+
+import Switch from '@mui/material/Switch';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import Table from '@mui/material/Table';
@@ -304,13 +306,18 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       <ModalWindow />
 
       {/* Page Header */}
-      <Box sx={{height: '48px', position: 'relative', top: 0, mb: 1, display: 'flex', justifyContent: 'space-between'}}>
+      <Box sx={{ position: 'relative', top: 0, mb: 1, display: 'flex', justifyContent: 'space-between'}}>
         <Box>
           <img
             src={kulLogoBlack}
-            style={{position: 'relative', top: '0px', left: '0px', width: 105, height: 32, cursor: 'pointer'}}
+            style={{position: 'relative', top: '0px', left: '-31px', width: 105, height: 32, cursor: 'pointer'}}
             onClick={() => window.location.reload()}
             />
+
+          <FormGroup>
+            <FormControlLabel control={<Switch />} label="EWP Dashboard" />
+          </FormGroup>
+
         </Box>
         <Box sx={{width: 116}}>
           {/* <SettingsIcon sx={{cursor: 'pointer'}} onClick={() => modalOpen(newModalContent.options)} /> */}
