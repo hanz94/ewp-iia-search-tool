@@ -12,6 +12,7 @@ import ModalWindow from './ModalWindow';
 import newModalContent from '../utils/newModalContent';
 
 import ModuleCsv from './ModuleCsv';
+import ModuleEwp from './ModuleEwp';
 
 
 alasql.utils.isBrowserify = false;
@@ -70,6 +71,7 @@ function SqlApp() {
       {/* Page App */}
 
       {currentModule === 'CSV' && <ModuleCsv />}
+      {currentModule === 'EWP' && <ModuleEwp />}
 
       {/* End Page App */}
       
