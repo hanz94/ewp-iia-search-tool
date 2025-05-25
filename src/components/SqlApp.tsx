@@ -56,6 +56,8 @@ function SqlApp() {
   const [erasmusCodes, setErasmusCodes] = useState([]);
   const [institutionNames, setInstitutionNames] = useState([]);
 
+  const [currentModule, setCurrentModule] = useState('CSV');
+
   const [selectedErasmusCode, setSelectedErasmusCode] = useState(null);
   const [selectedInstitutionName, setSelectedInstitutionName] = useState(null);
   const [dataFiltered, setDataFiltered] = useState([]);
@@ -312,7 +314,23 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
             onClick={() => window.location.reload()}
             />
         </Box>
-        <Box sx={{width: 116}}>
+        <Box sx={{width: 205}}>
+
+          <FormControl>
+            <InputLabel id="module-label">Moduł</InputLabel>
+            <Select
+              labelId="module-label"
+              id="module-select"
+              value={currentModule}
+              label="Moduł"
+              sx={{ width: 116, height: 42 }}
+              onChange={(e) => {setCurrentModule(e.target.value)}}
+            >
+              <MenuItem value={'CSV'}>CSV</MenuItem>
+              <MenuItem value={'EWP'}>EWP</MenuItem>
+            </Select>
+          </FormControl>
+
           {/* <SettingsIcon sx={{cursor: 'pointer'}} onClick={() => modalOpen(newModalContent.options)} /> */}
           <DarkModeSwitch checked={mode === 'dark'} onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')} size={24} sunColor='currentColor' moonColor='currentColor'
           style={{position: 'absolute', top: '0px', right: '0px'}}/>
