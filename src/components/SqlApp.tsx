@@ -42,22 +42,23 @@ function SqlApp() {
             onClick={() => window.location.reload()}
             />
         </Box>
-        <Box sx={{width: 205}}>
+        <Box sx={{ width: 250 }}>
 
-          <FormControl>
-            <InputLabel id="module-label">Moduł</InputLabel>
-            <Select
-              labelId="module-label"
-              id="module-select"
-              value={currentModule}
-              label="Moduł"
-              sx={{ width: 116, height: 42 }}
-              onChange={(e) => {setCurrentModule(e.target.value)}}
-            >
-              <MenuItem value={'CSV'}>CSV</MenuItem>
-              <MenuItem value={'EWP'}>EWP</MenuItem>
-            </Select>
-          </FormControl>
+        <FormControl sx={{ minWidth: 156 }}>
+          <InputLabel id="module-label">Baza umów</InputLabel>
+          <Select
+            labelId="module-label"
+            id="module-select"
+            value={currentModule}
+            label="Baza umów"
+            sx={{ height: 42 }}
+            onChange={(e) => setCurrentModule(e.target.value)}
+          >
+            <MenuItem value={'CSV'}>Lokalna (CSV)</MenuItem>
+            <MenuItem value={'EWP'}>Zdalna (EWP)</MenuItem>
+          </Select>
+        </FormControl>
+
 
           {/* <SettingsIcon sx={{cursor: 'pointer'}} onClick={() => modalOpen(newModalContent.options)} /> */}
           <DarkModeSwitch checked={mode === 'dark'} onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')} size={24} sunColor='currentColor' moonColor='currentColor'
