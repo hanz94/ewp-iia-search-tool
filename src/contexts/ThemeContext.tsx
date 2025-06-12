@@ -19,8 +19,10 @@ interface ThemeContextType {
     trimRows: boolean;
     setTrimRows: (trim: boolean) => void;
     optionsLastActiveTextFieldId: React.MutableRefObject<string>;
-    initialFetchError: boolean;
-    setInitialFetchError: (error: boolean) => void;
+    fetchError: boolean;
+    setFetchError: (error: boolean) => void;
+    fetchErrorMessage: string;
+    setFetchErrorMessage: (message: string) => void;
   }
 
   const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -28,7 +30,8 @@ interface ThemeContextType {
   const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
 
     //start EwpModule values
-    const [initialFetchError, setInitialFetchError] = useState(false);
+    const [fetchError, setFetchError] = useState(false);
+    const [fetchErrorMessage, setFetchErrorMessage] = useState('');
     //end EwpModule values
 
     // const prefersDarkMode = useMediaQuery<boolean>('(prefers-color-scheme: dark)');
@@ -153,7 +156,7 @@ interface ThemeContextType {
           };
 
 return (
-    <ThemeContext.Provider value={{ mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId, initialFetchError, setInitialFetchError }}>
+    <ThemeContext.Provider value={{ mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId, fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage }}>
       <ThemeProvider theme={appTheme}>
         <CssBaseline />
         {children}

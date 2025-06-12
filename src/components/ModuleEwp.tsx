@@ -15,8 +15,8 @@ import { useThemeContext } from '../contexts/ThemeContext';
 
 function ModuleEwp() {
 
-  const { getAgreementLabel, formatChangedTime} = useModuleEwpContext();
-  const { initialFetchError, setInitialFetchError } = useThemeContext();
+  const { getAgreementLabel, formatChangedTime } = useModuleEwpContext();
+  const { fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage } = useThemeContext();
 
   const [data, setData] = useState([]);
 
@@ -62,14 +62,23 @@ function ModuleEwp() {
     })
     .catch((err) => console.error('Error loading partners.json:', err));
   //end of all partners fetch
-      } else {
+      } 
+      else if (data?.connection && !data?.token) {
         setConnected(false);
+        setFetchError(true);
+        setFetchErrorMessage('invalid token');
+      }
+      else {
+        setConnected(false);
+        setFetchError(true);
+        setFetchErrorMessage('status error');
       }
     })
     .catch((err) => {
       console.error('Status check failed:', err);
       setConnected(false);
-      setInitialFetchError(true)
+      setFetchError(true);
+      setFetchErrorMessage('initial fetch error');
     });
   
   }, []);
@@ -174,22 +183,22 @@ function ModuleEwp() {
         />
     </>
     )
-    : (!connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0 && !initialFetchError) ?
+    : (!connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0 && !fetchError) ?
     (
     <>
     <CircularProgress />
     <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Łączenie z EWP Dashboard...</Typography>
     </>
     )
-    : (!connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0 && initialFetchError) ?
+    : (!connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0 && fetchError) ?
     (
     <>
-    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Błąd łączenia z serwerem (initial fetch error)</Typography>
+    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Błąd łączenia z serwerem ({fetchErrorMessage})</Typography>
     <Button
         variant="contained"
         size="small"
         onClick={() => {
-          setInitialFetchError(false)
+          setFetchError(false);
           handleInitialFetch();
         }}
         sx={{ display: 'block', mx: 'auto', mt: 1 }}
