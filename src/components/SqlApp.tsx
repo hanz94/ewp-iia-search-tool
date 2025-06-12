@@ -13,6 +13,7 @@ import newModalContent from '../utils/newModalContent';
 
 import ModuleCsv from './ModuleCsv';
 import ModuleEwp from './ModuleEwp';
+import { ModuleEwpContextProvider } from '../contexts/ModuleEwpContext';
 
 
 alasql.utils.isBrowserify = false;
@@ -72,7 +73,9 @@ function SqlApp() {
       {/* Page App */}
 
       {currentModule === 'CSV' && <ModuleCsv />}
-      {currentModule === 'EWP' && <ModuleEwp />}
+      {currentModule === 'EWP' && <ModuleEwpContextProvider>
+        <ModuleEwp />
+      </ModuleEwpContextProvider>}
 
       {/* End Page App */}
       

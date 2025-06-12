@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useLocalStorageState } from '@toolpad/core';
@@ -19,11 +19,18 @@ interface ThemeContextType {
     trimRows: boolean;
     setTrimRows: (trim: boolean) => void;
     optionsLastActiveTextFieldId: React.MutableRefObject<string>;
+    initialFetchError: boolean;
+    setInitialFetchError: (error: boolean) => void;
   }
 
   const ThemeContext = createContext<ThemeContextType | null>(null);
 
   const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
+
+    //start EwpModule values
+    const [initialFetchError, setInitialFetchError] = useState(false);
+    //end EwpModule values
+
     // const prefersDarkMode = useMediaQuery<boolean>('(prefers-color-scheme: dark)');
     const [mode, setMode] = useLocalStorageState<ModeType>('selectedMode', 'light');
 
@@ -146,7 +153,7 @@ interface ThemeContextType {
           };
 
 return (
-    <ThemeContext.Provider value={{ mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId }}>
+    <ThemeContext.Provider value={{ mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId, initialFetchError, setInitialFetchError }}>
       <ThemeProvider theme={appTheme}>
         <CssBaseline />
         {children}

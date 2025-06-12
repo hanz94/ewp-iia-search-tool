@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import '../App.css';
-import { TextField, Typography, Box } from '@mui/material';
+import { Button, TextField, Typography, Box } from '@mui/material';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import Accordion from '@mui/material/Accordion';
@@ -9,41 +9,14 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CircularProgress from '@mui/material/CircularProgress';
 
-function getAgreementLabel(count) {
-    const lastDigit = count % 10;
-    const lastTwoDigits = count % 100;
-  
-    if (count === 1) {
-      return 'umowę międzyinstytucjonalną';
-    }
-  
-    if (
-      lastDigit >= 2 &&
-      lastDigit <= 4 &&
-      !(lastTwoDigits >= 12 && lastTwoDigits <= 14)
-    ) {
-      return 'umowy międzyinstytucjonalne';
-    }
-  
-    return 'umów międzyinstytucjonalnych';
-  }
-  //format date and time for IIA last modification
-  function formatChangedTime(raw) {
-    if (!raw) return 'brak danych';
-  
-    // Example input: "Tue, 04/02/2024 - 15:09"
-    const [, datePart, timePart] = raw.split(/,\s*|\s*-\s*/); // ["Tue", "04/02/2024", "15:09"]
-    const [month, day, year] = datePart.split('/'); // MM/DD/YYYY
-    const [hour, minute] = timePart.split(':');
-  
-    const date = new Date(year, month - 1, day, hour, minute);
-  
-    const pad = (n) => String(n).padStart(2, '0');
-  
-    return `${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  }
+import { useModuleEwpContext } from '../contexts/ModuleEwpContext';
+import { useThemeContext } from '../contexts/ThemeContext';
+
 
 function ModuleEwp() {
+
+  const { getAgreementLabel, formatChangedTime} = useModuleEwpContext();
+  const { initialFetchError, setInitialFetchError } = useThemeContext();
 
   const [data, setData] = useState([]);
 
@@ -59,8 +32,7 @@ function ModuleEwp() {
 
   const [connected, setConnected] = useState(false);
 
-    //fetch info on load
-useEffect(() => {
+  const handleInitialFetch = useCallback(() => {
     fetch('http://localhost:10300/status')
     .then((res) => {
       if (!res.ok) throw new Error('Failed to fetch status');
@@ -97,10 +69,15 @@ useEffect(() => {
     .catch((err) => {
       console.error('Status check failed:', err);
       setConnected(false);
+      setInitialFetchError(true)
     });
   
   }, []);
-  
+
+  //fetch info on load
+  useEffect(() => {
+    handleInitialFetch();
+  }, []);
   
   //watch for changes: selectedErasmusCode, selectedInstitutionName
   useEffect(() => {
@@ -197,11 +174,28 @@ useEffect(() => {
         />
     </>
     )
-    : (!connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0) ?
+    : (!connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0 && !initialFetchError) ?
     (
     <>
     <CircularProgress />
     <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Łączenie z EWP Dashboard...</Typography>
+    </>
+    )
+    : (!connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0 && initialFetchError) ?
+    (
+    <>
+    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Błąd łączenia z serwerem (initial fetch error)</Typography>
+    <Button
+        variant="contained"
+        size="small"
+        onClick={() => {
+          setInitialFetchError(false)
+          handleInitialFetch();
+        }}
+        sx={{ display: 'block', mx: 'auto', mt: 1 }}
+      >
+        Odśwież
+    </Button>
     </>
     )
     : (connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0) &&
@@ -209,7 +203,7 @@ useEffect(() => {
     <>
     <CircularProgress />
     <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Połączono z EWP Dashboard.</Typography>
-    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Pobieram listę instytucji partnerskich...</Typography>
+    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Pobieram listę uczelni partnerskich...</Typography>
     </>
     )}
 
