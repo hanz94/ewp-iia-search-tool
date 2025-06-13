@@ -29,6 +29,8 @@ interface ThemeContextType {
     setErasmusCodes: (codes: any[]) => void;
     institutionNames: any[];
     setInstitutionNames: (names: any[]) => void;
+    partnersTimestamp: any;
+    setPartnersTimestamp: (timestamp: any) => void;
     selectedErasmusCode: any;
     setSelectedErasmusCode: (code: any) => void;
     selectedInstitutionName: any;
@@ -57,6 +59,7 @@ interface ThemeContextType {
 
     const [erasmusCodes, setErasmusCodes] = useState([]);
     const [institutionNames, setInstitutionNames] = useState([]);
+    const [partnersTimestamp, setPartnersTimestamp] = useState(null);
   
     const [selectedErasmusCode, setSelectedErasmusCode] = useState(null);
     const [selectedInstitutionName, setSelectedInstitutionName] = useState(null);
@@ -190,7 +193,7 @@ interface ThemeContextType {
           };
 
 return (
-    <ThemeContext.Provider value={{ mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId, fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected }}>
+    <ThemeContext.Provider value={{ mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId, fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected }}>
       <ThemeProvider theme={appTheme}>
         <CssBaseline />
         {children}

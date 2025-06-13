@@ -18,7 +18,7 @@ import { useThemeContext } from '../contexts/ThemeContext';
 function ModuleEwp() {
 
   const { getAgreementLabel, formatChangedTime } = useModuleEwpContext();
-  const { fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected } = useThemeContext();
+  const { fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected } = useThemeContext();
 
 //   const [data, setData] = useState([]);
 
@@ -47,7 +47,6 @@ function ModuleEwp() {
         setConnected(true);
   
   //start of all partners fetch
-        // fetch('/partners-heis.json')
         const eventSource = new EventSource('http://localhost:10300/stream/partners');
 
         eventSource.onmessage = (event) => {
@@ -60,7 +59,7 @@ function ModuleEwp() {
           }
       
           if (message.progress && !message.done) {
-            // Optional: update a progress bar
+            // Update a progress bar
             setProgress(parseInt(message.progress));
           }
       
@@ -73,9 +72,8 @@ function ModuleEwp() {
             setErasmusCodes(() => data.map((item) => item.partnerErasmusCode).filter(Boolean).sort());
             setInstitutionNames(() => data.map((item) => item.partnerName).filter(Boolean).sort());
       
-            // console.log('Final data:', data);
-      
             eventSource.close();
+            setPartnersTimestamp(Date.now());
           }
         };
       
@@ -105,8 +103,9 @@ function ModuleEwp() {
   
   }, []);
 
-  //fetch info on load
+  //fetch info on first load
   useEffect(() => {
+    if (erasmusCodes.length > 0 || institutionNames.length > 0 || data.length > 0) return;
     handleInitialFetch();
   }, []);
   
@@ -203,6 +202,9 @@ function ModuleEwp() {
             }
         }}
         />
+        {(!selectedErasmusCode || !selectedInstitutionName) && (
+            <Typography sx={{ fontSize: 12, textAlign: 'center' }}>Ostatnia aktualizacja: {new Date(partnersTimestamp).toLocaleString()} </Typography>
+        )}
     </>
     )
     : (!connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0 && !fetchError) ?
