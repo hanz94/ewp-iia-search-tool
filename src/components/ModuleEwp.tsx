@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import '../App.css';
 import { Button, TextField, Typography, Box } from '@mui/material';
 
@@ -35,6 +35,7 @@ function ModuleEwp() {
 //   const [connected, setConnected] = useState(false);
 
     const [progress, setProgress] = useState(0);
+    const hasMounted = useRef(false);
 
   const handleInitialFetch = useCallback(() => {
     fetch('http://localhost:10300/status')
@@ -111,6 +112,11 @@ function ModuleEwp() {
   
   //watch for changes: selectedErasmusCode, selectedInstitutionName
   useEffect(() => {
+    //prevent fetching on mount when dataFiltered (IIA details) was fetched previously
+    if (!hasMounted.current) return;
+    hasMounted.current = true;
+
+    //fetch dataFiltered on every Autocomplete change
     setDataFiltered([]);
     setDataFilteredDetails([]);
     if (selectedErasmusCode && selectedInstitutionName) {
@@ -154,6 +160,7 @@ function ModuleEwp() {
         sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label="Kod Erasmus+" />}
         onChange={(e, value) => {
+            hasMounted.current = true;
             setSelectedErasmusCode(value ? value : null)
 
             if (value) {
@@ -182,6 +189,7 @@ function ModuleEwp() {
         sx={{ minWidth: 500 }}
         renderInput={(params) => <TextField {...params} label="Nazwa instytucji" />}
         onChange={(e, value) => {
+            hasMounted.current = true;
             setSelectedInstitutionName(() => value ? value : null)
 
             if (value) {
