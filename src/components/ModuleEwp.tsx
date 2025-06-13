@@ -8,29 +8,33 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgressWithLabel from './LinearProgressWithLabel';
 
 import { useModuleEwpContext } from '../contexts/ModuleEwpContext';
 import { useThemeContext } from '../contexts/ThemeContext';
 
 
+
 function ModuleEwp() {
 
   const { getAgreementLabel, formatChangedTime } = useModuleEwpContext();
-  const { fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage } = useThemeContext();
+  const { fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected } = useThemeContext();
 
-  const [data, setData] = useState([]);
+//   const [data, setData] = useState([]);
 
-  const [erasmusCodes, setErasmusCodes] = useState([]);
-  const [institutionNames, setInstitutionNames] = useState([]);
+//   const [erasmusCodes, setErasmusCodes] = useState([]);
+//   const [institutionNames, setInstitutionNames] = useState([]);
 
-  const [selectedErasmusCode, setSelectedErasmusCode] = useState(null);
-  const [selectedInstitutionName, setSelectedInstitutionName] = useState(null);
-  const [selectedHeiID, setSelectedHeiID] = useState(null);
-  const [selectedHeiTimestamp, setSelectedHeiTimestamp] = useState(null);
-  const [dataFiltered, setDataFiltered] = useState([]);
-  const [dataFilteredDetails, setDataFilteredDetails] = useState([]);
+//   const [selectedErasmusCode, setSelectedErasmusCode] = useState(null);
+//   const [selectedInstitutionName, setSelectedInstitutionName] = useState(null);
+//   const [selectedHeiID, setSelectedHeiID] = useState(null);
+//   const [selectedHeiTimestamp, setSelectedHeiTimestamp] = useState(null);
+//   const [dataFiltered, setDataFiltered] = useState([]);
+//   const [dataFilteredDetails, setDataFilteredDetails] = useState([]);
 
-  const [connected, setConnected] = useState(false);
+//   const [connected, setConnected] = useState(false);
+
+    const [progress, setProgress] = useState(0);
 
   const handleInitialFetch = useCallback(() => {
     fetch('http://localhost:10300/status')
@@ -44,23 +48,41 @@ function ModuleEwp() {
   
   //start of all partners fetch
         // fetch('/partners-heis.json')
-    fetch(`http://localhost:10300/partners`)
-    .then((res) => {
-      if (!res.ok) throw new Error('Failed to fetch partners');
-      return res.json();
-    })
-    .then((data) => {
-      setData(() => data);
-  
-      //parse erasmus codes and institution names
-      setErasmusCodes(() => data.map((item) => item.partnerErasmusCode).filter(Boolean).sort());
-      setInstitutionNames(() => data.map((item) => item.partnerName).filter(Boolean).sort());
-  
-      // setAlasqlQuerySource(() => 'FROM ?');
-  
-      console.log(data);
-    })
-    .catch((err) => console.error('Error loading partners.json:', err));
+        const eventSource = new EventSource('http://localhost:10300/stream/partners');
+
+        eventSource.onmessage = (event) => {
+          const message = JSON.parse(event.data);
+      
+          if (message.error) {
+            console.error('Error from server:', message.error);
+            eventSource.close();
+            return;
+          }
+      
+          if (message.progress && !message.done) {
+            // Optional: update a progress bar
+            setProgress(parseInt(message.progress));
+          }
+      
+          if (message.done) {
+            const data = message.data;
+      
+            setData(() => data);
+      
+            // Parse erasmus codes and institution names
+            setErasmusCodes(() => data.map((item) => item.partnerErasmusCode).filter(Boolean).sort());
+            setInstitutionNames(() => data.map((item) => item.partnerName).filter(Boolean).sort());
+      
+            // console.log('Final data:', data);
+      
+            eventSource.close();
+          }
+        };
+      
+        eventSource.onerror = (err) => {
+          console.error('SSE connection error:', err);
+          eventSource.close();
+        };
   //end of all partners fetch
       } 
       else if (data?.connection && !data?.token) {
@@ -211,8 +233,9 @@ function ModuleEwp() {
     (
     <>
     <CircularProgress />
-    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Połączono z EWP Dashboard.</Typography>
-    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Pobieram listę uczelni partnerskich...</Typography>
+    <Typography sx={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>Połączono z EWP Dashboard</Typography>
+    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Przygotowuję listę uczelni partnerskich...</Typography>
+    <LinearProgressWithLabel value={progress} />
     </>
     )}
 
@@ -299,46 +322,10 @@ function ModuleEwp() {
     ) : (selectedErasmusCode && selectedInstitutionName && selectedHeiID) && (
         <>
         <CircularProgress />
-        <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Pobieram szczegóły umowy...</Typography>
+        <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Przygotowuję szczegóły umowy...</Typography>
         </>
     )
     }
-
-    {/* {(selectedErasmusCode || selectedInstitutionName) && dataFiltered.length > 0 && (
-        <>
-        <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>
-            <b>Katolicki&nbsp;Uniwersytet&nbsp;Lubelski&nbsp;Jana&nbsp;Pawła&nbsp;II&nbsp;(PL&nbsp;LUBLIN02)</b> posiada umowę międzyinstytucjonalną z <b>{selectedInstitutionName.replace(/ /g, '\u00A0')} ({selectedErasmusCode.replace(/ /g, '\u00A0')})</b> w podanym zakresie:
-        </Typography>
-
-        <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
-            (Stan&nbsp;na&nbsp;{lastUpdate})
-        </Typography>
-        <TableContainer component={Paper} sx={{ maxHeight: dataGridTableHeight + 'px', overflow: 'auto' }}>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                    {Object.keys(dataFiltered[0]).map((key) => (
-                        <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }} key={key}>
-                        {key}
-                        </TableCell>
-                    ))}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {dataFiltered.map((row, rowIndex) => (
-                    <TableRow key={rowIndex}>
-                        {Object.values(row).map((value, colIndex) => (
-                        <TableCell key={colIndex}>
-                            {value instanceof Date ? value.toLocaleDateString() : value ? String(value) : "(Brak)"}
-                        </TableCell>
-                        ))}
-                    </TableRow>
-                    ))}
-                </TableBody>
-                </Table>
-            </TableContainer>
-        </>
-    )} */}
 
     </Box>
     );
