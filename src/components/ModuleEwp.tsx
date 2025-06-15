@@ -17,7 +17,7 @@ import { useThemeContext } from '../contexts/ThemeContext';
 
 function ModuleEwp() {
 
-  const { getAgreementLabel, formatChangedTime } = useModuleEwpContext();
+  const { getAgreementLabel, formatTimeHeader, formatTimeBody } = useModuleEwpContext();
   const { fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected } = useThemeContext();
 
 //   const [data, setData] = useState([]);
@@ -211,7 +211,10 @@ function ModuleEwp() {
         }}
         />
         {(!selectedErasmusCode || !selectedInstitutionName) && (
+          <>
+            <Typography sx={{ fontSize: 13, textAlign: 'center', mt: 0.4 }}>EWP Dashboard</Typography>
             <Typography sx={{ fontSize: 12, textAlign: 'center' }}>Ostatnia aktualizacja: {new Date(partnersTimestamp).toLocaleString()} </Typography>
+          </>
         )}
     </>
     )
@@ -243,7 +246,7 @@ function ModuleEwp() {
     (
     <>
     <CircularProgress />
-    <Typography sx={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>Połączono z EWP Dashboard</Typography>
+    <Typography sx={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', mt: 1, ml: -1 }}>✅ Połączono z EWP Dashboard</Typography>
     <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Przygotowuję listę uczelni partnerskich...</Typography>
     <LinearProgressWithLabel value={progress} />
     </>
@@ -281,7 +284,7 @@ function ModuleEwp() {
                         Ostatnia modyfikacja:
                     </Typography>
                     <Typography sx={{ fontSize: '0.75em'}}>
-                        {formatChangedTime(dataFilteredDetails[index]?.changed_time)}
+                        {formatTimeHeader(dataFilteredDetails[index]?.changed_time)}
                     </Typography>
                     </>
                 )}
@@ -311,6 +314,47 @@ function ModuleEwp() {
             <AccordionDetails>
             {dataFilteredDetails.length > 0 ? (
                 <>
+                {/* <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>{JSON.stringify(dataFilteredDetails[index].partner[0].signing_date, null, 2)}</Typography> */}
+
+                {/* IIA Details - First partner signature status */}
+
+                {!dataFilteredDetails[index].partner[0].signing_date ? (
+                    <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>Umowa nie została podpisana przez {dataFilteredDetails[index].partner[0].institution.name}</Typography>
+                )
+                : (
+                  <>
+                    <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>
+                    Umowa podpisana przez {dataFilteredDetails[index].partner[0].institution.name}
+                    </Typography>
+                    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+                    Data: {formatTimeBody(dataFilteredDetails[index].partner[0].signing_date)}
+                    </Typography>
+                    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+                    Podpis: {dataFilteredDetails[index].partner[0].signing_contact.contact_names} ({dataFilteredDetails[index].partner[0].signing_contact.emails.join('; ')})
+                    </Typography>
+                  </>
+                )}
+
+                {/* IIA Details - Second partner signature status */}
+
+                {!dataFilteredDetails[index].partner[1].signing_date ? (
+                    <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>Umowa nie została podpisana przez {dataFilteredDetails[index].partner[1].institution.name}</Typography>
+                )
+                : (
+                  <>
+                    <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>
+                    Umowa podpisana przez {dataFilteredDetails[index].partner[1].institution.name}
+                    </Typography>
+                    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+                    Data: {formatTimeBody(dataFilteredDetails[index].partner[1].signing_date)}
+                    </Typography>
+                    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+                    Podpis: {dataFilteredDetails[index].partner[1].signing_contact.contact_names} ({dataFilteredDetails[index].partner[1].signing_contact.emails.join('; ')})
+                    </Typography>
+                  </>
+                )}
+
+                {/* IIA Details - Other details */}
                 <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                     <pre style={{ margin: 0 }}>
                     <code>
@@ -318,7 +362,6 @@ function ModuleEwp() {
                     </code>
                     </pre>
                 </Typography>
-
                 </>
             )
             :
@@ -332,7 +375,7 @@ function ModuleEwp() {
     ) : (selectedErasmusCode && selectedInstitutionName && selectedHeiID) && (
         <>
         <CircularProgress />
-        <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Przygotowuję szczegóły umowy...</Typography>
+        <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Przygotowuję szczegóły współpracy...</Typography>
         </>
     )
     }
