@@ -14,6 +14,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
 
 
 alasql.utils.isBrowserify = false;
@@ -23,43 +24,9 @@ alasql.utils.global.XLSX = XLSX;
 function ModuleCsv() {
 
     const { dataGridTableHeight, trimRows, rowWithColumnNames } = useThemeContext();
-  const { modalOpen } = useModalContext();
+    const { modalOpen } = useModalContext();
 
-  const [data, setData] = useState([]);
-  const [originalData, setOriginalData] = useState([]);
-  const [slicedData, setSlicedData] = useState([]);
-
-  const [alasqlQuery, setAlasqlQuery] = useState('');
-  const [alasqlQueryBefore, setAlasqlQueryBefore] = useState('');
-  const [alasqlQuerySource, setAlasqlQuerySource] = useState('');
-  const [alasqlQueryAfter, setAlasqlQueryAfter] = useState('');
-
-  const [inputFileValue, setInputFileValue] = useState('');
-  const [currentWorkbook, setCurrentWorkbook] = useState('');
-  const [availableWorkSheets, setAvailableWorkSheets] = useState([]);
-  const [currrentWorksheet, setCurrentWorksheet] = useState('');
-  const [availableColumns, setAvailableColumns] = useState([]);
-  const [currentGroupByColumn, setCurrentGroupByColumn] = useState('');
-
-  const [useGroupBy, setUseGroupBy] = useState(false);
-
-  const [erasmusCodes, setErasmusCodes] = useState([]);
-  const [institutionNames, setInstitutionNames] = useState([]);
-
-  const [selectedErasmusCode, setSelectedErasmusCode] = useState(null);
-  const [selectedInstitutionName, setSelectedInstitutionName] = useState(null);
-  const [dataFiltered, setDataFiltered] = useState([]);
-  const [lastUpdate, setLastUpdate] = useState('');
-
-  //remove data after empty rows - fix for group by
-const alasqlRemoveDataAfterFirstEmptyRow = function (rows) {
-  // Find the index of the first empty row
-  const emptyRowIndex = rows.findIndex(row =>
-      Object.values(row).every(value => value === null || value === undefined || value === "")
-  );
-  // Return rows up to the first empty row
-  return emptyRowIndex === -1 ? rows : rows.slice(0, emptyRowIndex);
-};
+    const  { data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow } = useModuleCsvContext();
 
   //execute AlaSQL query
   useEffect(() => {
@@ -114,7 +81,7 @@ const alasqlRemoveDataAfterFirstEmptyRow = function (rows) {
     if (inputFileValue && alasqlQuerySource) {
 
       // Get the current worksheet range
-      let newCurrentWorksheetRange = currentWorkbook.Sheets[currrentWorksheet]["!ref"];
+      let newCurrentWorksheetRange = currentWorkbook.Sheets[currentWorksheet]["!ref"];
 
       //Replace A1 with A + rowWithColumnNames
       newCurrentWorksheetRange = newCurrentWorksheetRange.replace(/A(.*?):/, `A${rowWithColumnNames}:`);
@@ -122,7 +89,7 @@ const alasqlRemoveDataAfterFirstEmptyRow = function (rows) {
       // Use RegExp to find and replace the sheetid value
       let updatedSource = alasqlQuerySource.replace(
         /{sheetid: "(.*?)", autoExt: false/,
-        `{sheetid: "${currrentWorksheet}", autoExt: false`
+        `{sheetid: "${currentWorksheet}", autoExt: false`
       );
 
       // Use RegExp to find and replace the range value
@@ -131,12 +98,11 @@ const alasqlRemoveDataAfterFirstEmptyRow = function (rows) {
         `range: "${newCurrentWorksheetRange}"`
       );
 
-      updateAvailableColumns(currentWorkbook, currrentWorksheet, newCurrentWorksheetRange);
+      updateAvailableColumns(currentWorkbook, currentWorksheet, newCurrentWorksheetRange);
       setAlasqlQuerySource(updatedSource);
       // setCurrentWorksheetRange(newCurrentWorksheetRange);
     }
-  }, [currrentWorksheet, rowWithColumnNames]);
-
+  }, [currentWorksheet, rowWithColumnNames]);
 
   //Group by
   useEffect(() => {
@@ -243,19 +209,6 @@ const handleFileChange = (newInputValue) => {
         setOriginalData(() => result);
         let firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
         setSlicedData(() => result.slice(0, firstEmptyRowIndex));
-
-        // console.log(result);
-
-        // // Populate Erasmus codes and institution names after data is loaded
-        // alasql.promise('SELECT DISTINCT [KOD ERASMUS] FROM ? ORDER BY [KOD ERASMUS]', [result]).then((codes) => {
-        //   const newErasmusCodes = codes.map((item) => item["KOD ERASMUS"]);
-        //   setErasmusCodes(() => newErasmusCodes);
-        // });
-
-        // alasql.promise('SELECT DISTINCT [NAZWA UCZELNI] FROM ? ORDER BY [NAZWA UCZELNI]', [result]).then((institutions) => {
-        //   const newInstitutionNames = institutions.map((item) => item["NAZWA UCZELNI"]);
-        //   setInstitutionNames(() => newInstitutionNames);
-        // });
       });
     };
 
@@ -265,7 +218,6 @@ const handleFileChange = (newInputValue) => {
     alert('Invalid file type! Please upload a CSV, XLS, or XLSX file.');
   }
 };
-
 
 const updateAvailableColumns = (workbook, sheetName, range) => {
   const worksheet = workbook.Sheets[sheetName];
@@ -289,9 +241,6 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
 
       {erasmusCodes.length > 0 && institutionNames.length > 0 && data.length > 0 && (
         <>
-
-        {/* {console.log(institutionNames)} */}
-
           <Autocomplete
           disablePortal
           value={selectedErasmusCode}

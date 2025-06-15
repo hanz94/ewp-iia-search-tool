@@ -13,6 +13,7 @@ import newModalContent from '../utils/newModalContent';
 
 import ModuleCsv from './ModuleCsv';
 import ModuleEwp from './ModuleEwp';
+import { ModuleCsvContextProvider } from '../contexts/ModuleCsvContext';
 import { ModuleEwpContextProvider } from '../contexts/ModuleEwpContext';
 
 
@@ -72,10 +73,13 @@ function SqlApp() {
 
       {/* Page App */}
 
-      {currentModule === 'CSV' && <ModuleCsv />}
-      {currentModule === 'EWP' && <ModuleEwpContextProvider>
-        <ModuleEwp />
-      </ModuleEwpContextProvider>}
+
+      <ModuleCsvContextProvider>
+        <ModuleEwpContextProvider>
+          {currentModule === 'CSV' && <ModuleCsv />}
+          {currentModule === 'EWP' && <ModuleEwp />}
+        </ModuleEwpContextProvider>
+      </ModuleCsvContextProvider>
 
       {/* End Page App */}
       
