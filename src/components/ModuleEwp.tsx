@@ -314,45 +314,31 @@ function ModuleEwp() {
             <AccordionDetails>
             {dataFilteredDetails.length > 0 ? (
                 <>
-                {/* <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>{JSON.stringify(dataFilteredDetails[index].partner[0].signing_date, null, 2)}</Typography> */}
 
-                {/* IIA Details - First partner signature status */}
+                {/* IIA Details - All Partners signature status */}
 
-                {!dataFilteredDetails[index].partner[0].signing_date ? (
-                    <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>Umowa nie została podpisana przez {dataFilteredDetails[index].partner[0].institution.name}</Typography>
-                )
-                : (
-                  <>
-                    <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>
-                    Umowa podpisana przez {dataFilteredDetails[index].partner[0].institution.name}
+                {dataFilteredDetails[index].partner.map((partner, i) => (
+                  !partner.signing_date ? (
+                    <Typography
+                      key={`not-signed-${i}`}
+                      sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: i === 0 ? 0 : 1.5 }}
+                    >
+                      Umowa nie została podpisana przez {partner.institution.name}
                     </Typography>
-                    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-                    Data: {formatTimeBody(dataFilteredDetails[index].partner[0].signing_date)}
-                    </Typography>
-                    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-                    Podpis: {dataFilteredDetails[index].partner[0].signing_contact.contact_names} ({dataFilteredDetails[index].partner[0].signing_contact.emails.join('; ')})
-                    </Typography>
-                  </>
-                )}
-
-                {/* IIA Details - Second partner signature status */}
-
-                {!dataFilteredDetails[index].partner[1].signing_date ? (
-                    <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>Umowa nie została podpisana przez {dataFilteredDetails[index].partner[1].institution.name}</Typography>
-                )
-                : (
-                  <>
-                    <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: 1 }}>
-                    Umowa podpisana przez {dataFilteredDetails[index].partner[1].institution.name}
-                    </Typography>
-                    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-                    Data: {formatTimeBody(dataFilteredDetails[index].partner[1].signing_date)}
-                    </Typography>
-                    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-                    Podpis: {dataFilteredDetails[index].partner[1].signing_contact.contact_names} ({dataFilteredDetails[index].partner[1].signing_contact.emails.join('; ')})
-                    </Typography>
-                  </>
-                )}
+                  ) : (
+                    <>
+                      <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: i === 0 ? 0 : 1.5 }}>
+                        Umowa podpisana przez {partner.institution.name}
+                      </Typography>
+                      <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+                        Data: {formatTimeBody(partner.signing_date)}
+                      </Typography>
+                      <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+                        Podpis: {partner.signing_contact.contact_names} ({partner.signing_contact.emails.join('; ')})
+                      </Typography>
+                    </>
+                  )
+                ))}
 
                 {/* IIA Details - Other details */}
                 <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
