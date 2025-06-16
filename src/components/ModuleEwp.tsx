@@ -358,83 +358,164 @@ function ModuleEwp() {
                       <RadioGroup             aria-labelledby="cooperation-conditions-radio-group-label"
                       name="cooperation-conditions-radio-group">
 
-                        {/* STAFF TEACHER */}
+                        {/* STAFF TEACHERS */}
                         {dataFilteredDetails[index].cooperation_conditions.staff_teachers.length > 0 &&
                           dataFilteredDetails[index].cooperation_conditions.staff_teachers.map((staff_teacher, i) => (
-                            // OUTGOING OR INCOMING
-                            staff_teacher.sending_institution.heiID === "kul.pl" ? (
-                              // Outgoing
-                              <FormControlLabel value="sta-out" control={<Radio />} label="Wyjazdy pracowników w celu prowadzenia zajęć dydaktycznych" />
-                            ) : (
-                              // Incoming
-                              <FormControlLabel value="sta-in" control={<Radio />} label="Przyjazdy pracowników w celu prowadzenia zajęć dydaktycznych" />
-                            )
+                            <FormControlLabel
+                              key={`staff-teacher-${i}`}
+                              value={staff_teacher.sending_institution.heiID === "kul.pl" ? "sta-out" : "sta-in"}
+                              control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
+                              label={
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                  }}
+                                >
+                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                    {staff_teacher.sending_institution.heiID === "kul.pl"
+                                      ? "Wyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"
+                                      : "Przyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"}
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                    Kod ISCED-F: {staff_teacher.subject_area[0].isced_f_code}
+                                  </Typography>
+                                </Box>
+                              }
+                              sx={{
+                                alignItems: 'flex-start',
+                                display: 'flex',
+                                width: '100%',
+                                '& .MuiFormControlLabel-label': {
+                                  flex: 1,
+                                },
+                              }}
+                            />
                           ))
                         }
 
                         {/* STAFF TRAINING */}
                         {dataFilteredDetails[index].cooperation_conditions.staff_trainings.length > 0 &&
                           dataFilteredDetails[index].cooperation_conditions.staff_trainings.map((staff_training, i) => (
-                            // OUTGOING OR INCOMING
-                            staff_training.sending_institution.heiID === "kul.pl" ? (
-                              // Outgoing
-                              <FormControlLabel value="stt-out" control={<Radio />} label="Wyjazdy pracowników w celach szkoleniowych" />
-                            ) : (
-                              // Incoming
-                              <FormControlLabel value="stt-in" control={<Radio />} label="Przyjazdy pracowników w celach szkoleniowych" />
-                            )
+                            <FormControlLabel
+                              key={`staff-training-${i}`}
+                              value={staff_training.sending_institution.heiID === "kul.pl" ? "stt-out" : "stt-in"}
+                              control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
+                              label={
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                  }}
+                                >
+                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                    {staff_training.sending_institution.heiID === "kul.pl"
+                                      ? "Wyjazdy pracowników w celach szkoleniowych"
+                                      : "Przyjazdy pracowników w celach szkoleniowych"}
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                    Kod ISCED-F: {staff_training.subject_area[0].isced_f_code}
+                                  </Typography>
+                                </Box>
+                              }
+                              sx={{
+                                alignItems: 'flex-start',
+                                display: 'flex',
+                                width: '100%',
+                                '& .MuiFormControlLabel-label': {
+                                  flex: 1,
+                                },
+                              }}
+                            />
                           ))
                         }
 
                         {/* STUDENT STUDIES */}
                         {dataFilteredDetails[index].cooperation_conditions.student_studies.length > 0 &&
                           dataFilteredDetails[index].cooperation_conditions.student_studies.map((student_study, i) => (
-                            // OUTGOING OR INCOMING
-                            student_study.sending_institution.heiID === "kul.pl" ? (
-                              // Outgoing
-                              <FormControlLabel value="sms-out" control={<Radio />} label="Wyjazdy studentów w celu studiowania" />
-                            ) : (
-                              // Incoming
-                              <FormControlLabel value="sms-in" control={<Radio />} label="Przyjazdy studentów w celu studiowania" />
-                            )
+                            <FormControlLabel
+                              key={`student-study-${i}`}
+                              value={student_study.sending_institution.heiID === "kul.pl" ? "sms-out" : "sms-in"}
+                              control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
+                              label={
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                  }}
+                                >
+                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                    {student_study.sending_institution.heiID === "kul.pl"
+                                      ? "Wyjazdy studentów w celu studiowania"
+                                      : "Przyjazdy studentów w celu studiowania"}
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                    Kod ISCED-F: {student_study.subject_area[0].isced_f_code}
+                                  </Typography>
+                                </Box>
+                              }
+                              sx={{
+                                alignItems: 'flex-start',
+                                display: 'flex',
+                                width: '100%',
+                                '& .MuiFormControlLabel-label': {
+                                  flex: 1,
+                                },
+                              }}
+                            />
                           ))
                         }
 
                         {/* STUDENT TRAINEESHIPS */}
                         {dataFilteredDetails[index].cooperation_conditions.student_traineeships.length > 0 &&
                           dataFilteredDetails[index].cooperation_conditions.student_traineeships.map((student_traineeship, i) => (
-                            // OUTGOING OR INCOMING
-                            student_traineeship.sending_institution.heiID === "kul.pl" ? (
-                              // Outgoing
-                              <FormControlLabel value="smt-out" control={<Radio />} label="Wyjazdy studentów na praktyki" />
-                            ) : (
-                              // Incoming
-                              <FormControlLabel value="smt-in" control={<Radio />} label="Przyjazdy studentów na praktyki" />
-                            )
+                            <FormControlLabel
+                              key={`student-traineeship-${i}`}
+                              value={student_traineeship.sending_institution.heiID === "kul.pl" ? "smt-out" : "smt-in"}
+                              control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
+                              label={
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                  }}
+                                >
+                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                    {student_traineeship.sending_institution.heiID === "kul.pl"
+                                      ? "Wyjazdy studentów na praktyki"
+                                      : "Przyjazdy studentów na praktyki"}
+                                  </Typography>
+                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                    Kod ISCED-F: {student_traineeship.subject_area[0].isced_f_code}
+                                  </Typography>
+                                </Box>
+                              }
+                              sx={{
+                                alignItems: 'flex-start',
+                                display: 'flex',
+                                width: '100%',
+                                '& .MuiFormControlLabel-label': {
+                                  flex: 1,
+                                },
+                              }}
+                            />
                           ))
                         }
+
 
                       </RadioGroup>
                     </FormControl>
 
                   </>
                 )}
-
-                {/* <FormControl>
-                  <RadioGroup
-                    aria-labelledby="demo-radio-buttons-group-label"
-                    name="radio-buttons-group"
-                  >
-                    <FormControlLabel value="sta-out" control={<Radio />} label="STA OUT" />
-                    <FormControlLabel value="sta-in" control={<Radio />} label="STA IN" />
-                    <FormControlLabel value="stt-out" control={<Radio />} label="STT OUT" />
-                    <FormControlLabel value="stt-in" control={<Radio />} label="STT IN" />
-                    <FormControlLabel value="sms-out" control={<Radio />} label="SMS OUT" />
-                    <FormControlLabel value="sms-in" control={<Radio />} label="SMS IN" />
-                    <FormControlLabel value="smt-out" control={<Radio />} label="SMT OUT" />
-                    <FormControlLabel value="smt-in" control={<Radio />} label="SMT IN" />
-                  </RadioGroup>
-                </FormControl> */}
 
                 {/* IIA Details - Other details */}
                 <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
