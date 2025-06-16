@@ -51,10 +51,16 @@ function formatTimeBody(raw: string): string {
   const month = String(offsetDate.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
   const year = offsetDate.getFullYear();
 
-  const hours = String(offsetDate.getHours()).padStart(2, '0');
-  const minutes = String(offsetDate.getMinutes()).padStart(2, '0');
+  // Check if input contains time part (has "T" and "Z" or "T" and time)
+  const hasTime = raw.includes('T');
 
-  return `${day}-${month}-${year} ${hours}:${minutes}`;
+  if (hasTime) {
+    const hours = String(offsetDate.getHours()).padStart(2, '0');
+    const minutes = String(offsetDate.getMinutes()).padStart(2, '0');
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
+  } else {
+    return `${day}-${month}-${year}`;
+  }
 }
 
 const ModuleEwpContextProvider = ({ children }: { children: React.ReactNode }) => {

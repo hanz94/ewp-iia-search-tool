@@ -318,25 +318,30 @@ function ModuleEwp() {
                 {/* IIA Details - All Partners signature status */}
 
                 {dataFilteredDetails[index].partner.map((partner, i) => (
-                  !partner.signing_date ? (
+                  partner.signing_date || item.iia_status == 'approved-by-all' ? (
+                    <>
+                    <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: i === 0 ? 0 : 1.5 }}>
+                      Umowa podpisana przez {partner.institution.name}
+                    </Typography>
+                    {partner.signing_date && (
+                      <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+                      Data: {formatTimeBody(partner.signing_date)}
+                    </Typography>
+                    )}
+                    {partner.signing_contact && (
+                      <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+                      Podpis: {partner.signing_contact?.contact_names}
+                      {partner.signing_contact?.emails.length > 0 && ` (${partner.signing_contact?.emails.join('; ')})`}
+                    </Typography>
+                    )}
+                  </>
+                  ) : (
                     <Typography
                       key={`not-signed-${i}`}
                       sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: i === 0 ? 0 : 1.5 }}
                     >
                       Umowa nie została podpisana przez {partner.institution.name}
                     </Typography>
-                  ) : (
-                    <>
-                      <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: i === 0 ? 0 : 1.5 }}>
-                        Umowa podpisana przez {partner.institution.name}
-                      </Typography>
-                      <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-                        Data: {formatTimeBody(partner.signing_date)}
-                      </Typography>
-                      <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-                        Podpis: {partner.signing_contact.contact_names} ({partner.signing_contact.emails.join('; ')})
-                      </Typography>
-                    </>
                   )
                 ))}
 
