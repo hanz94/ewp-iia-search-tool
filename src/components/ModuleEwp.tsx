@@ -363,7 +363,7 @@ function ModuleEwp() {
                           dataFilteredDetails[index].cooperation_conditions.staff_teachers.map((staff_teacher, i) => (
                             <FormControlLabel
                               key={`staff-teacher-${i}`}
-                              value={staff_teacher.sending_institution.heiID === "kul.pl" ? "sta-out" : "sta-in"}
+                              value={staff_teacher.sending_institution.heiID === "kul.pl" ? `sta-out-${i}` : `sta-in-${i}`}
                               control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
                               label={
                                 <Box
@@ -401,7 +401,7 @@ function ModuleEwp() {
                           dataFilteredDetails[index].cooperation_conditions.staff_trainings.map((staff_training, i) => (
                             <FormControlLabel
                               key={`staff-training-${i}`}
-                              value={staff_training.sending_institution.heiID === "kul.pl" ? "stt-out" : "stt-in"}
+                              value={staff_training.sending_institution.heiID === "kul.pl" ? `stt-out-${i}` : `stt-in-${i}`}
                               control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
                               label={
                                 <Box
@@ -439,7 +439,7 @@ function ModuleEwp() {
                           dataFilteredDetails[index].cooperation_conditions.student_studies.map((student_study, i) => (
                             <FormControlLabel
                               key={`student-study-${i}`}
-                              value={student_study.sending_institution.heiID === "kul.pl" ? "sms-out" : "sms-in"}
+                              value={student_study.sending_institution.heiID === "kul.pl" ? `sms-out-${i}` : `sms-in-${i}`}
                               control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
                               label={
                                 <Box
@@ -477,7 +477,7 @@ function ModuleEwp() {
                           dataFilteredDetails[index].cooperation_conditions.student_traineeships.map((student_traineeship, i) => (
                             <FormControlLabel
                               key={`student-traineeship-${i}`}
-                              value={student_traineeship.sending_institution.heiID === "kul.pl" ? "smt-out" : "smt-in"}
+                              value={student_traineeship.sending_institution.heiID === "kul.pl" ? `smt-out-${i}` : `smt-in-${i}`}
                               control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
                               label={
                                 <Box
