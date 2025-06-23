@@ -33,9 +33,38 @@ function ModuleEwp() {
 //   const [dataFilteredDetails, setDataFilteredDetails] = useState([]);
 
 //   const [connected, setConnected] = useState(false);
+    const [selectedCoopCondValue, setSelectedCoopCondValue] = useState('');
+    const [selectedCoopCondObject, setSelectedCoopCondObject] = useState(null);
 
     const [progress, setProgress] = useState(0);
     const hasMounted = useRef(false);
+
+
+    function getSelectedCoopCondObject(selectedValue, data, index) {
+      if (!selectedValue || !data || typeof index !== 'number') return null;
+    
+      const [prefix, positionStr] = selectedValue.split('-');
+      const position = parseInt(positionStr, 10);
+    
+      if (isNaN(position)) return null;
+    
+      const map = {
+        sta: 'staff_teachers',
+        stt: 'staff_trainings',
+        sms: 'student_studies',
+        smt: 'student_traineeships',
+      };
+    
+      const arrayName = map[prefix];
+      if (!arrayName) return null;
+    
+      const targetArray = data[index]?.cooperation_conditions?.[arrayName];
+      if (!Array.isArray(targetArray) || position >= targetArray.length) return null;
+    
+      return targetArray[position];
+    }  
+    
+    
 
   const handleInitialFetch = useCallback(() => {
     fetch('http://localhost:10300/status')
@@ -356,14 +385,20 @@ function ModuleEwp() {
                     
                     <FormControl>
                       <RadioGroup             aria-labelledby="cooperation-conditions-radio-group-label"
-                      name="cooperation-conditions-radio-group">
+                      name="cooperation-conditions-radio-group"
+                      value={selectedCoopCondValue}
+                      onChange={(e) => {
+                        setSelectedCoopCondValue(e.target.value);
+                        setSelectedCoopCondObject(getSelectedCoopCondObject(e.target.value, dataFilteredDetails, index));
+                      }}
+                      >
 
                         {/* STAFF TEACHERS */}
                         {dataFilteredDetails[index].cooperation_conditions.staff_teachers.length > 0 &&
                           dataFilteredDetails[index].cooperation_conditions.staff_teachers.map((staff_teacher, i) => (
                             <FormControlLabel
                               key={`staff-teacher-${i}`}
-                              value={staff_teacher.sending_institution.heiID === "kul.pl" ? `sta-out-${i}` : `sta-in-${i}`}
+                              value={`sta-${i}`}
                               control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
                               label={
                                 <Box
@@ -401,7 +436,7 @@ function ModuleEwp() {
                           dataFilteredDetails[index].cooperation_conditions.staff_trainings.map((staff_training, i) => (
                             <FormControlLabel
                               key={`staff-training-${i}`}
-                              value={staff_training.sending_institution.heiID === "kul.pl" ? `stt-out-${i}` : `stt-in-${i}`}
+                              value={`stt-${i}`}
                               control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
                               label={
                                 <Box
@@ -439,7 +474,7 @@ function ModuleEwp() {
                           dataFilteredDetails[index].cooperation_conditions.student_studies.map((student_study, i) => (
                             <FormControlLabel
                               key={`student-study-${i}`}
-                              value={student_study.sending_institution.heiID === "kul.pl" ? `sms-out-${i}` : `sms-in-${i}`}
+                              value={`sms-${i}`}
                               control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
                               label={
                                 <Box
@@ -477,7 +512,7 @@ function ModuleEwp() {
                           dataFilteredDetails[index].cooperation_conditions.student_traineeships.map((student_traineeship, i) => (
                             <FormControlLabel
                               key={`student-traineeship-${i}`}
-                              value={student_traineeship.sending_institution.heiID === "kul.pl" ? `smt-out-${i}` : `smt-in-${i}`}
+                              value={`smt-${i}`}
                               control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
                               label={
                                 <Box
@@ -517,14 +552,26 @@ function ModuleEwp() {
                   </>
                 )}
 
+                {/* IIA Details - Cooperation conditions details (based on selectedCoopCondValue) */}
+                {selectedCoopCondValue && selectedCoopCondObject && (
+                  <>
+                  <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
+                    {selectedCoopCondValue}
+                  </Typography>
+                  <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
+                    {JSON.stringify(selectedCoopCondObject, null, 2)}
+                  </Typography>
+                  </>
+                )}
+
                 {/* IIA Details - Other details */}
-                <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
+                {/* <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                     <pre style={{ margin: 0 }}>
                     <code>
                         {JSON.stringify(dataFilteredDetails[index], null, 2)}
                     </code>
                     </pre>
-                </Typography>
+                </Typography> */}
 
               </>
             )
