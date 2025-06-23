@@ -148,6 +148,8 @@ function ModuleEwp() {
     //fetch dataFiltered on every Autocomplete change
     setDataFiltered([]);
     setDataFilteredDetails([]);
+    setSelectedCoopCondValue('');
+    setSelectedCoopCondObject(null);
     if (selectedErasmusCode && selectedInstitutionName) {
       fetch(`http://localhost:10300/partners/partner/${selectedHeiID}`)
         .then((res) => res.json())
@@ -387,163 +389,191 @@ function ModuleEwp() {
                       <RadioGroup             aria-labelledby="cooperation-conditions-radio-group-label"
                       name="cooperation-conditions-radio-group"
                       value={selectedCoopCondValue}
-                      onChange={(e) => {
-                        setSelectedCoopCondValue(e.target.value);
-                        setSelectedCoopCondObject(getSelectedCoopCondObject(e.target.value, dataFilteredDetails, index));
-                      }}
                       >
 
                         {/* STAFF TEACHERS */}
                         {dataFilteredDetails[index].cooperation_conditions.staff_teachers.length > 0 &&
-                          dataFilteredDetails[index].cooperation_conditions.staff_teachers.map((staff_teacher, i) => (
-                            <FormControlLabel
-                              key={`staff-teacher-${i}`}
-                              value={`sta-${i}`}
-                              control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
-                              label={
-                                <Box
-                                  sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                  }}
-                                >
-                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                    {staff_teacher.sending_institution.heiID === "kul.pl"
-                                      ? "Wyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"
-                                      : "Przyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"}
-                                  </Typography>
-                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                    Kod ISCED-F: {staff_teacher.subject_area[0].isced_f_code}
-                                  </Typography>
-                                </Box>
-                              }
-                              sx={{
-                                alignItems: 'flex-start',
-                                display: 'flex',
-                                width: '100%',
-                                '& .MuiFormControlLabel-label': {
-                                  flex: 1,
-                                },
-                              }}
-                            />
-                          ))
-                        }
+                          dataFilteredDetails[index].cooperation_conditions.staff_teachers.map((staff_teacher, i) => {
+                            const radioValue = `sta-${i}`;
+                            return (
+                              <FormControlLabel
+                                key={`staff-teacher-${i}`}
+                                value={radioValue}
+                                control={
+                                  <Radio
+                                    sx={{ alignSelf: 'flex-start', mt: 0.5 }}
+                                    onClick={() => {
+                                      if (selectedCoopCondValue === radioValue) {
+                                        setSelectedCoopCondValue('');
+                                        setSelectedCoopCondObject(null);
+                                      } else {
+                                        setSelectedCoopCondValue(radioValue);
+                                        setSelectedCoopCondObject(getSelectedCoopCondObject(radioValue, dataFilteredDetails, index));
+                                      }
+                                    }}
+                                  />
+                                }
+                                label={
+                                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                      {staff_teacher.sending_institution.heiID === "kul.pl"
+                                        ? "Wyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"
+                                        : "Przyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                      Kod ISCED-F: {staff_teacher.subject_area[0].isced_f_code}
+                                    </Typography>
+                                  </Box>
+                                }
+                                sx={{
+                                  alignItems: 'flex-start',
+                                  display: 'flex',
+                                  width: '100%',
+                                  '& .MuiFormControlLabel-label': {
+                                    flex: 1,
+                                  },
+                                }}
+                              />
+                            );
+                          })}
 
                         {/* STAFF TRAINING */}
                         {dataFilteredDetails[index].cooperation_conditions.staff_trainings.length > 0 &&
-                          dataFilteredDetails[index].cooperation_conditions.staff_trainings.map((staff_training, i) => (
-                            <FormControlLabel
-                              key={`staff-training-${i}`}
-                              value={`stt-${i}`}
-                              control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
-                              label={
-                                <Box
-                                  sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                  }}
-                                >
-                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                    {staff_training.sending_institution.heiID === "kul.pl"
-                                      ? "Wyjazdy pracowników w celach szkoleniowych"
-                                      : "Przyjazdy pracowników w celach szkoleniowych"}
-                                  </Typography>
-                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                    Kod ISCED-F: {staff_training.subject_area[0].isced_f_code}
-                                  </Typography>
-                                </Box>
-                              }
-                              sx={{
-                                alignItems: 'flex-start',
-                                display: 'flex',
-                                width: '100%',
-                                '& .MuiFormControlLabel-label': {
-                                  flex: 1,
-                                },
-                              }}
-                            />
-                          ))
-                        }
+                          dataFilteredDetails[index].cooperation_conditions.staff_trainings.map((staff_training, i) => {
+                            const radioValue = `stt-${i}`;
+                            return (
+                              <FormControlLabel
+                                key={`staff-training-${i}`}
+                                value={radioValue}
+                                control={
+                                  <Radio
+                                    sx={{ alignSelf: 'flex-start', mt: 0.5 }}
+                                    onClick={() => {
+                                      if (selectedCoopCondValue === radioValue) {
+                                        setSelectedCoopCondValue('');
+                                        setSelectedCoopCondObject(null);
+                                      } else {
+                                        setSelectedCoopCondValue(radioValue);
+                                        setSelectedCoopCondObject(getSelectedCoopCondObject(radioValue, dataFilteredDetails, index));
+                                      }
+                                    }}
+                                  />
+                                }
+                                label={
+                                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                      {staff_training.sending_institution.heiID === "kul.pl"
+                                        ? "Wyjazdy pracowników w celach szkoleniowych"
+                                        : "Przyjazdy pracowników w celach szkoleniowych"}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                      Kod ISCED-F: {staff_training.subject_area[0].isced_f_code}
+                                    </Typography>
+                                  </Box>
+                                }
+                                sx={{
+                                  alignItems: 'flex-start',
+                                  display: 'flex',
+                                  width: '100%',
+                                  '& .MuiFormControlLabel-label': {
+                                    flex: 1,
+                                  },
+                                }}
+                              />
+                            );
+                          })}
 
                         {/* STUDENT STUDIES */}
                         {dataFilteredDetails[index].cooperation_conditions.student_studies.length > 0 &&
-                          dataFilteredDetails[index].cooperation_conditions.student_studies.map((student_study, i) => (
-                            <FormControlLabel
-                              key={`student-study-${i}`}
-                              value={`sms-${i}`}
-                              control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
-                              label={
-                                <Box
-                                  sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                  }}
-                                >
-                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                    {student_study.sending_institution.heiID === "kul.pl"
-                                      ? "Wyjazdy studentów w celu studiowania"
-                                      : "Przyjazdy studentów w celu studiowania"}
-                                  </Typography>
-                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                    Kod ISCED-F: {student_study.subject_area[0].isced_f_code}
-                                  </Typography>
-                                </Box>
-                              }
-                              sx={{
-                                alignItems: 'flex-start',
-                                display: 'flex',
-                                width: '100%',
-                                '& .MuiFormControlLabel-label': {
-                                  flex: 1,
-                                },
-                              }}
-                            />
-                          ))
-                        }
+                          dataFilteredDetails[index].cooperation_conditions.student_studies.map((student_study, i) => {
+                            const radioValue = `sms-${i}`;
+                            return (
+                              <FormControlLabel
+                                key={`student-study-${i}`}
+                                value={radioValue}
+                                control={
+                                  <Radio
+                                    sx={{ alignSelf: 'flex-start', mt: 0.5 }}
+                                    onClick={() => {
+                                      if (selectedCoopCondValue === radioValue) {
+                                        setSelectedCoopCondValue('');
+                                        setSelectedCoopCondObject(null);
+                                      } else {
+                                        setSelectedCoopCondValue(radioValue);
+                                        setSelectedCoopCondObject(getSelectedCoopCondObject(radioValue, dataFilteredDetails, index));
+                                      }
+                                    }}
+                                  />
+                                }
+                                label={
+                                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                      {student_study.sending_institution.heiID === "kul.pl"
+                                        ? "Wyjazdy studentów w celu studiowania"
+                                        : "Przyjazdy studentów w celu studiowania"}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                      Kod ISCED-F: {student_study.subject_area[0].isced_f_code}
+                                    </Typography>
+                                  </Box>
+                                }
+                                sx={{
+                                  alignItems: 'flex-start',
+                                  display: 'flex',
+                                  width: '100%',
+                                  '& .MuiFormControlLabel-label': {
+                                    flex: 1,
+                                  },
+                                }}
+                              />
+                            );
+                          })}
 
                         {/* STUDENT TRAINEESHIPS */}
                         {dataFilteredDetails[index].cooperation_conditions.student_traineeships.length > 0 &&
-                          dataFilteredDetails[index].cooperation_conditions.student_traineeships.map((student_traineeship, i) => (
-                            <FormControlLabel
-                              key={`student-traineeship-${i}`}
-                              value={`smt-${i}`}
-                              control={<Radio sx={{ alignSelf: 'flex-start', mt: 0.5 }} />}
-                              label={
-                                <Box
-                                  sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                  }}
-                                >
-                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                    {student_traineeship.sending_institution.heiID === "kul.pl"
-                                      ? "Wyjazdy studentów na praktyki"
-                                      : "Przyjazdy studentów na praktyki"}
-                                  </Typography>
-                                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                    Kod ISCED-F: {student_traineeship.subject_area[0].isced_f_code}
-                                  </Typography>
-                                </Box>
-                              }
-                              sx={{
-                                alignItems: 'flex-start',
-                                display: 'flex',
-                                width: '100%',
-                                '& .MuiFormControlLabel-label': {
-                                  flex: 1,
-                                },
-                              }}
-                            />
-                          ))
-                        }
+                          dataFilteredDetails[index].cooperation_conditions.student_traineeships.map((student_traineeship, i) => {
+                            const radioValue = `smt-${i}`;
+                            return (
+                              <FormControlLabel
+                                key={`student-traineeship-${i}`}
+                                value={radioValue}
+                                control={
+                                  <Radio
+                                    sx={{ alignSelf: 'flex-start', mt: 0.5 }}
+                                    onClick={() => {
+                                      if (selectedCoopCondValue === radioValue) {
+                                        setSelectedCoopCondValue('');
+                                        setSelectedCoopCondObject(null);
+                                      } else {
+                                        setSelectedCoopCondValue(radioValue);
+                                        setSelectedCoopCondObject(getSelectedCoopCondObject(radioValue, dataFilteredDetails, index));
+                                      }
+                                    }}
+                                  />
+                                }
+                                label={
+                                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                      {student_traineeship.sending_institution.heiID === "kul.pl"
+                                        ? "Wyjazdy studentów na praktyki"
+                                        : "Przyjazdy studentów na praktyki"}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                      Kod ISCED-F: {student_traineeship.subject_area[0].isced_f_code}
+                                    </Typography>
+                                  </Box>
+                                }
+                                sx={{
+                                  alignItems: 'flex-start',
+                                  display: 'flex',
+                                  width: '100%',
+                                  '& .MuiFormControlLabel-label': {
+                                    flex: 1,
+                                  },
+                                }}
+                              />
+                            );
+                          })}
 
 
                       </RadioGroup>
