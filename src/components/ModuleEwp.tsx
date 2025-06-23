@@ -421,7 +421,7 @@ function ModuleEwp() {
                                         : "Przyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {staff_teacher.subject_area[0].isced_f_code}
+                                      Kod ISCED-F: {staff_teacher.subject_area[0].isced_f_code} {staff_teacher.subject_area[0].isced_clarification && `(${staff_teacher.subject_area[0].isced_clarification})`}
                                     </Typography>
                                   </Box>
                                 }
@@ -467,7 +467,7 @@ function ModuleEwp() {
                                         : "Przyjazdy pracowników w celach szkoleniowych"}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {staff_training.subject_area[0].isced_f_code}
+                                      Kod ISCED-F: {staff_training.subject_area[0].isced_f_code} {staff_training.subject_area[0].isced_clarification && `(${staff_training.subject_area[0].isced_clarification})`}
                                     </Typography>
                                   </Box>
                                 }
@@ -513,7 +513,7 @@ function ModuleEwp() {
                                         : "Przyjazdy studentów w celu studiowania"}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {student_study.subject_area[0].isced_f_code}
+                                      Kod ISCED-F: {student_study.subject_area[0].isced_f_code} {student_study.subject_area[0].isced_clarification && `(${student_study.subject_area[0].isced_clarification})`}
                                     </Typography>
                                   </Box>
                                 }
@@ -559,7 +559,7 @@ function ModuleEwp() {
                                         : "Przyjazdy studentów na praktyki"}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {student_traineeship.subject_area[0].isced_f_code}
+                                      Kod ISCED-F: {student_traineeship.subject_area[0].isced_f_code} {student_traineeship.subject_area[0].isced_clarification && `(${student_traineeship.subject_area[0].isced_clarification})`}
                                     </Typography>
                                   </Box>
                                 }
@@ -585,6 +585,12 @@ function ModuleEwp() {
                 {/* IIA Details - Cooperation conditions details (based on selectedCoopCondValue) */}
                 {selectedCoopCondValue && selectedCoopCondObject && (
                   <>
+                  <Typography
+                    sx={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', mt: 3 }}
+                  >
+                      SZCZEGÓŁY
+                  </Typography>
+
                   <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                     {selectedCoopCondValue}
                   </Typography>
