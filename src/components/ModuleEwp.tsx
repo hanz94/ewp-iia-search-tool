@@ -64,7 +64,16 @@ function ModuleEwp() {
       return targetArray[position];
     }  
     
-    
+  function getMobilityType(radioValue) {
+    const prefix = radioValue.split('-')[0];
+    const map = {
+      sta: 'Mobilność pracowników w celu prowadzenia zajęć dydaktycznych',
+      stt: 'Mobilność pracowników w celach szkoleniowych',
+      sms: 'Mobilność studentów w celu studiowania',
+      smt: 'Mobilność studentów w ramach praktyk',
+    }
+    return map[prefix];
+  }
 
   const handleInitialFetch = useCallback(() => {
     fetch('http://localhost:10300/status')
@@ -513,7 +522,7 @@ function ModuleEwp() {
                                         : "Przyjazdy studentów w celu studiowania"}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {student_study.subject_area[0].isced_f_code} {student_study.subject_area[0].isced_clarification && `(${student_study.subject_area[0].isced_clarification})`}
+                                      Kod ISCED-F: {student_study.subject_area[0].isced_f_code} {student_study.subject_area[0].isced_clarification && `(${student_study.subject_area[0].isced_clarification})`} {student_study.eqf_level && `(EQF ${student_study.eqf_level.join(', ')})`}
                                     </Typography>
                                   </Box>
                                 }
@@ -560,6 +569,7 @@ function ModuleEwp() {
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
                                       Kod ISCED-F: {student_traineeship.subject_area[0].isced_f_code} {student_traineeship.subject_area[0].isced_clarification && `(${student_traineeship.subject_area[0].isced_clarification})`}
+                                      {student_traineeship.eqf_level && `(EQF ${student_traineeship.eqf_level.join(', ')})`}
                                     </Typography>
                                   </Box>
                                 }
@@ -582,7 +592,7 @@ function ModuleEwp() {
                   </>
                 )}
 
-                {/* IIA Details - Cooperation conditions details (based on selectedCoopCondValue) */}
+                {/* IIA Details - Cooperation condition details (based on selectedCoopCondValue) */}
                 {selectedCoopCondValue && selectedCoopCondObject && (
                   <>
                   <Typography
@@ -590,6 +600,72 @@ function ModuleEwp() {
                   >
                       SZCZEGÓŁY
                   </Typography>
+
+                  <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
+                      {getMobilityType(selectedCoopCondValue)}
+                  </Typography>
+
+                  {/* SENDING INSTITUTION */}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 1.3 }}>
+                    <Box sx={{ width: '45%' }}>
+                      <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
+                          Jednostka wysyłająca
+                      </Typography>
+                      <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                          {selectedCoopCondObject.sending_institution.name} ({selectedCoopCondObject.sending_institution.heiID})
+                      </Typography>
+                    </Box>
+
+                    {/* ARROW RIGHT */}
+                    <Typography variant="body2" sx={{ textAlign: 'center', width: '10%' }}>
+                      →
+                    </Typography>
+
+                    {/* RECEIVING INSTITUTION */}
+                    <Box sx={{ width: '45%' }}>
+                      <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
+                          Jednostka przyjmująca
+                      </Typography>
+                      <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                          {selectedCoopCondObject.receiving_institution.name} ({selectedCoopCondObject.receiving_institution.heiID})
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ my: 1.3 }}>
+                    <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
+                        Zakres współpracy
+                    </Typography>
+                    <Typography variant="body2" sx={{ textAlign: 'center', my: 0.5 }}>
+                        ISCED-F: {selectedCoopCondObject.subject_area[0].isced_f_code} {selectedCoopCondObject.subject_area[0].isced_clarification && `(${selectedCoopCondObject.subject_area[0].isced_clarification})`}
+                    </Typography>
+                    {selectedCoopCondObject?.eqf_level?.length > 0 && (
+                      <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                        EQF: {selectedCoopCondObject.eqf_level.join(', ')}
+                      </Typography>
+                    )}
+                  </Box>
+
+                  <Box>
+                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                        Liczba mobilności: {selectedCoopCondObject.mobilities_per_year}
+                    </Typography>
+                    {(selectedCoopCondObject?.total_days_per_year || selectedCoopCondObject?.total_months_per_year) && (
+                      <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                        Maksymalny czas trwania mobilności:{" "}
+                        {selectedCoopCondObject.total_days_per_year
+                          ? `${selectedCoopCondObject.total_days_per_year} dni`
+                          : `${selectedCoopCondObject.total_months_per_year} miesięcy`}{" "}
+                        / rok akademicki
+                      </Typography>
+                    )}
+                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                        Początek: {selectedCoopCondObject.receiving_acad_year[0]}
+                    </Typography>
+                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                        Koniec: {selectedCoopCondObject.receiving_acad_year[1]}
+                    </Typography>
+                  </Box>
 
                   <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                     {selectedCoopCondValue}
