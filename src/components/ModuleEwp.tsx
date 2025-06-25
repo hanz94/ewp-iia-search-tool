@@ -33,6 +33,7 @@ function ModuleEwp() {
 //   const [dataFilteredDetails, setDataFilteredDetails] = useState([]);
 
 //   const [connected, setConnected] = useState(false);
+
     const [selectedCoopCondValue, setSelectedCoopCondValue] = useState('');
     const [selectedCoopCondObject, setSelectedCoopCondObject] = useState(null);
 
@@ -308,7 +309,16 @@ function ModuleEwp() {
         </Typography>
 
         {dataFiltered.map((item, index) => (
-            <Accordion key={index} sx={{ mt: 1.1 }}>
+            <Accordion key={index} sx={{ mt: 1.1 }}
+              onChange={() => {
+                //DELAY slightly longer (200ms) than the accordion animation (150ms)
+                setTimeout(() => {
+                  //reset selected cooperation condition on every open/close
+                  setSelectedCoopCondValue('');
+                  setSelectedCoopCondObject(null);
+                }, 200)
+              }}
+            >
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`panel${index}-content`}
