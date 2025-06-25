@@ -328,6 +328,7 @@ function ModuleEwp() {
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`panel${index}-content`}
                 id={`panel${index}-header`}
+                sx={{ userSelect: 'none' }}
             >
                 <Box component="span" sx={{ width: '50%' }}>
                 <Typography sx={{ mb: 0.3 }}>
