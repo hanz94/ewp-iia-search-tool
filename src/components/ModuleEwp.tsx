@@ -34,6 +34,8 @@ function ModuleEwp() {
 
 //   const [connected, setConnected] = useState(false);
 
+    const [expandedAccordion, setExpandedAccordion] = useState(-1);
+
     const [selectedCoopCondValue, setSelectedCoopCondValue] = useState('');
     const [selectedCoopCondObject, setSelectedCoopCondObject] = useState(null);
 
@@ -308,15 +310,18 @@ function ModuleEwp() {
             Stan na {new Date(selectedHeiTimestamp).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '').replace(/\./g, '-')}
         </Typography>
 
-        {dataFiltered.map((item, index) => (
-            <Accordion key={index} sx={{ mt: 1.1 }}
-              onChange={() => {
-                //DELAY slightly longer (200ms) than the accordion animation (150ms)
-                setTimeout(() => {
-                  //reset selected cooperation condition on every open/close
-                  setSelectedCoopCondValue('');
-                  setSelectedCoopCondObject(null);
-                }, 200)
+        {dataFiltered.map((item, index) => {
+          const isExpanded = expandedAccordion === index; 
+    
+          return (
+            <Accordion key={index} sx={{ mt: 1.1 }} expanded={isExpanded}
+              onChange={(e, newExpanded) => {
+                // Toggle logic
+                setExpandedAccordion(newExpanded ? index : null);
+
+                //reset selected cooperation condition on every open/close
+                setSelectedCoopCondValue('');
+                setSelectedCoopCondObject(null);
               }}
             >
             <AccordionSummary
@@ -702,7 +707,8 @@ function ModuleEwp() {
             }
             </AccordionDetails>
             </Accordion>
-        ))}
+        )
+        })}
 
         </>
     ) : (selectedErasmusCode && selectedInstitutionName && selectedHeiID) && (
