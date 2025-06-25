@@ -160,6 +160,7 @@ function ModuleEwp() {
     //fetch dataFiltered on every Autocomplete change
     setDataFiltered([]);
     setDataFilteredDetails([]);
+    setExpandedAccordion(-1);
     setSelectedCoopCondValue('');
     setSelectedCoopCondObject(null);
     if (selectedErasmusCode && selectedInstitutionName) {
