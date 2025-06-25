@@ -649,6 +649,7 @@ function ModuleEwp() {
                     </Box>
                   </Box>
 
+                  {/* ISCED-F INFO */}
                   <Box sx={{ my: 1.3 }}>
                     <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
                         Zakres współpracy
@@ -662,7 +663,8 @@ function ModuleEwp() {
                       </Typography>
                     )}
                   </Box>
-
+                  
+                  {/* ISCED-F INFO - more details */}
                   <Box>
                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
                         Liczba mobilności: {selectedCoopCondObject.mobilities_per_year}
@@ -684,12 +686,64 @@ function ModuleEwp() {
                     </Typography>
                   </Box>
 
-                  <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
+                  {/* LANGUAGE REQUIREMENTS */}
+                  {selectedCoopCondObject.language_skill.length > 0 && (
+                  <Box sx={{ my: 1.8 }}>
+                    <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
+                        Wymagania językowe
+                    </Typography>
+                    {/* Language requirements list - ul, li */}
+                    <Box
+                      component="ul"
+                      sx={{
+                        p: 0,
+                        m: 0,
+                        listStyle: 'none',
+                      }}
+                    >
+                      {selectedCoopCondObject.language_skill.map((languageRequirement, i) => (
+                        <Box
+                          component="li"
+                          key={`language-requirement-${i}`}
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            justifyContent: 'center',
+                            gap: 1, // space between dot and text
+                            my: 0.5,
+                          }}
+                        >
+                          {/* Custom bullet */}
+                          <Box
+                            component="span"
+                            sx={{
+                              fontSize: '1.2em', // larger bullet
+                              lineHeight: 1,
+                            }}
+                          >
+                            •
+                          </Box>
+
+                          {/* Text content */}
+                          <Typography
+                            variant="body2"
+                            sx={{ textAlign: 'left', whiteSpace: 'pre-wrap', textTransform: 'uppercase' }}
+                          >
+                            {languageRequirement?.language} {languageRequirement?.cefr_level}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
+
+                  </Box>
+                  )}
+
+                  {/* <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                     {selectedCoopCondValue}
                   </Typography>
                   <Typography sx={{ fontSize: 12, textAlign: 'left', mt: 1, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                     {JSON.stringify(selectedCoopCondObject, null, 2)}
-                  </Typography>
+                  </Typography> */}
                   </>
                 )}
 
