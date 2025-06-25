@@ -194,7 +194,7 @@ function ModuleEwp() {
     {connected && erasmusCodes.length > 0 && institutionNames.length > 0 && data.length > 0 ? (
         <>
 
-        {console.log(institutionNames)}
+        {/* {console.log(institutionNames)} */}
 
         <Autocomplete
         disablePortal
@@ -413,6 +413,7 @@ function ModuleEwp() {
                       <RadioGroup             aria-labelledby="cooperation-conditions-radio-group-label"
                       name="cooperation-conditions-radio-group"
                       value={selectedCoopCondValue}
+                      sx={{ userSelect: 'none' }}
                       >
 
                         {/* STAFF TEACHERS */}
