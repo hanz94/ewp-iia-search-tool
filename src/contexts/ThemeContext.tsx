@@ -19,57 +19,11 @@ interface ThemeContextType {
     trimRows: boolean;
     setTrimRows: (trim: boolean) => void;
     optionsLastActiveTextFieldId: React.MutableRefObject<string>;
-    fetchError: boolean;
-    setFetchError: (error: boolean) => void;
-    fetchErrorMessage: string;
-    setFetchErrorMessage: (message: string) => void;
-    data: any[];
-    setData: (data: any[]) => void;
-    erasmusCodes: any[];
-    setErasmusCodes: (codes: any[]) => void;
-    institutionNames: any[];
-    setInstitutionNames: (names: any[]) => void;
-    partnersTimestamp: any;
-    setPartnersTimestamp: (timestamp: any) => void;
-    selectedErasmusCode: any;
-    setSelectedErasmusCode: (code: any) => void;
-    selectedInstitutionName: any;
-    setSelectedInstitutionName: (name: any) => void;
-    selectedHeiID: any;
-    setSelectedHeiID: (id: any) => void;
-    selectedHeiTimestamp: any;
-    setSelectedHeiTimestamp: (timestamp: any) => void;
-    dataFiltered: any[];
-    setDataFiltered: (data: any[]) => void;
-    dataFilteredDetails: any[];
-    setDataFilteredDetails: (data: any[]) => void;
-    connected: boolean;
-    setConnected: (connected: boolean) => void;
   }
 
   const ThemeContext = createContext<ThemeContextType | null>(null);
 
   const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
-
-    //start EwpModule values
-    const [fetchError, setFetchError] = useState(false);
-    const [fetchErrorMessage, setFetchErrorMessage] = useState('');
-
-    const [data, setData] = useState([]);
-
-    const [erasmusCodes, setErasmusCodes] = useState([]);
-    const [institutionNames, setInstitutionNames] = useState([]);
-    const [partnersTimestamp, setPartnersTimestamp] = useState(null);
-  
-    const [selectedErasmusCode, setSelectedErasmusCode] = useState(null);
-    const [selectedInstitutionName, setSelectedInstitutionName] = useState(null);
-    const [selectedHeiID, setSelectedHeiID] = useState(null);
-    const [selectedHeiTimestamp, setSelectedHeiTimestamp] = useState(null);
-    const [dataFiltered, setDataFiltered] = useState([]);
-    const [dataFilteredDetails, setDataFilteredDetails] = useState([]);
-  
-    const [connected, setConnected] = useState(false);
-    //end EwpModule values
 
     // const prefersDarkMode = useMediaQuery<boolean>('(prefers-color-scheme: dark)');
     const [mode, setMode] = useLocalStorageState<ModeType>('selectedMode', 'light');
@@ -193,7 +147,7 @@ interface ThemeContextType {
           };
 
 return (
-    <ThemeContext.Provider value={{ mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId, fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected }}>
+    <ThemeContext.Provider value={{ mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId }}>
       <ThemeProvider theme={appTheme}>
         <CssBaseline />
         {children}
