@@ -1,9 +1,35 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 interface ModuleEwpContextType {
   getAgreementLabel: (count: number) => string;
   formatTimeHeader: (raw: string) => string;
   formatTimeBody: (raw: string) => string;
+    fetchError: boolean;
+    setFetchError: (error: boolean) => void;
+    fetchErrorMessage: string;
+    setFetchErrorMessage: (message: string) => void;
+    data: any[];
+    setData: (data: any[]) => void;
+    erasmusCodes: any[];
+    setErasmusCodes: (codes: any[]) => void;
+    institutionNames: any[];
+    setInstitutionNames: (names: any[]) => void;
+    partnersTimestamp: any;
+    setPartnersTimestamp: (timestamp: any) => void;
+    selectedErasmusCode: any;
+    setSelectedErasmusCode: (code: any) => void;
+    selectedInstitutionName: any;
+    setSelectedInstitutionName: (name: any) => void;
+    selectedHeiID: any;
+    setSelectedHeiID: (id: any) => void;
+    selectedHeiTimestamp: any;
+    setSelectedHeiTimestamp: (timestamp: any) => void;
+    dataFiltered: any[];
+    setDataFiltered: (data: any[]) => void;
+    dataFilteredDetails: any[];
+    setDataFilteredDetails: (data: any[]) => void;
+    connected: boolean;
+    setConnected: (connected: boolean) => void;
 }
 
 const ModuleEwpContext = createContext<ModuleEwpContextType | undefined>(undefined);
@@ -64,8 +90,27 @@ function formatTimeBody(raw: string): string {
 }
 
 const ModuleEwpContextProvider = ({ children }: { children: React.ReactNode }) => {
+
+      const [fetchError, setFetchError] = useState(false);
+      const [fetchErrorMessage, setFetchErrorMessage] = useState('');
+  
+      const [data, setData] = useState([]);
+  
+      const [erasmusCodes, setErasmusCodes] = useState([]);
+      const [institutionNames, setInstitutionNames] = useState([]);
+      const [partnersTimestamp, setPartnersTimestamp] = useState(null);
+    
+      const [selectedErasmusCode, setSelectedErasmusCode] = useState(null);
+      const [selectedInstitutionName, setSelectedInstitutionName] = useState(null);
+      const [selectedHeiID, setSelectedHeiID] = useState(null);
+      const [selectedHeiTimestamp, setSelectedHeiTimestamp] = useState(null);
+      const [dataFiltered, setDataFiltered] = useState([]);
+      const [dataFilteredDetails, setDataFilteredDetails] = useState([]);
+    
+      const [connected, setConnected] = useState(false);
+
   return (
-    <ModuleEwpContext.Provider value={{ getAgreementLabel, formatTimeHeader, formatTimeBody }}>
+    <ModuleEwpContext.Provider value={{ getAgreementLabel, formatTimeHeader, formatTimeBody, fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected }}>
       {children}
     </ModuleEwpContext.Provider>
   );

@@ -11,14 +11,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgressWithLabel from './LinearProgressWithLabel';
 
 import { useModuleEwpContext } from '../contexts/ModuleEwpContext';
-import { useThemeContext } from '../contexts/ThemeContext';
-
-
 
 function ModuleEwp() {
 
-  const { getAgreementLabel, formatTimeHeader, formatTimeBody } = useModuleEwpContext();
-  const { fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected } = useThemeContext();
+  const { getAgreementLabel, formatTimeHeader, formatTimeBody, fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected } = useModuleEwpContext();
 
 //   const [data, setData] = useState([]);
 
@@ -587,7 +583,7 @@ function ModuleEwp() {
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
                                       Kod ISCED-F: {student_traineeship.subject_area[0].isced_f_code} {student_traineeship.subject_area[0].isced_clarification && `(${student_traineeship.subject_area[0].isced_clarification})`}
-                                      {student_traineeship.eqf_level && `(EQF ${student_traineeship.eqf_level.join(', ')})`}
+                                      {student_traineeship.eqf_level && ` (EQF ${student_traineeship.eqf_level.join(', ')})`}
                                     </Typography>
                                   </Box>
                                 }
