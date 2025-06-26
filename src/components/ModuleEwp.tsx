@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import '../App.css';
-import { Button, TextField, Typography, Box, FormControl, FormControlLabel, RadioGroup, Radio} from '@mui/material';
+import { Button, TextField, Typography, Box, FormControl, FormControlLabel, RadioGroup, Radio } from '@mui/material';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import Accordion from '@mui/material/Accordion';
@@ -14,54 +14,44 @@ import { useModuleEwpContext } from '../contexts/ModuleEwpContext';
 
 function ModuleEwp() {
 
+  const srv = 'http://localhost';
+  const port = 10300;
+  const srvUrl = srv + ':' + port;
+
   const { getAgreementLabel, formatTimeHeader, formatTimeBody, fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected } = useModuleEwpContext();
 
-//   const [data, setData] = useState([]);
+  const [expandedAccordion, setExpandedAccordion] = useState(-1);
 
-//   const [erasmusCodes, setErasmusCodes] = useState([]);
-//   const [institutionNames, setInstitutionNames] = useState([]);
+  const [selectedCoopCondValue, setSelectedCoopCondValue] = useState('');
+  const [selectedCoopCondObject, setSelectedCoopCondObject] = useState(null);
 
-//   const [selectedErasmusCode, setSelectedErasmusCode] = useState(null);
-//   const [selectedInstitutionName, setSelectedInstitutionName] = useState(null);
-//   const [selectedHeiID, setSelectedHeiID] = useState(null);
-//   const [selectedHeiTimestamp, setSelectedHeiTimestamp] = useState(null);
-//   const [dataFiltered, setDataFiltered] = useState([]);
-//   const [dataFilteredDetails, setDataFilteredDetails] = useState([]);
-
-//   const [connected, setConnected] = useState(false);
-
-    const [expandedAccordion, setExpandedAccordion] = useState(-1);
-
-    const [selectedCoopCondValue, setSelectedCoopCondValue] = useState('');
-    const [selectedCoopCondObject, setSelectedCoopCondObject] = useState(null);
-
-    const [progress, setProgress] = useState(0);
-    const hasMounted = useRef(false);
+  const [progress, setProgress] = useState(0);
+  const hasMounted = useRef(false);
 
 
-    function getSelectedCoopCondObject(selectedValue, data, index) {
-      if (!selectedValue || !data || typeof index !== 'number') return null;
-    
-      const [prefix, positionStr] = selectedValue.split('-');
-      const position = parseInt(positionStr, 10);
-    
-      if (isNaN(position)) return null;
-    
-      const map = {
-        sta: 'staff_teachers',
-        stt: 'staff_trainings',
-        sms: 'student_studies',
-        smt: 'student_traineeships',
-      };
-    
-      const arrayName = map[prefix];
-      if (!arrayName) return null;
-    
-      const targetArray = data[index]?.cooperation_conditions?.[arrayName];
-      if (!Array.isArray(targetArray) || position >= targetArray.length) return null;
-    
-      return targetArray[position];
-    }  
+  function getSelectedCoopCondObject(selectedValue, data, index) {
+    if (!selectedValue || !data || typeof index !== 'number') return null;
+  
+    const [prefix, positionStr] = selectedValue.split('-');
+    const position = parseInt(positionStr, 10);
+  
+    if (isNaN(position)) return null;
+  
+    const map = {
+      sta: 'staff_teachers',
+      stt: 'staff_trainings',
+      sms: 'student_studies',
+      smt: 'student_traineeships',
+    };
+  
+    const arrayName = map[prefix];
+    if (!arrayName) return null;
+  
+    const targetArray = data[index]?.cooperation_conditions?.[arrayName];
+    if (!Array.isArray(targetArray) || position >= targetArray.length) return null;
+  
+    return targetArray[position];
+  }  
     
   function getMobilityType(radioValue) {
     const prefix = radioValue.split('-')[0];
@@ -75,7 +65,7 @@ function ModuleEwp() {
   }
 
   const handleInitialFetch = useCallback(() => {
-    fetch('http://localhost:10300/status')
+    fetch(srvUrl + '/status')
     .then((res) => {
       if (!res.ok) throw new Error('Failed to fetch status');
       return res.json();
@@ -84,8 +74,8 @@ function ModuleEwp() {
       if (data?.connection && data?.token) {
         setConnected(true);
   
-  //start of all partners fetch
-        const eventSource = new EventSource('http://localhost:10300/stream/partners');
+    //start of all partners fetch
+        const eventSource = new EventSource(srvUrl + '/stream/partners');
 
         eventSource.onmessage = (event) => {
           const message = JSON.parse(event.data);
@@ -160,14 +150,14 @@ function ModuleEwp() {
     setSelectedCoopCondValue('');
     setSelectedCoopCondObject(null);
     if (selectedErasmusCode && selectedInstitutionName) {
-      fetch(`http://localhost:10300/partners/partner/${selectedHeiID}`)
+      fetch(srvUrl + `/partners/partner/${selectedHeiID}`)
         .then((res) => res.json())
         .then((data) => {
           setDataFiltered(data);
           setSelectedHeiTimestamp(Date.now());
   
           const detailPromises = data.map((item) =>
-            fetch(`http://localhost:10300/iia/details/${item.id}`)
+            fetch(srvUrl + `/iia/details/${item.id}`)
               .then((res) => res.json())
               .catch((err) => {
                 console.error(`Error loading iia-details for IIA: ${item.id}`, err);
@@ -190,8 +180,6 @@ function ModuleEwp() {
 
     {connected && erasmusCodes.length > 0 && institutionNames.length > 0 && data.length > 0 ? (
         <>
-
-        {/* {console.log(institutionNames)} */}
 
         <Autocomplete
         disablePortal
