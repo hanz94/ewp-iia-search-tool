@@ -432,7 +432,7 @@ function ModuleEwp() {
                                         : "Przyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {staff_teacher.subject_area[0].isced_f_code} {staff_teacher.subject_area[0].isced_clarification && `(${staff_teacher.subject_area[0].isced_clarification})`}
+                                      Kod ISCED-F: {staff_teacher.subject_area[0]?.isced_f_code} {staff_teacher.subject_area[0]?.isced_clarification && `(${staff_teacher.subject_area[0]?.isced_clarification})`}
                                     </Typography>
                                   </Box>
                                 }
@@ -478,7 +478,7 @@ function ModuleEwp() {
                                         : "Przyjazdy pracowników w celach szkoleniowych"}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {staff_training.subject_area[0].isced_f_code} {staff_training.subject_area[0].isced_clarification && `(${staff_training.subject_area[0].isced_clarification})`}
+                                      Kod ISCED-F: {staff_training.subject_area[0]?.isced_f_code} {staff_training.subject_area[0]?.isced_clarification && `(${staff_training.subject_area[0]?.isced_clarification})`}
                                     </Typography>
                                   </Box>
                                 }
@@ -524,7 +524,7 @@ function ModuleEwp() {
                                         : "Przyjazdy studentów w celu studiowania"}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {student_study.subject_area[0].isced_f_code} {student_study.subject_area[0].isced_clarification && `(${student_study.subject_area[0].isced_clarification})`} {student_study.eqf_level && `(EQF ${student_study.eqf_level.join(', ')})`}
+                                      Kod ISCED-F: {student_study.subject_area[0]?.isced_f_code} {student_study.subject_area[0]?.isced_clarification && `(${student_study.subject_area[0]?.isced_clarification})`} {student_study.eqf_level && `(EQF ${student_study.eqf_level.join(', ')})`}
                                     </Typography>
                                   </Box>
                                 }
@@ -570,7 +570,7 @@ function ModuleEwp() {
                                         : "Przyjazdy studentów na praktyki"}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {student_traineeship.subject_area[0].isced_f_code} {student_traineeship.subject_area[0].isced_clarification && `(${student_traineeship.subject_area[0].isced_clarification})`}
+                                      Kod ISCED-F: {student_traineeship.subject_area[0]?.isced_f_code} {student_traineeship.subject_area[0]?.isced_clarification && `(${student_traineeship.subject_area[0]?.isced_clarification})`}
                                       {student_traineeship.eqf_level && ` (EQF ${student_traineeship.eqf_level.join(', ')})`}
                                     </Typography>
                                   </Box>
@@ -640,7 +640,7 @@ function ModuleEwp() {
                         Zakres współpracy
                     </Typography>
                     <Typography variant="body2" sx={{ textAlign: 'center', my: 0.5 }}>
-                        ISCED-F: {selectedCoopCondObject.subject_area[0].isced_f_code} {selectedCoopCondObject.subject_area[0].isced_clarification && `(${selectedCoopCondObject.subject_area[0].isced_clarification})`}
+                        ISCED-F: {selectedCoopCondObject.subject_area[0]?.isced_f_code} {selectedCoopCondObject.subject_area[0]?.isced_clarification && `(${selectedCoopCondObject.subject_area[0]?.isced_clarification})`}
                     </Typography>
                     {selectedCoopCondObject?.eqf_level?.length > 0 && (
                       <Typography variant="body2" sx={{ textAlign: 'center' }}>
