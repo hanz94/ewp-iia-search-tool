@@ -28,8 +28,8 @@ interface ThemeContextType {
     // const prefersDarkMode = useMediaQuery<boolean>('(prefers-color-scheme: dark)');
     const [mode, setMode] = useLocalStorageState<ModeType>('selectedMode', 'light');
 
-    //Data Grid / Table - Height (manageable in Options, default 400px)
-    const [dataGridTableHeight, setDataGridTableHeight] = useLocalStorageState<number>('dataGridTableHeight', 400);
+    //Data Grid / Table - Height (manageable in Options, default 490px)
+    const [dataGridTableHeight, setDataGridTableHeight] = useState<number>(590);
 
     //Data Grid - Column Width (manageable in Options, default 100px, minimum 100px)
     const [dataGridColumnWidth, setDataGridColumnWidth] = useLocalStorageState<number>('dataGridColumnWidth', 100);
