@@ -7,6 +7,7 @@ import * as XLSX from 'xlsx';
 import { useThemeContext } from '../contexts/ThemeContext';
 import { useModalContext } from '../contexts/ModalContext';
 import kulLogoBlack from '../assets/kul_logo-black.jpg';
+import LinkIcon from '@mui/icons-material/Link';
 
 import ModalWindow from './ModalWindow';
 import newModalContent from '../utils/newModalContent';
@@ -56,7 +57,7 @@ function SqlApp() {
             sx={{ height: 42 }}
             onChange={(e) => setCurrentModule(e.target.value)}
           >
-            <MenuItem value={'CSV'}>Lokalna (CSV)</MenuItem>
+            <MenuItem value={'CSV'}>Lokalna</MenuItem>
             <MenuItem value={'EWP'}>Zdalna (EWP)</MenuItem>
           </Select>
         </FormControl>
@@ -78,9 +79,12 @@ function SqlApp() {
         {/* End Page App */}
         {currentModule === 'CSV' && erasmusCodes.length > 0 && !selectedErasmusCode && (
           <>
-          <Typography variant="div" sx={{ fontSize: 12, textAlign: 'center' }}>
-            Liczba uczelni partnerskich: {erasmusCodes.length}
-          </Typography>
+            <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+              Liczba uczelni partnerskich w ramach programu Erasmus+: {erasmusCodes.length}
+            </Typography>
+            <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+              Uwaga! Zestawienie obejmuje wyłącznie umowy zawarte w formie elektronicznej za pośrednictwem platformy EWP Dashboard.
+            </Typography>
           </>
         )}
       </Box>
@@ -88,14 +92,17 @@ function SqlApp() {
       
       {/* Page Footer */}
       <Box>
-        <Box>
-          <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', my: 1 }}>
-            <Link href="https://www.kul.pl/uczelnie-partnerskie-kul,art_90613.html" target="_blank" rel="noopener noreferrer">Przejdź do: Umowy bilateralne</Link>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.2, fontSize: 12 }}>
+          <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', mt: 1.2, mb: 0.5 }}>
+            <Link href="https://www.kul.pl/uczelnie-partnerskie-kul,art_90613.html" target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none', color: 'inherit', fontSize: 10, '&:hover': { color: 'primary.light', textDecoration: 'underline' }, cursor: 'pointer' }}>
+              <LinkIcon sx={{ mr: 0.7, fontSize: 16 }} />
+              Przejdź do: Umowy bilateralne
+            </Link>
           </Typography>
         </Box>
         <Box>
           <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', my: 1 }}>
-            Dział Współpracy Międzynarodowej &copy; 2024-2025 Bartłomiej Pawłowski - ExcelSQL v1.4.3
+            Dział Współpracy Międzynarodowej &copy; 2024-2025 Bartłomiej Pawłowski
           </Typography>
         </Box>
       </Box>
