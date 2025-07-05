@@ -11,12 +11,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgressWithLabel from './LinearProgressWithLabel';
 
 import { useModuleEwpContext } from '../contexts/ModuleEwpContext';
+import { REVERSE_PROXY_URL } from './ReverseProxyConfig';
 
 function ModuleEwp() {
 
-  const srv = 'http://localhost';
-  const port = 10300;
-  const srvUrl = srv + ':' + port;
+  const srvUrl = REVERSE_PROXY_URL;
 
   const { getAgreementLabel, formatTimeHeader, formatTimeBody, fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected } = useModuleEwpContext();
 
