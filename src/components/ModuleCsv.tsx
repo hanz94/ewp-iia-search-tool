@@ -167,7 +167,7 @@ useEffect(() => {
 //watch for changes: selectedErasmusCode, selectedInstitutionName
 useEffect(() => {
   if (selectedErasmusCode && selectedInstitutionName) {
-    alasql.promise('SELECT [TYP MOBILNOŚCI], [WYJAZD LUB PRZYJAZD], [LICZBA MOBILNOŚCI], [EQF], [STATUS], [OD], [DO], [ZAKRES WSPÓŁPRACY], [OPIS] FROM ? WHERE [KOD ERASMUS] = ? AND [STATUS] != "Szkic"', [data, selectedErasmusCode]).then((result) => {
+    alasql.promise('SELECT [TYP MOBILNOŚCI], [WYJAZD LUB PRZYJAZD], [LICZBA MOBILNOŚCI], [EQF], [STATUS], [OD], [DO], [ZAKRES WSPÓŁPRACY], [OPIS], [WYMAGANY JĘZYK] FROM ? WHERE [KOD ERASMUS] = ? AND [STATUS] != "Szkic"', [data, selectedErasmusCode]).then((result) => {
       setDataFiltered(() => result);
     })
   }
