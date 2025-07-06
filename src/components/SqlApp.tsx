@@ -7,6 +7,9 @@ import * as XLSX from 'xlsx';
 import { useThemeContext } from '../contexts/ThemeContext';
 import { useModalContext } from '../contexts/ModalContext';
 import kulLogoBlack from '../assets/kul_logo-black.jpg';
+import DownloadIcon from '@mui/icons-material/Download';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import LinkIcon from '@mui/icons-material/Link';
 
 import ModalWindow from './ModalWindow';
@@ -20,6 +23,15 @@ import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
 alasql.utils.isBrowserify = false;
 alasql.utils.global.XLSX = XLSX;
 
+//Download umowy.xlsx  /   alternative: window.location.href = '/umowy.xlsx';
+const handleDownload = () => {
+  const link = document.createElement('a');
+  link.href = '/umowy.xlsx';
+  link.download = 'umowy.xlsx';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 function SqlApp() {
 
@@ -85,6 +97,12 @@ function SqlApp() {
             <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
               Uwaga! Zestawienie obejmuje wyłącznie umowy zawarte w formie elektronicznej za pośrednictwem platformy EWP Dashboard.
             </Typography>
+
+            <Tooltip title="Pobierz umowy.xlsx">
+              <IconButton sx={{ mt: 0.3 }} onClick={handleDownload}>
+                <DownloadIcon />
+              </IconButton>
+            </Tooltip>
           </>
         )}
       </Box>
