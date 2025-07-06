@@ -23,10 +23,11 @@ import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
 alasql.utils.isBrowserify = false;
 alasql.utils.global.XLSX = XLSX;
 
-//Download umowy.xlsx  /   alternative: window.location.href = '/umowy.xlsx';
+//Download umowy.xlsx  /   alternative: window.location.href = '${base}umowy.xlsx';
 const handleDownload = () => {
+  const base = import.meta.env.BASE_URL;
   const link = document.createElement('a');
-  link.href = '/umowy.xlsx';
+  link.href = `${base}umowy.xlsx`;
   link.download = 'umowy.xlsx';
   document.body.appendChild(link);
   link.click();
@@ -37,7 +38,7 @@ function SqlApp() {
 
   const { mode, setMode } = useThemeContext();
   const { modalOpen } = useModalContext();
-  const { erasmusCodes, selectedErasmusCode } = useModuleCsvContext();
+  const { erasmusCodes, selectedErasmusCode, lastUpdate } = useModuleCsvContext();
 
   const [currentModule, setCurrentModule] = useState('CSV');
 
@@ -98,7 +99,14 @@ function SqlApp() {
               Uwaga! Zestawienie obejmuje wyłącznie umowy zawarte w formie elektronicznej za pośrednictwem platformy EWP Dashboard.
             </Typography>
 
-            <Tooltip title="Pobierz umowy.xlsx">
+            <Tooltip title={
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="body2" sx={{ fontSize: 11 }}>
+                  Pobierz umowy.xlsx<br />
+                  Ostatnia aktualizacja: {lastUpdate}
+                </Typography>
+              </Box>
+            }>
               <IconButton sx={{ mt: 0.3 }} onClick={handleDownload}>
                 <DownloadIcon />
               </IconButton>
