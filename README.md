@@ -1,39 +1,26 @@
-## [ENG] ExcelSQL App
 
-ExcelSQL (React-based application) enables executing SQL commands on CSV, XLS, and XLSX files. This tool provides powerful data filtering and statistical analysis capabilities, all based on information stored in spreadsheets. 
+# EWP IIA Search Tool
 
-With ExcelSQL, you can:
-- Filter and sort data to create customized reports.
-- Perform expense analyses and generate detailed summaries.
-- Create individual codes based on data from multiple cells.
-- Manipulate and analyze date fields.
+EWP IIA Search Tool (fullstack React-based application) is designed for the staff and students of The John Paul II Catholic University of Lublin (KUL) and enables the visitors to search and view the details of Inter-Institutional Agreements (IIAs) signed between KUL and its Erasmus+ partner institutions based on the data from [EWP Dashboard](https://ewp-dashboard.eu/) platform.
 
-The system operates by converting a local spreadsheet in CSV, XLS, or XLSX format into a temporary database. You can then run SQL queries on this database using the [AlaSQL](https://github.com/alasql/alasql) library.
+Implementation: https://www.kul.pl/art_110162.html
 
----
+## How it works
 
-## [PL] Aplikacja ExcelSQL
+The application facilitates finding IIA details by integrating 2 modules, each using a different database:
 
-Aplikacja reactowa **ExcelSQL** umożliwia wykonywanie poleceń SQL na plikach CSV, XLS oraz XLSX. Pozwala na filtrowanie danych i generowanie analiz statystycznych w oparciu o informacje zawarte w arkuszach kalkulacyjnych. 
+➡ CSV Module (with local database) - offers static data from regularly updated downloadable spreadsheet (CSV converted to XLSX by [ExcelSQL](https://github.com/hanz94/excelsql)),
 
-Funkcje aplikacji:
-- Filtrowanie i sortowanie danych w celu tworzenia raportów.
-- Analizę wydatków i generowanie szczegółowych podsumowań.
-- Tworzenie indywidualnych kodów bazujących na danych z wielu komórek.
-- Operowanie na polach z datami.
+➡ EWP Module (with remote database) - offers real-time data from [EWP Dashboard](https://ewp-dashboard.eu/) platform.
 
-System opiera się na konwersji lokalnego arkusza kalkulacyjnego w formacie CSV, XLS lub XLSX do tymczasowej bazy danych, umożliwiając wykonywanie zapytań SQL za pomocą biblioteki [AlaSQL](https://github.com/alasql/alasql).
+## Preview
 
-## Installation
-Clone this repository and install dependencies:
-```bash
-git clone https://github.com/hanz94/excelsql.git
-cd excelsql
-npm install
-```
+### Local database (XLSX File)
 
-## Contribution
-Feel free to open issues or submit pull requests to improve the project. We welcome contributions in both Polish and English.
+| | |
+|:-------------------------:|:-------------------------:|
+|<img width="717" alt="CSV Module Preview (PNG-1)" src="https://github.com/hanz94/ewp-iia-search-tool/blob/b57d7cd9d4170e8f26f82bd52baf9be4cc4768c0/screenshots/csv-1.png">|<img width="717" alt="CSV Module Preview (PNG-2)" src="https://github.com/hanz94/ewp-iia-search-tool/blob/b57d7cd9d4170e8f26f82bd52baf9be4cc4768c0/screenshots/csv-2.png">|
 
-## License
-This project is licensed under the MIT License.
+
+### Remote database (EWP Dashboard API)
+tbd
