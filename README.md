@@ -28,3 +28,8 @@ The application facilitates finding IIA details by integrating 2 modules, each u
 |:-------------------------:|:-------------------------:|
 |<img width="717" alt="EWP Module Preview (PNG-1)" src="https://github.com/hanz94/ewp-iia-search-tool/blob/130de66a4aaac04955a06c29fb11ca6a9541d8e4/screenshots/ewp-1.png">|<img width="717" alt="EWP Module Preview (PNG-2)" src="https://github.com/hanz94/ewp-iia-search-tool/blob/130de66a4aaac04955a06c29fb11ca6a9541d8e4/screenshots/ewp-2.png">|
 |<img width="717" alt="EWP Module Preview (PNG-3)" src="https://github.com/hanz94/ewp-iia-search-tool/blob/130de66a4aaac04955a06c29fb11ca6a9541d8e4/screenshots/ewp-3.png">|<img width="717" alt="EWP Module Preview (PNG-4)" src="https://github.com/hanz94/ewp-iia-search-tool/blob/130de66a4aaac04955a06c29fb11ca6a9541d8e4/screenshots/ewp-4.png">|
+
+# Acknowledgements
+- Arkadiusz Włodarczyk for inspiring courses on:
+    - [JS, XML, jQuery, AJAX and RWD](https://www.udemy.com/course/kurs-tworzenia-stron-www-w-html-i-css-od-podstaw-do-eksperta/ )
+    - [React Hooks, framer-motion, PWA](https://www.udemy.com/course/react-od-podstaw-do-eksperta/)
