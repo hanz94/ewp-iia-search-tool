@@ -7,6 +7,8 @@ import { light } from '@mui/material/styles/createPalette';
 
 type ModeType = "light" | "dark" | null;
 interface ThemeContextType {
+    currentAppLanguage: string;
+    setCurrentAppLanguage: (lang: string) => void;
     mode: ModeType;
     setMode: (mode: ModeType) => void;
     toggleTheme: () => void;
@@ -24,6 +26,8 @@ interface ThemeContextType {
   const ThemeContext = createContext<ThemeContextType | null>(null);
 
   const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
+
+    const [currentAppLanguage, setCurrentAppLanguage] = useLocalStorageState<string>('currentAppLanguage', 'PL');
 
     // const prefersDarkMode = useMediaQuery<boolean>('(prefers-color-scheme: dark)');
     const [mode, setMode] = useLocalStorageState<ModeType>('selectedMode', 'light');
@@ -147,7 +151,7 @@ interface ThemeContextType {
           };
 
 return (
-    <ThemeContext.Provider value={{ mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId }}>
+    <ThemeContext.Provider value={{ currentAppLanguage, setCurrentAppLanguage, mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId }}>
       <ThemeProvider theme={appTheme}>
         <CssBaseline />
         {children}

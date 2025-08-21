@@ -11,6 +11,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import LinkIcon from '@mui/icons-material/Link';
+import ReactCountryFlag from "react-country-flag"
 
 import ModalWindow from './ModalWindow';
 import newModalContent from '../utils/newModalContent';
@@ -36,29 +37,54 @@ const handleDownload = () => {
 
 function SqlApp() {
 
-  const { mode, setMode } = useThemeContext();
-  const { modalOpen } = useModalContext();
+  const { currentAppLanguage, setCurrentAppLanguage, mode, setMode } = useThemeContext();
+  // const { modalOpen } = useModalContext();
   const { erasmusCodes, selectedErasmusCode, lastUpdate } = useModuleCsvContext();
 
   const [currentModule, setCurrentModule] = useState('CSV');
 
+  const localisationMenuItemHeight = 28;
+
     return ( 
         <>
       {/* Page Wrapper */}
-      <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'space-between', flexDirection: 'column', height: '100%', p:2.5, overflow: 'auto'}}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'space-between', flexDirection: 'column', height: '100%', p:2.5, overflow: 'auto' }}>
 
       <ModalWindow />
 
       {/* Page Header */}
-      <Box sx={{height: '48px', position: 'relative', top: 0, mb: 1, display: 'flex', justifyContent: 'space-between'}}>
-        <Box>
+      <Box sx={{ maxHeight: 70, position: 'relative', top: 0, mb: 1, display: 'flex', justifyContent: 'space-between' }}>
+        <Box sx={{ width: 225, height: '100%' }}>
+
           <img
             src={kulLogoBlack}
-            style={{position: 'relative', top: '0px', left: '0px', width: 105, height: 32, cursor: 'pointer'}}
+            style={{ position: 'relative', top: '0px', left: '0px', width: 105, height: 32, cursor: 'pointer' }}
             onClick={() => window.location.reload()}
             />
+
+        <FormControl sx={{ minWidth: 105 }}>
+          <Select
+            value={currentAppLanguage}
+            sx={{ mx: 1, height: 32, fontSize: "0.9rem", ".MuiOutlinedInput-notchedOutline": { border: 0 } }}
+            onChange={(e) => setCurrentAppLanguage(e.target.value)}
+          >
+            <MenuItem value={"PL"} sx={{ height: localisationMenuItemHeight }}>
+              <ReactCountryFlag countryCode="PL" svg style={{ marginRight: 8 }} />
+              PL
+            </MenuItem>
+            <MenuItem value={"EN"} sx={{ height: localisationMenuItemHeight }}>
+              <ReactCountryFlag countryCode="GB" svg style={{ marginRight: 8 }} />
+              EN
+            </MenuItem>
+            <MenuItem value={"TR"} sx={{ height: localisationMenuItemHeight }}>
+              <ReactCountryFlag countryCode="TR" svg style={{ marginRight: 8 }} />
+              TR
+            </MenuItem>
+          </Select>
+        </FormControl>
+
         </Box>
-        <Box sx={{ width: 250 }}>
+        <Box sx={{ width: 236 }}>
 
         <FormControl sx={{ minWidth: 156 }}>
           <InputLabel id="module-label">Baza umów</InputLabel>
