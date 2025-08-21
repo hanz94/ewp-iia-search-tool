@@ -15,14 +15,15 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
+import { useTranslation } from 'react-i18next';
 
 
 alasql.utils.isBrowserify = false;
 alasql.utils.global.XLSX = XLSX;
 
-
 function ModuleCsv() {
 
+    const { t } = useTranslation();
     const { dataGridTableHeight, trimRows, rowWithColumnNames } = useThemeContext();
     const { modalOpen } = useModalContext();
 
@@ -246,7 +247,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           value={selectedErasmusCode}
           options={erasmusCodes}
           sx={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} label="Kod Erasmus+" />}
+          renderInput={(params) => <TextField {...params} label={t('CSV_ERASMUS_CODE')} />}
           onChange={(e, value) => {
             setSelectedErasmusCode(value ? value : null)
             if (value) {
@@ -271,7 +272,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           value={selectedInstitutionName}
           options={institutionNames}
           sx={{ minWidth: 500 }}
-          renderInput={(params) => <TextField {...params} label="Nazwa instytucji" />}
+          renderInput={(params) => <TextField {...params} label={t('CSV_INSTITUTION_NAME')} />}
           onChange={(e, value) => {
             setSelectedInstitutionName(value ? value : null);
             if (value) {

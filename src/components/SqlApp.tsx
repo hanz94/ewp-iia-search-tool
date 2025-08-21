@@ -19,6 +19,7 @@ import newModalContent from '../utils/newModalContent';
 import ModuleCsv from './ModuleCsv';
 import ModuleEwp from './ModuleEwp';
 import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
+import { useTranslation } from 'react-i18next';
 
 
 alasql.utils.isBrowserify = false;
@@ -37,13 +38,14 @@ const handleDownload = () => {
 
 function SqlApp() {
 
-  const { currentAppLanguage, setCurrentAppLanguage, mode, setMode } = useThemeContext();
+  const { t } = useTranslation();
+  const { currentAppLanguage, setCurrentAppLanguage, changeAppLanguage, mode, setMode } = useThemeContext();
   // const { modalOpen } = useModalContext();
   const { erasmusCodes, selectedErasmusCode, lastUpdate } = useModuleCsvContext();
 
   const [currentModule, setCurrentModule] = useState('CSV');
 
-  const localisationMenuItemHeight = 28;
+  const localisationMenuItemHeight = 32;
 
     return ( 
         <>
@@ -66,17 +68,17 @@ function SqlApp() {
           <Select
             value={currentAppLanguage}
             sx={{ mx: 1, height: 32, fontSize: "0.9rem", ".MuiOutlinedInput-notchedOutline": { border: 0 } }}
-            onChange={(e) => setCurrentAppLanguage(e.target.value)}
+            onChange={(e) => changeAppLanguage(e.target.value)}
           >
-            <MenuItem value={"PL"} sx={{ height: localisationMenuItemHeight }}>
+            <MenuItem value={"pl"} sx={{ height: localisationMenuItemHeight }}>
               <ReactCountryFlag countryCode="PL" svg style={{ marginRight: 8 }} />
               PL
             </MenuItem>
-            <MenuItem value={"EN"} sx={{ height: localisationMenuItemHeight }}>
+            <MenuItem value={"en"} sx={{ height: localisationMenuItemHeight }}>
               <ReactCountryFlag countryCode="GB" svg style={{ marginRight: 8 }} />
               EN
             </MenuItem>
-            <MenuItem value={"TR"} sx={{ height: localisationMenuItemHeight }}>
+            <MenuItem value={"tr"} sx={{ height: localisationMenuItemHeight }}>
               <ReactCountryFlag countryCode="TR" svg style={{ marginRight: 8 }} />
               TR
             </MenuItem>

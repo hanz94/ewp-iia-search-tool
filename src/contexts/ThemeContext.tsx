@@ -2,13 +2,16 @@ import { createContext, useContext, useRef, useState } from 'react';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useLocalStorageState } from '@toolpad/core';
+import useOptionalLocalStorageState from '../hooks/useOptionalLocalStorageState';
 import { lighten, darken } from '@mui/material';
 import { light } from '@mui/material/styles/createPalette';
+import i18n from '../translations/i18n';
 
 type ModeType = "light" | "dark" | null;
 interface ThemeContextType {
     currentAppLanguage: string;
     setCurrentAppLanguage: (lang: string) => void;
+    changeAppLanguage: (lng: string) => void;
     mode: ModeType;
     setMode: (mode: ModeType) => void;
     toggleTheme: () => void;
@@ -27,7 +30,11 @@ interface ThemeContextType {
 
   const ThemeContextProvider = ({ children }: { children: React.ReactNode }) => {
 
-    const [currentAppLanguage, setCurrentAppLanguage] = useLocalStorageState<string>('currentAppLanguage', 'PL');
+    const [currentAppLanguage, setCurrentAppLanguage] = useOptionalLocalStorageState<string>('currentAppLanguage', 'pl');
+    const changeAppLanguage = (lng: string) => {
+      setCurrentAppLanguage(lng);
+      i18n.changeLanguage(lng);
+    };
 
     // const prefersDarkMode = useMediaQuery<boolean>('(prefers-color-scheme: dark)');
     const [mode, setMode] = useLocalStorageState<ModeType>('selectedMode', 'light');
@@ -151,7 +158,7 @@ interface ThemeContextType {
           };
 
 return (
-    <ThemeContext.Provider value={{ currentAppLanguage, setCurrentAppLanguage, mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId }}>
+    <ThemeContext.Provider value={{ currentAppLanguage, setCurrentAppLanguage, changeAppLanguage, mode, setMode, toggleTheme, dataGridTableHeight, setDataGridTableHeight, dataGridColumnWidth, setDataGridColumnWidth, rowWithColumnNames, setRowWithColumnNames, trimRows, setTrimRows, optionsLastActiveTextFieldId }}>
       <ThemeProvider theme={appTheme}>
         <CssBaseline />
         {children}
