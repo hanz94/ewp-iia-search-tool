@@ -1,0 +1,14 @@
+{
+    "CSV_ERASMUS_CODE": "Erasmus+ code",
+    "CSV_INSTITUTION_NAME": "Institution name",
+    "SQL_DOWNLOAD": "Download",
+    "SQL_IIA_DATABASE": "IIA Database",
+    "SQL_IIA_DATABASE_LOCAL": "Local",
+    "SQL_IIA_DATABASE_REMOTE": "Remote (EWP)",
+    "SQL_IRO": "International Relations Office",
+    "SQL_LAST_UPDATE": "Last update",
+    "SQL_NUMBER_OF_PARTNER_UNIVERSITIES": "Number of partner universities under the Erasmus+ programme",
+    "SQL_NUMBER_OF_PARTNER_UNIVERSITIES_NOTE": "Note: The summary includes only agreements signed electronically via the EWP Dashboard platform.",
+    "SQL_REDIRECT_TO_BILATERAL": "Go to: Bilateral agreements",
+    "SQL_XLSX_FILENAME": "agreements.xlsx"
+}

@@ -78,10 +78,10 @@ function SqlApp() {
               <ReactCountryFlag countryCode="GB" svg style={{ marginRight: 8 }} />
               EN
             </MenuItem>
-            <MenuItem value={"tr"} sx={{ height: localisationMenuItemHeight }}>
+            {/* <MenuItem value={"tr"} sx={{ height: localisationMenuItemHeight }}>
               <ReactCountryFlag countryCode="TR" svg style={{ marginRight: 8 }} />
               TR
-            </MenuItem>
+            </MenuItem> */}
           </Select>
         </FormControl>
 
@@ -89,17 +89,17 @@ function SqlApp() {
         <Box sx={{ width: 236 }}>
 
         <FormControl sx={{ minWidth: 156 }}>
-          <InputLabel id="module-label">Baza umów</InputLabel>
+          <InputLabel id="module-label">{t('SQL_IIA_DATABASE')}</InputLabel>
           <Select
             labelId="module-label"
             id="module-select"
             value={currentModule}
-            label="Baza umów"
+            label={t('SQL_IIA_DATABASE')}
             sx={{ height: 42 }}
             onChange={(e) => setCurrentModule(e.target.value)}
           >
-            <MenuItem value={'CSV'}>Lokalna</MenuItem>
-            <MenuItem value={'EWP'}>Zdalna (EWP)</MenuItem>
+            <MenuItem value={'CSV'}>{t('SQL_IIA_DATABASE_LOCAL')}</MenuItem>
+            <MenuItem value={'EWP'}>{t('SQL_IIA_DATABASE_REMOTE')}</MenuItem>
           </Select>
         </FormControl>
 
@@ -121,17 +121,17 @@ function SqlApp() {
         {currentModule === 'CSV' && erasmusCodes.length > 0 && !selectedErasmusCode && (
           <>
             <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-              Liczba uczelni partnerskich w ramach programu Erasmus+: {erasmusCodes.length}
+              {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES')}: {erasmusCodes.length}
             </Typography>
             <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-              Uwaga! Zestawienie obejmuje wyłącznie umowy zawarte w formie elektronicznej za pośrednictwem platformy EWP Dashboard.
+              {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES_NOTE')}
             </Typography>
 
             <Tooltip title={
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="body2" sx={{ fontSize: 11 }}>
-                  Pobierz umowy.xlsx<br />
-                  Ostatnia aktualizacja: {lastUpdate}
+                  {t('SQL_DOWNLOAD')} {t('SQL_XLSX_FILENAME')}<br />
+                  {t('SQL_LAST_UPDATE')}: {lastUpdate}
                 </Typography>
               </Box>
             }>
@@ -150,13 +150,13 @@ function SqlApp() {
           <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', mt: 1.2, mb: 0.5 }}>
             <Link href="https://www.kul.pl/uczelnie-partnerskie-kul,art_90613.html" target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none', color: 'inherit', fontSize: 10, '&:hover': { color: 'primary.light', textDecoration: 'underline' }, cursor: 'pointer' }}>
               <LinkIcon sx={{ mr: 0.7, fontSize: 16 }} />
-              Przejdź do: Umowy bilateralne
+              {t('SQL_REDIRECT_TO_BILATERAL')}
             </Link>
           </Typography>
         </Box>
         <Box>
           <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', my: 1 }}>
-            Dział Współpracy Międzynarodowej &copy; 2024-2025 Bartłomiej Pawłowski
+            {t('SQL_IRO')} &copy; 2024-2025 Bartłomiej Pawłowski
           </Typography>
         </Box>
       </Box>

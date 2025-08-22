@@ -1,0 +1,14 @@
+{
+    "CSV_ERASMUS_CODE": "Kod Erasmus+",
+    "CSV_INSTITUTION_NAME": "Nazwa instytucji",
+    "SQL_DOWNLOAD": "Pobierz",
+    "SQL_IIA_DATABASE": "Baza umów",
+    "SQL_IIA_DATABASE_LOCAL": "Lokalna",
+    "SQL_IIA_DATABASE_REMOTE": "Zdalna (EWP)",
+    "SQL_IRO": "Dział Współpracy Międzynarodowej",
+    "SQL_LAST_UPDATE": "Ostatnia aktualizacja",
+    "SQL_NUMBER_OF_PARTNER_UNIVERSITIES": "Liczba uczelni partnerskich w ramach programu Erasmus+",
+    "SQL_NUMBER_OF_PARTNER_UNIVERSITIES_NOTE": "Uwaga! Zestawienie obejmuje wyłącznie umowy zawarte w formie elektronicznej za pośrednictwem platformy EWP Dashboard.",
+    "SQL_REDIRECT_TO_BILATERAL": "Przejdź do: Umowy bilateralne",
+    "SQL_XLSX_FILENAME": "umowy.xlsx"
+}
