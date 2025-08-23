@@ -1,6 +1,11 @@
 {
+    "CSV_THIS_INSTITUTION_NAME": "The\u00A0John\u00A0Paul\u00A0II\u00A0Catholic\u00A0University\u00A0of\u00A0Lublin",
+    "CSV_THIS_INSTITUTION_EC": "PL\u00A0LUBLIN02",
     "CSV_ERASMUS_CODE": "Erasmus+ code",
     "CSV_INSTITUTION_NAME": "Institution name",
+    "CSV_INSTITUTION_SIGNED_IIA_WITH_PARTNER": "has signed an inter-institutional agreement with",
+    "CSV_IN_SCOPE": "in the following scope",
+    "CSV_AS_OF": "As\u00A0of",
     "SQL_DOWNLOAD": "Download",
     "SQL_IIA_DATABASE": "IIA Database",
     "SQL_IIA_DATABASE_LOCAL": "Local",

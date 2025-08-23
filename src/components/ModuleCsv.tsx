@@ -295,11 +295,11 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       {(selectedErasmusCode || selectedInstitutionName) && dataFiltered.length > 0 && (
         <>
           <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>
-            <b>Katolicki&nbsp;Uniwersytet&nbsp;Lubelski&nbsp;Jana&nbsp;Pawła&nbsp;II&nbsp;(PL&nbsp;LUBLIN02)</b> posiada umowę międzyinstytucjonalną z <b>{selectedInstitutionName && selectedInstitutionName.replace(/ /g, '\u00A0')} ({selectedErasmusCode && selectedErasmusCode.replace(/ /g, '\u00A0')})</b> w podanym zakresie:
+            <b>{t('CSV_THIS_INSTITUTION_NAME')}&nbsp;({t('CSV_THIS_INSTITUTION_EC')})&nbsp;</b>{t('CSV_INSTITUTION_SIGNED_IIA_WITH_PARTNER')} <b>{selectedInstitutionName && selectedInstitutionName.replace(/ /g, '\u00A0')}&nbsp;({selectedErasmusCode && selectedErasmusCode.replace(/ /g, '\u00A0')})</b> {t('CSV_IN_SCOPE')}:
           </Typography>
 
           <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
-            (Stan&nbsp;na&nbsp;{lastUpdate})
+            ({t('CSV_AS_OF')}&nbsp;{lastUpdate})
           </Typography>
           <TableContainer component={Paper} sx={{ maxHeight: dataGridTableHeight + 'px', overflow: 'auto' }}>
             <Table size="small">

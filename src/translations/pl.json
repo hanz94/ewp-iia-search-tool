@@ -1,6 +1,11 @@
 {
+    "CSV_THIS_INSTITUTION_NAME": "Katolicki\u00A0Uniwersytet\u00A0Lubelski\u00A0Jana\u00A0Pawła\u00A0II",
+    "CSV_THIS_INSTITUTION_EC": "PL\u00A0LUBLIN02",
     "CSV_ERASMUS_CODE": "Kod Erasmus+",
     "CSV_INSTITUTION_NAME": "Nazwa instytucji",
+    "CSV_INSTITUTION_SIGNED_IIA_WITH_PARTNER": "posiada umowę międzyinstytucjonalną z",
+    "CSV_IN_SCOPE": "w podanym zakresie",
+    "CSV_AS_OF": "Stan\u00A0na",
     "SQL_DOWNLOAD": "Pobierz",
     "SQL_IIA_DATABASE": "Baza umów",
     "SQL_IIA_DATABASE_LOCAL": "Lokalna",
