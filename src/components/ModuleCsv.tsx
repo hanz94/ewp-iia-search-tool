@@ -247,7 +247,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           value={selectedErasmusCode}
           options={erasmusCodes}
           sx={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} label={t('CSV_ERASMUS_CODE')} />}
+          renderInput={(params) => <TextField {...params} label={t('ERASMUS_CODE')} />}
           onChange={(e, value) => {
             setSelectedErasmusCode(value ? value : null)
             if (value) {
@@ -272,7 +272,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           value={selectedInstitutionName}
           options={institutionNames}
           sx={{ minWidth: 500 }}
-          renderInput={(params) => <TextField {...params} label={t('CSV_INSTITUTION_NAME')} />}
+          renderInput={(params) => <TextField {...params} label={t('INSTITUTION_NAME')} />}
           onChange={(e, value) => {
             setSelectedInstitutionName(value ? value : null);
             if (value) {
@@ -295,11 +295,11 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       {(selectedErasmusCode || selectedInstitutionName) && dataFiltered.length > 0 && (
         <>
           <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>
-            <b>{t('CSV_THIS_INSTITUTION_NAME')}&nbsp;({t('CSV_THIS_INSTITUTION_EC')})&nbsp;</b>{t('CSV_INSTITUTION_SIGNED_IIA_WITH_PARTNER')} <b>{selectedInstitutionName && selectedInstitutionName.replace(/ /g, '\u00A0')}&nbsp;({selectedErasmusCode && selectedErasmusCode.replace(/ /g, '\u00A0')})</b> {t('CSV_IN_SCOPE')}:
+            <b>{t('THIS_INSTITUTION_NAME')}&nbsp;({t('THIS_INSTITUTION_EC')})&nbsp;</b>{t('CSV_INSTITUTION_HAS_IIA_WITH_PARTNER')} <b>{selectedInstitutionName && selectedInstitutionName.replace(/ /g, '\u00A0')}&nbsp;({selectedErasmusCode && selectedErasmusCode.replace(/ /g, '\u00A0')})</b> {t('CSV_IN_SCOPE')}:
           </Typography>
 
           <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
-            ({t('CSV_AS_OF')}&nbsp;{lastUpdate})
+            ({t('AS_OF')}&nbsp;{lastUpdate})
           </Typography>
           <TableContainer component={Paper} sx={{ maxHeight: dataGridTableHeight + 'px', overflow: 'auto' }}>
             <Table size="small">

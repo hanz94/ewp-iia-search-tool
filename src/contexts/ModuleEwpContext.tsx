@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react';
+import type { TFunction } from 'i18next';
 
 interface ModuleEwpContextType {
   getAgreementLabel: (count: number) => string;
@@ -34,12 +35,12 @@ interface ModuleEwpContextType {
 
 const ModuleEwpContext = createContext<ModuleEwpContextType | undefined>(undefined);
 
-function getAgreementLabel(count: number): string {
+function getAgreementLabel(t: TFunction, count: number): string {
   const lastDigit = count % 10;
   const lastTwoDigits = count % 100;
 
   if (count === 1) {
-    return 'umowę międzyinstytucjonalną';
+    return t('EWP_AGREEMENT_SINGULAR');
   }
 
   if (
@@ -47,10 +48,10 @@ function getAgreementLabel(count: number): string {
     lastDigit <= 4 &&
     !(lastTwoDigits >= 12 && lastTwoDigits <= 14)
   ) {
-    return 'umowy międzyinstytucjonalne';
+    return t('EWP_AGREEMENTS_PAUCAL_2_4');
   }
 
-  return 'umów międzyinstytucjonalnych';
+  return t('EWP_AGREEMENTS_PLURAL_5');
 }
 
 function formatTimeHeader(raw: string): string {

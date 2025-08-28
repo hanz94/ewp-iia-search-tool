@@ -131,7 +131,7 @@ function SqlApp() {
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="body2" sx={{ fontSize: 11 }}>
                   {t('SQL_DOWNLOAD')} {t('SQL_XLSX_FILENAME')}<br />
-                  {t('SQL_LAST_UPDATE')}: {lastUpdate}
+                  {t('LAST_UPDATE')}: {lastUpdate}
                 </Typography>
               </Box>
             }>

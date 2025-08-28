@@ -10,6 +10,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CircularProgress from '@mui/material/CircularProgress';
 import LinearProgressWithLabel from './LinearProgressWithLabel';
 
+import { useTranslation } from 'react-i18next';
 import { useModuleEwpContext } from '../contexts/ModuleEwpContext';
 import { REVERSE_PROXY_URL } from './ReverseProxyConfig';
 
@@ -18,6 +19,8 @@ function ModuleEwp() {
   const srvUrl = REVERSE_PROXY_URL;
 
   const { getAgreementLabel, formatTimeHeader, formatTimeBody, fetchError, setFetchError, fetchErrorMessage, setFetchErrorMessage, data, setData, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, partnersTimestamp, setPartnersTimestamp, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, selectedHeiID, setSelectedHeiID, selectedHeiTimestamp, setSelectedHeiTimestamp, dataFiltered, setDataFiltered, dataFilteredDetails, setDataFilteredDetails, connected, setConnected } = useModuleEwpContext();
+
+  const { t } = useTranslation();
 
   const [expandedAccordion, setExpandedAccordion] = useState(-1);
 
@@ -185,7 +188,7 @@ function ModuleEwp() {
         value={selectedErasmusCode}
         options={erasmusCodes}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Kod Erasmus+" />}
+        renderInput={(params) => <TextField {...params} label={t('ERASMUS_CODE')} />}
         onChange={(e, value) => {
             hasMounted.current = true;
             setSelectedErasmusCode(value ? value : null)
@@ -214,7 +217,7 @@ function ModuleEwp() {
         value={selectedInstitutionName}
         options={institutionNames}
         sx={{ minWidth: 500 }}
-        renderInput={(params) => <TextField {...params} label="Nazwa instytucji" />}
+        renderInput={(params) => <TextField {...params} label={t('INSTITUTION_NAME')} />}
         onChange={(e, value) => {
             hasMounted.current = true;
             setSelectedInstitutionName(() => value ? value : null)
@@ -240,7 +243,7 @@ function ModuleEwp() {
         {(!selectedErasmusCode || !selectedInstitutionName) && (
           <>
             <Typography sx={{ fontSize: 13, textAlign: 'center', mt: 0.4 }}>EWP Dashboard</Typography>
-            <Typography sx={{ fontSize: 12, textAlign: 'center' }}>Ostatnia aktualizacja: {new Date(partnersTimestamp).toLocaleString()} </Typography>
+            <Typography sx={{ fontSize: 12, textAlign: 'center' }}>{t('LAST_UPDATE')}: {new Date(partnersTimestamp).toLocaleString()} </Typography>
           </>
         )}
     </>
@@ -249,13 +252,13 @@ function ModuleEwp() {
     (
     <>
     <CircularProgress />
-    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Łączenie z EWP Dashboard...</Typography>
+    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>{t('EWP_CONNECTING_TO_EWP_DASHBOARD')}</Typography>
     </>
     )
     : (!connected && erasmusCodes.length === 0 && institutionNames.length === 0 && data.length === 0 && fetchError) ?
     (
     <>
-    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Błąd łączenia z serwerem ({fetchErrorMessage})</Typography>
+    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>{t('EWP_ERROR_CONNECTING_TO_SERVER')} ({fetchErrorMessage})</Typography>
     <Button
         variant="contained"
         size="small"
@@ -265,7 +268,7 @@ function ModuleEwp() {
         }}
         sx={{ display: 'block', mx: 'auto', mt: 1 }}
       >
-        Odśwież
+        {t('EWP_REFRESH')}
     </Button>
     </>
     )
@@ -273,8 +276,8 @@ function ModuleEwp() {
     (
     <>
     <CircularProgress />
-    <Typography sx={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', mt: 1, ml: -1 }}>✅ Połączono z EWP Dashboard</Typography>
-    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Przygotowuję listę uczelni partnerskich...</Typography>
+    <Typography sx={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', mt: 1, ml: -1 }}>✅ {t('EWP_CONNECTED_TO_EWP_DASHBOARD')}</Typography>
+    <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>{t('EWP_PREPARING_PARTNERS_LIST')}</Typography>
     <LinearProgressWithLabel value={progress} />
     </>
     )}
@@ -288,10 +291,10 @@ function ModuleEwp() {
         {/* <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>{JSON.stringify(dataFiltered, null, 2)}</Typography> */}
 
         <Typography sx={{ fontSize: 12, textAlign: 'center' }}>
-            <b>Katolicki&nbsp;Uniwersytet&nbsp;Lubelski&nbsp;Jana&nbsp;Pawła&nbsp;II&nbsp;(PL&nbsp;LUBLIN02)</b> posiada {dataFiltered.length} {getAgreementLabel(dataFiltered.length)} z <b>{selectedInstitutionName.replace(/ /g, '\u00A0')} ({selectedErasmusCode.replace(/ /g, '\u00A0')})</b>:
+            <b>{t('THIS_INSTITUTION_NAME')}&nbsp;({t('THIS_INSTITUTION_EC')})</b> {t('EWP_HAS')} {dataFiltered.length} {getAgreementLabel(t, dataFiltered.length)} {t('EWP_WITH')} <b>{selectedInstitutionName.replace(/ /g, '\u00A0')} ({selectedErasmusCode.replace(/ /g, '\u00A0')})</b>:
         </Typography>
         <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
-            Stan na {new Date(selectedHeiTimestamp).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '').replace(/\./g, '-')}
+            {t('AS_OF')} {new Date(selectedHeiTimestamp).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '').replace(/\./g, '-')}
         </Typography>
 
         {dataFiltered.map((item, index) => {
@@ -316,12 +319,12 @@ function ModuleEwp() {
             >
                 <Box component="span" sx={{ width: '50%' }}>
                 <Typography sx={{ mb: 0.3 }}>
-                    Umowa z {selectedHeiID.toUpperCase()} ({index+1})
+                    {t('EWP_AGREEMENT_WITH')} {selectedHeiID.toUpperCase()} ({index+1})
                 </Typography>
                 {dataFilteredDetails.length > 0 && (
                     <>
                     <Typography sx={{ fontSize: '0.8em'}}>
-                        Ostatnia modyfikacja:
+                        {t('EWP_LAST_MODIFICATION')}:
                     </Typography>
                     <Typography sx={{ fontSize: '0.75em'}}>
                         {formatTimeHeader(dataFilteredDetails[index]?.changed_time)}
@@ -335,15 +338,15 @@ function ModuleEwp() {
                     <Typography sx={{ fontSize: '0.95em', mt: 0.15 }}>
                     {
                         item.iia_status === 'approved-by-all'
-                        ? 'Podpisana przez obie strony'
+                        ? t('EWP_APPROVED_BY_ALL')
                         : item.iia_status === 'approved' && dataFilteredDetails[index]?.last_author ==='kul.pl'
-                        ? `Oczekuje na podpis ${selectedHeiID.toUpperCase()}`
+                        ? `${t('EWP_WAITING_FOR_SIGNATURE_FROM')} ${selectedHeiID.toUpperCase()}`
                         : item.iia_status === 'approved' && dataFilteredDetails[index]?.last_author !='kul.pl'
-                        ? 'Oczekuje na podpis KUL'
+                        ? `${t('EWP_WAITING_FOR_SIGNATURE_FROM')} KUL`
                         : item.iia_status === 'submitted' && dataFilteredDetails[index]?.last_author ==='kul.pl'
-                        ? `Weryfikowana przez ${selectedHeiID.toUpperCase()}`
+                        ? `${t('EWP_BEING_VERIFIED_BY')} ${selectedHeiID.toUpperCase()}`
                         : item.iia_status === 'submitted' && dataFilteredDetails[index]?.last_author !='kul.pl'
-                        ? 'Weryfikowana przez KUL'
+                        ? `${t('EWP_BEING_VERIFIED_BY')} KUL`
                         : item.iia_status
                     }
                 </Typography>
@@ -780,7 +783,7 @@ function ModuleEwp() {
     ) : (selectedErasmusCode && selectedInstitutionName && selectedHeiID) && (
         <>
         <CircularProgress />
-        <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Przygotowuję szczegóły współpracy...</Typography>
+        <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>{t('EWP_PREPARING_COOPERATION_DETAILS')}</Typography>
         </>
     )
     }

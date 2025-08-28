@@ -1,8 +1,13 @@
+import { useTranslation } from 'react-i18next';
+
 const LinearProgressWithLabel = ({ value }) => {
+
+  const { t } = useTranslation();
+
   return (
     <div style={{ width: '100%', marginBottom: '1rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <span>Postęp</span>
+        <span>{t('EWP_PROGRESS')}</span>
         <span>{`${Math.round(value)}%`}</span>
       </div>
       <div
