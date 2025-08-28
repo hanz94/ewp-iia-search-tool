@@ -58,10 +58,10 @@ function ModuleEwp() {
   function getMobilityType(radioValue) {
     const prefix = radioValue.split('-')[0];
     const map = {
-      sta: 'Mobilność pracowników w celu prowadzenia zajęć dydaktycznych',
-      stt: 'Mobilność pracowników w celach szkoleniowych',
-      sms: 'Mobilność studentów w celu studiowania',
-      smt: 'Mobilność studentów w ramach praktyk',
+      sta: t('EWP_STAFF_MOBILITY_FOR_TEACHING'),
+      stt: t('EWP_STAFF_MOBILITY_FOR_TRAINING'),
+      sms: t('EWP_STUDENT_MOBILITY_FOR_STUDIES'),
+      smt: t('EWP_STUDENT_MOBILITY_FOR_TRAINEESHIPS'),
     }
     return map[prefix];
   }
@@ -364,16 +364,16 @@ function ModuleEwp() {
                   partner.signing_date || item.iia_status == 'approved-by-all' ? (
                     <>
                     <Typography sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: i === 0 ? 0 : 1.5 }}>
-                      Umowa podpisana przez {partner.institution.name}
+                      {t('EWP_AGREEMENT_HAS_BEEN_SIGNED_BY')} {partner.institution.name}
                     </Typography>
                     {partner.signing_date && (
                       <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-                      Data: {formatTimeBody(partner.signing_date)}
+                      {t('EWP_DATE')}: {formatTimeBody(partner.signing_date)}
                     </Typography>
                     )}
                     {partner.signing_contact && (
                       <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-                      Podpis: {partner.signing_contact?.contact_names}
+                      {t('EWP_SIGNATURE')}: {partner.signing_contact?.contact_names}
                       {partner.signing_contact?.emails.length > 0 && ` (${partner.signing_contact?.emails.join('; ')})`}
                     </Typography>
                     )}
@@ -383,7 +383,7 @@ function ModuleEwp() {
                       key={`not-signed-${i}`}
                       sx={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', mt: i === 0 ? 0 : 1.5 }}
                     >
-                      Umowa nie została podpisana przez {partner.institution.name}
+                      {t('EWP_AGREEMENT_HAS_NOT_BEEN_SIGNED_BY')} {partner.institution.name}
                     </Typography>
                   )
                 ))}
@@ -394,7 +394,7 @@ function ModuleEwp() {
                     <Typography
                     sx={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', mt: 3 }}
                     >
-                      WARUNKI WSPÓŁPRACY
+                      {t('EWP_COOPERATION_CONDITIONS')}
                     </Typography>
                     
                     <FormControl>
@@ -430,11 +430,11 @@ function ModuleEwp() {
                                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
                                       {staff_teacher.sending_institution.heiID === "kul.pl"
-                                        ? "Wyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"
-                                        : "Przyjazdy pracowników w celu prowadzenia zajęć dydaktycznych"}
+                                        ? t('EWP_OUTGOING_STAFF_MOBILITY_FOR_TEACHING')
+                                        : t('EWP_INCOMING_STAFF_MOBILITY_FOR_TEACHING')}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {staff_teacher?.subject_area
+                                      {t('EWP_ISCED_F_CODE')}: {staff_teacher?.subject_area
                                         .map(
                                           (item) =>
                                             `${item?.isced_f_code}${item?.isced_clarification ? ` (${item?.isced_clarification})` : ''}`
@@ -481,11 +481,11 @@ function ModuleEwp() {
                                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
                                       {staff_training.sending_institution.heiID === "kul.pl"
-                                        ? "Wyjazdy pracowników w celach szkoleniowych"
-                                        : "Przyjazdy pracowników w celach szkoleniowych"}
+                                        ? t('EWP_OUTGOING_STAFF_MOBILITY_FOR_TRAINING')
+                                        : t('EWP_INCOMING_STAFF_MOBILITY_FOR_TRAINING')}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {staff_training?.subject_area
+                                      {t('EWP_ISCED_F_CODE')}: {staff_training?.subject_area
                                         .map(
                                           (item) =>
                                             `${item?.isced_f_code}${item?.isced_clarification ? ` (${item?.isced_clarification})` : ''}`
@@ -532,11 +532,11 @@ function ModuleEwp() {
                                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
                                       {student_study.sending_institution.heiID === "kul.pl"
-                                        ? "Wyjazdy studentów w celu studiowania"
-                                        : "Przyjazdy studentów w celu studiowania"}
+                                        ? t('EWP_OUTGOING_STUDENT_MOBILITY_FOR_STUDIES')
+                                        : t('EWP_INCOMING_STUDENT_MOBILITY_FOR_STUDIES')}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {student_study?.subject_area
+                                      {t('EWP_ISCED_F_CODE')}: {student_study?.subject_area
                                         .map(
                                           (item) =>
                                             `${item?.isced_f_code}${item?.isced_clarification ? ` (${item?.isced_clarification})` : ''}`
@@ -584,11 +584,11 @@ function ModuleEwp() {
                                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
                                       {student_traineeship.sending_institution.heiID === "kul.pl"
-                                        ? "Wyjazdy studentów na praktyki"
-                                        : "Przyjazdy studentów na praktyki"}
+                                        ? t('EWP_OUTGOING_STUDENT_MOBILITY_FOR_TRAINEESHIPS')
+                                        : t('EWP_INCOMING_STUDENT_MOBILITY_FOR_TRAINEESHIPS')}
                                     </Typography>
                                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                                      Kod ISCED-F: {student_traineeship?.subject_area
+                                      {t('EWP_ISCED_F_CODE')}: {student_traineeship?.subject_area
                                         .map(
                                           (item) =>
                                             `${item?.isced_f_code}${item?.isced_clarification ? ` (${item?.isced_clarification})` : ''}`
@@ -623,7 +623,7 @@ function ModuleEwp() {
                   <Typography
                     sx={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', mt: 3 }}
                   >
-                      SZCZEGÓŁY
+                      {t('EWP_DETAILS')}
                   </Typography>
 
                   <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
@@ -634,7 +634,7 @@ function ModuleEwp() {
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 1.3 }}>
                     <Box sx={{ width: '45%' }}>
                       <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
-                          Jednostka wysyłająca
+                          {t('EWP_SENDING_INSTITUTION')}
                       </Typography>
                       <Typography variant="body2" sx={{ textAlign: 'center' }}>
                           {selectedCoopCondObject.sending_institution.name} ({selectedCoopCondObject.sending_institution.heiID})
@@ -649,7 +649,7 @@ function ModuleEwp() {
                     {/* RECEIVING INSTITUTION */}
                     <Box sx={{ width: '45%' }}>
                       <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
-                          Jednostka przyjmująca
+                          {t('EWP_RECEIVING_INSTITUTION')}
                       </Typography>
                       <Typography variant="body2" sx={{ textAlign: 'center' }}>
                           {selectedCoopCondObject.receiving_institution.name} ({selectedCoopCondObject.receiving_institution.heiID})
@@ -660,7 +660,7 @@ function ModuleEwp() {
                   {/* ISCED-F INFO */}
                   <Box sx={{ my: 1.3 }}>
                     <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
-                        Zakres współpracy
+                        {t('EWP_SUBJECT_AREA')}
                     </Typography>
                     <Typography variant="body2" sx={{ textAlign: 'center', my: 0.5 }}>
                       ISCED-F: {selectedCoopCondObject?.subject_area
@@ -680,22 +680,22 @@ function ModuleEwp() {
                   {/* ISCED-F INFO - more details */}
                   <Box>
                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                        Liczba mobilności: {selectedCoopCondObject.mobilities_per_year}
+                        {t('EWP_NUMBER_OF_MOBILITIES')}: {selectedCoopCondObject.mobilities_per_year}
                     </Typography>
                     {(selectedCoopCondObject?.total_days_per_year || selectedCoopCondObject?.total_months_per_year) && (
                       <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                        Maksymalny czas trwania mobilności:{" "}
+                        {t('EWP_MAX_DURATION_OF_MOBILITY')}:{" "}
                         {selectedCoopCondObject.total_days_per_year
-                          ? `${selectedCoopCondObject.total_days_per_year} dni`
-                          : `${selectedCoopCondObject.total_months_per_year} miesięcy`}{" "}
-                        / rok akademicki
+                          ? `${selectedCoopCondObject.total_days_per_year} ${t('EWP_DAYS')}`
+                          : `${selectedCoopCondObject.total_months_per_year} ${t('EWP_MONTHS')}`}{" "}
+                        / {t('EWP_ACADEMIC_YEAR')}
                       </Typography>
                     )}
                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                        Początek: {selectedCoopCondObject.receiving_acad_year[0]}
+                        {t('EWP_START')}: {selectedCoopCondObject.receiving_acad_year[0]}
                     </Typography>
                     <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                        Koniec: {selectedCoopCondObject.receiving_acad_year[1]}
+                        {t('EWP_END')}: {selectedCoopCondObject.receiving_acad_year[1]}
                     </Typography>
                   </Box>
 
@@ -703,7 +703,7 @@ function ModuleEwp() {
                   {selectedCoopCondObject.language_skill.length > 0 && (
                   <Box sx={{ my: 1.8 }}>
                     <Typography variant="body2" sx={{ textAlign: 'center', textDecoration: 'underline' }}>
-                        Wymagania językowe
+                        {t('EWP_LANGUAGE_REQUIREMENTS')}
                     </Typography>
                     {/* Language requirements list - ul, li */}
                     <Box
