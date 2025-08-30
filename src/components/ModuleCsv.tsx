@@ -153,13 +153,13 @@ useEffect(() => {
 
 //watch for data to update erasmuscodes and institutionnames
 useEffect(() => {
-  alasql.promise('SELECT DISTINCT [KOD ERASMUS] FROM ? WHERE [STATUS] != "Szkic" ORDER BY [KOD ERASMUS]', [data]).then((codes) => {
-    const newErasmusCodes = codes.map((item) => item["KOD ERASMUS"]);
+  alasql.promise('SELECT DISTINCT [CSVTH_ERASMUS_CODE] FROM ? WHERE [CSVTH_STATUS] != "CSVTD_DRAFT" ORDER BY [CSVTH_ERASMUS_CODE]', [data]).then((codes) => {
+    const newErasmusCodes = codes.map((item) => item["CSVTH_ERASMUS_CODE"]);
     setErasmusCodes(() => newErasmusCodes);
   });
 
-  alasql.promise('SELECT DISTINCT [NAZWA UCZELNI] FROM ? WHERE [STATUS] != "Szkic" ORDER BY [NAZWA UCZELNI]', [data]).then((institutions) => {
-    const newInstitutionNames = institutions.map((item) => item["NAZWA UCZELNI"]);
+  alasql.promise('SELECT DISTINCT [CSVTH_INSTITUTION_NAME] FROM ? WHERE [CSVTH_STATUS] != "CSVTD_DRAFT" ORDER BY [CSVTH_INSTITUTION_NAME]', [data]).then((institutions) => {
+    const newInstitutionNames = institutions.map((item) => item["CSVTH_INSTITUTION_NAME"]);
     setInstitutionNames(() => newInstitutionNames);
   });
 }, [data])
@@ -168,7 +168,7 @@ useEffect(() => {
 //watch for changes: selectedErasmusCode, selectedInstitutionName
 useEffect(() => {
   if (selectedErasmusCode && selectedInstitutionName) {
-    alasql.promise('SELECT [TYP MOBILNOŚCI], [WYJAZD LUB PRZYJAZD], [LICZBA MOBILNOŚCI], [EQF], [STATUS], [OD], [DO], [ZAKRES WSPÓŁPRACY], [OPIS], [WYMAGANY JĘZYK] FROM ? WHERE [KOD ERASMUS] = ? AND [STATUS] != "Szkic"', [data, selectedErasmusCode]).then((result) => {
+    alasql.promise('SELECT [CSVTH_MOBILITY_TYPE], [CSVTH_NUMBER_OF_MOBILITIES], [CSVTH_STATUS], [CSVTH_SUBJECT_AREA], [CSVTH_SUBJECT_AREA_DESCRIPTION], CSVTH_OPTIONS FROM ? WHERE [CSVTH_ERASMUS_CODE] = ? AND [CSVTH_STATUS] != "CSVTD_DRAFT"', [data, selectedErasmusCode]).then((result) => {
       setDataFiltered(() => result);
     })
   }
@@ -252,9 +252,9 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
             setSelectedErasmusCode(value ? value : null)
             if (value) {
               //find matching institution name
-              alasql.promise(`SELECT DISTINCT [NAZWA UCZELNI] FROM ? WHERE [KOD ERASMUS] = ?`, [data, value]).then((result) => {
+              alasql.promise(`SELECT DISTINCT [CSVTH_INSTITUTION_NAME] FROM ? WHERE [CSVTH_ERASMUS_CODE] = ?`, [data, value]).then((result) => {
                 if (result.length > 0) {
-                  setSelectedInstitutionName(() => result[0]['NAZWA UCZELNI']);
+                  setSelectedInstitutionName(() => result[0]['CSVTH_INSTITUTION_NAME']);
                 }
                 else {
                   setSelectedInstitutionName(() => null);
@@ -277,9 +277,9 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
             setSelectedInstitutionName(value ? value : null);
             if (value) {
               // find matching Erasmus code
-              alasql.promise(`SELECT DISTINCT [KOD ERASMUS] FROM ? WHERE [NAZWA UCZELNI] = ?`, [data, value]).then((result) => {
+              alasql.promise(`SELECT DISTINCT [CSVTH_ERASMUS_CODE] FROM ? WHERE [CSVTH_INSTITUTION_NAME] = ?`, [data, value]).then((result) => {
                 if (result.length > 0) {
-                  setSelectedErasmusCode(() => result[0]['KOD ERASMUS']);
+                  setSelectedErasmusCode(() => result[0]['CSVTH_ERASMUS_CODE']);
                 } else {
                   setSelectedErasmusCode(() => null);
                 }
@@ -307,7 +307,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
                     <TableRow>
                       {Object.keys(dataFiltered[0]).map((key) => (
                         <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }} key={key}>
-                          {key}
+                          {t(key)}
                         </TableCell>
                       ))}
                     </TableRow>
@@ -317,7 +317,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
                       <TableRow key={rowIndex}>
                         {Object.values(row).map((value, colIndex) => (
                           <TableCell key={colIndex}>
-                            {value instanceof Date ? value.toLocaleDateString() : value ? String(value) : "(Brak)"}
+                            {value instanceof Date ? value.toLocaleDateString() : value ? (String(value).startsWith("CSVTD_") ? t(String(value)) : String(value)) : t('CSVTHD_SHOW_DETAILS')}
                           </TableCell>
                         ))}
                       </TableRow>
