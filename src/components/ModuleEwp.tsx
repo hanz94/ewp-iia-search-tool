@@ -772,7 +772,7 @@ function ModuleEwp() {
               </>
             )
             :
-                <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>Ładowanie...</Typography>
+                <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>{t('EWP_LOADING')}</Typography>
             }
             </AccordionDetails>
             </Accordion>
