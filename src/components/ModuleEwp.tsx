@@ -340,9 +340,9 @@ function ModuleEwp() {
                         item.iia_status === 'approved-by-all'
                         ? t('EWP_APPROVED_BY_ALL')
                         : item.iia_status === 'approved' && dataFilteredDetails[index]?.last_author ==='kul.pl'
-                        ? `${t('EWP_WAITING_FOR_SIGNATURE_FROM')} ${selectedHeiID.toUpperCase()}`
+                        ? `${t('EWP_WAITING_FOR_SIGNATURE_FROM', {hei: selectedHeiID.toUpperCase()})}`
                         : item.iia_status === 'approved' && dataFilteredDetails[index]?.last_author !='kul.pl'
-                        ? `${t('EWP_WAITING_FOR_SIGNATURE_FROM')} KUL`
+                        ? `${t('EWP_WAITING_FOR_SIGNATURE_FROM'), {hei: 'KUL'}}`
                         : item.iia_status === 'submitted' && dataFilteredDetails[index]?.last_author ==='kul.pl'
                         ? `${t('EWP_BEING_VERIFIED_BY')} ${selectedHeiID.toUpperCase()}`
                         : item.iia_status === 'submitted' && dataFilteredDetails[index]?.last_author !='kul.pl'

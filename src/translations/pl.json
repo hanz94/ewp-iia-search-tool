@@ -22,7 +22,7 @@
     "EWP_AGREEMENT_WITH": "Umowa z",
     "EWP_LAST_MODIFICATION": "Ostatnia modyfikacja",
     "EWP_APPROVED_BY_ALL": "Podpisana przez obie strony",
-    "EWP_WAITING_FOR_SIGNATURE_FROM": "Oczekuje na podpis",
+    "EWP_WAITING_FOR_SIGNATURE_FROM": "Oczekuje na podpis {{hei}}",
     "EWP_BEING_VERIFIED_BY": "Weryfikowana przez",
     "EWP_AGREEMENT_HAS_BEEN_SIGNED_BY": "Umowa podpisana przez",
     "EWP_AGREEMENT_HAS_NOT_BEEN_SIGNED_BY": "Umowa nie została podpisana przez",

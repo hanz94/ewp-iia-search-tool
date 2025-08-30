@@ -22,7 +22,7 @@
     "EWP_AGREEMENT_WITH": "Agreement with",
     "EWP_LAST_MODIFICATION": "Last modification",
     "EWP_APPROVED_BY_ALL": "Approved by all",
-    "EWP_WAITING_FOR_SIGNATURE_FROM": "Waiting for signature from",
+    "EWP_WAITING_FOR_SIGNATURE_FROM": "Waiting for {{hei}} signature",
     "EWP_BEING_VERIFIED_BY": "Being verified by",
     "EWP_AGREEMENT_HAS_BEEN_SIGNED_BY": "Signed by",
     "EWP_AGREEMENT_HAS_NOT_BEEN_SIGNED_BY": "Not signed by",
