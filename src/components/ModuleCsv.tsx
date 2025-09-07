@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../App.css';
-import { Box, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import * as alasql from 'alasql';
 import * as XLSX from 'xlsx';
 import { useThemeContext } from '../contexts/ThemeContext';
@@ -16,6 +16,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
 import { useTranslation } from 'react-i18next';
+import ModuleCsvDetailsBtn from './ModuleCsvDetailsBtn';
 
 
 alasql.utils.isBrowserify = false;
@@ -164,13 +165,24 @@ useEffect(() => {
   });
 }, [data])
 
+//CSV TABLE - COLUMNS VISIBLE IN TABLE
+const visibleColumns = ['CSVTH_MOBILITY_TYPE', 'CSVTH_NUMBER_OF_MOBILITIES', 'CSVTH_STATUS', 'CSVTH_SUBJECT_AREA', 'CSVTH_SUBJECT_AREA_DESCRIPTION', 'CSVTH_OPTIONS'];
 
 //watch for changes: selectedErasmusCode, selectedInstitutionName
 useEffect(() => {
   if (selectedErasmusCode && selectedInstitutionName) {
-    alasql.promise('SELECT [CSVTH_MOBILITY_TYPE], [CSVTH_NUMBER_OF_MOBILITIES], [CSVTH_STATUS], [CSVTH_SUBJECT_AREA], [CSVTH_SUBJECT_AREA_DESCRIPTION], CSVTH_OPTIONS FROM ? WHERE [CSVTH_ERASMUS_CODE] = ? AND [CSVTH_STATUS] != "CSVTD_DRAFT"', [data, selectedErasmusCode]).then((result) => {
-      setDataFiltered(() => result);
-    })
+    alasql.promise(
+      'SELECT *, CSVTH_OPTIONS FROM ? WHERE [CSVTH_ERASMUS_CODE] = ? AND [CSVTH_STATUS] != "CSVTD_DRAFT"',
+      [data, selectedErasmusCode]
+    ).then((result) => {
+      // Reorder keys so CSVTH_OPTIONS is last
+      const reordered = result.map(row => {
+        const { CSVTH_OPTIONS, ...rest } = row;
+        return { ...rest, CSVTH_OPTIONS }; // put it at the end
+      });
+      setDataFiltered(() => reordered);
+    });
+
   }
 }, [selectedErasmusCode, selectedInstitutionName]);
 
@@ -301,30 +313,42 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
             ({t('AS_OF')}&nbsp;{lastUpdate})
           </Typography>
-          <TableContainer component={Paper} sx={{ maxHeight: dataGridTableHeight + 'px', overflow: 'auto' }}>
+          <TableContainer
+            component={Paper}
+            sx={{ maxHeight: dataGridTableHeight + 'px', overflow: 'auto' }}
+          >
             <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      {Object.keys(dataFiltered[0]).map((key) => (
-                        <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }} key={key}>
-                          {t(key)}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {dataFiltered.map((row, rowIndex) => (
-                      <TableRow key={rowIndex}>
-                        {Object.values(row).map((value, colIndex) => (
-                          <TableCell key={colIndex}>
-                            {value instanceof Date ? value.toLocaleDateString() : value ? (String(value).startsWith("CSVTD_") ? t(String(value)) : String(value)) : t('CSVTHD_SHOW_DETAILS')}
-                          </TableCell>
-                        ))}
-                      </TableRow>
+              <TableHead>
+                <TableRow>
+                  {visibleColumns.map((key) => (
+                    <TableCell
+                      sx={{ fontWeight: 'bold', textAlign: 'center' }}
+                      key={key}
+                    >
+                      {t(key)}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {dataFiltered.map((row, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {visibleColumns.map((key, colIndex) => (
+                      <TableCell key={colIndex}>
+                        {row[key] instanceof Date
+                          ? row[key].toLocaleDateString()
+                          : row[key]
+                          ? String(row[key]).startsWith('CSVTD_')
+                            ? t(String(row[key]))
+                            : String(row[key])
+                          : <ModuleCsvDetailsBtn data={data} rowId={row.id} />}
+                      </TableCell>
                     ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </>
       )}
 
