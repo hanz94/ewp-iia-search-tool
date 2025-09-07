@@ -20,7 +20,7 @@ function ModalWindow() {
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
-      width: 400,
+      width: 525,
       maxWidth: '85%',
       backgroundColor: lighten(theme.palette.background.paper, 0.125),
       boxShadow: theme.shadows[24],
