@@ -10,7 +10,7 @@ interface ModuleCsvDetailsBtnProps {
   rowId: number;
 }
 
-//FORMAT EQF VALUE (shows all possible eqfs separated by comma) OR if CSVTD_* value, show translated value
+// FORMAT EQF VALUE (shows all possible eqfs separated by comma) OR if CSVTD_* value, show translated value
 function formatEqfValue(value: string, t: TFunction): string {
   // check for numbers 6, 7, 8
   const numbers = ["5", "6", "7", "8"].filter(num => value.includes(num));
@@ -49,6 +49,7 @@ function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
         CSVTH_TO,
     } = selectedRow;
 
+    // MODAL CONTENT
     const content = (
         
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
@@ -86,7 +87,7 @@ function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
         </Typography>
         </Box>
 
-
+        {/* formatted EQF */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="body2" sx={{ fontWeight: 'bold', mr: 1 }}>
             {t('CSVTH_EQF')}:
@@ -94,11 +95,12 @@ function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
         <Typography variant="body2">{formatEqfValue(CSVTH_EQF, t) ?? '-'}</Typography>
         </Box>
 
+        {/* IF BLENDED */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="body2" sx={{ fontWeight: 'bold', mr: 1 }}>
             {t('CSVTH_BLENDED')}:
         </Typography>
-        <Typography variant="body2">{CSVTH_BLENDED ?? '-'}</Typography>
+        <Typography variant="body2">{t(CSVTH_BLENDED) ?? '-'}</Typography>
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

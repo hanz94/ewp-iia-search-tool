@@ -37,6 +37,8 @@
     "CSVTD_DRAFT": "Szkic",
     "CSVTD_NOT_APPLICABLE": "(Nie dotyczy)",
     "CSVTD_NULL": "(Brak)",
+    "CSVTD_YES": "TAK",
+    "CSVTD_NO": "NIE",
     "EWP_CONNECTING_TO_EWP_DASHBOARD": "Łączenie z EWP Dashboard...",
     "EWP_ERROR_CONNECTING_TO_SERVER": "Błąd łączenia z serwerem",
     "EWP_REFRESH": "Odśwież",

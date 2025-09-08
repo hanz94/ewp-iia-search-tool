@@ -37,6 +37,8 @@
     "CSVTD_DRAFT": "Draft",
     "CSVTD_NOT_APPLICABLE": "(Not applicable)",
     "CSVTD_NULL": "(Empty)",
+    "CSVTD_YES": "YES",
+    "CSVTD_NO": "NO",
     "EWP_CONNECTING_TO_EWP_DASHBOARD": "Connecting to EWP Dashboard...",
     "EWP_ERROR_CONNECTING_TO_SERVER": "Error connecting to the server",
     "EWP_REFRESH": "Try again",
