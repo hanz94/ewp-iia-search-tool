@@ -3,10 +3,28 @@ import { useTranslation } from 'react-i18next';
 import { useModalContext } from '../contexts/ModalContext';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import alasql from 'alasql';
+import { TFunction } from "i18next";
 
 interface ModuleCsvDetailsBtnProps {
   data: any[];
   rowId: number;
+}
+
+//FORMAT EQF VALUE (shows all possible eqfs separated by comma) OR if CSVTD_* value, show translated value
+function formatEqfValue(value: string, t: TFunction): string {
+  // check for numbers 6, 7, 8
+  const numbers = ["5", "6", "7", "8"].filter(num => value.includes(num));
+  if (numbers.length > 0) {
+    return numbers.join(", ");
+  }
+
+  // handle CSVTD_* values
+  if (value.startsWith("CSVTD_")) {
+    return t(value);
+  }
+
+  // Fallback: return raw value
+  return value;
 }
 
 function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
@@ -19,7 +37,7 @@ function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
 
     if (!selectedRow) return;
 
-    // XLSX COLUMNS FOR DETAILED VIEW GO HERE (except id, which is defined as rowId)
+    // XLSX COLUMNS USED IN DETAILED VIEW GO HERE (except id, which is defined as rowId)
     const {
         CSVTH_ERASMUS_CODE,
         CSVTH_INSTITUTION_NAME,
@@ -73,7 +91,7 @@ function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
         <Typography variant="body2" sx={{ fontWeight: 'bold', mr: 1 }}>
             {t('CSVTH_EQF')}:
         </Typography>
-        <Typography variant="body2">{CSVTH_EQF ?? '-'}</Typography>
+        <Typography variant="body2">{formatEqfValue(CSVTH_EQF, t) ?? '-'}</Typography>
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
