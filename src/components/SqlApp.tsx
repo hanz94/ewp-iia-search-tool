@@ -148,7 +148,7 @@ function SqlApp() {
       <Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.2, fontSize: 12 }}>
           <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', mt: 1.2, mb: 0.5 }}>
-            <Link href="https://www.kul.pl/uczelnie-partnerskie-kul,art_90613.html" target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none', color: 'inherit', fontSize: 10, '&:hover': { color: 'primary.light', textDecoration: 'underline' }, cursor: 'pointer' }}>
+            <Link href="https://www.kul.pl/uczelnie-partnerskie-kul,art_90613.html" target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none', color: 'inherit', fontSize: 12, '&:hover': { color: 'primary.light', textDecoration: 'underline' }, cursor: 'pointer' }}>
               <LinkIcon sx={{ mr: 0.7, fontSize: 16 }} />
               {t('SQL_REDIRECT_TO_BILATERAL')}
             </Link>
@@ -156,7 +156,7 @@ function SqlApp() {
         </Box>
         <Box>
           <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', my: 1 }}>
-            {t('SQL_IRO')} &copy; 2024-2025 Bartłomiej Pawłowski
+            {t('SQL_IRO')} &copy; 2024-2025 <Link href="https://github.com/hanz94" rel="noopener noreferrer" sx={{ textDecoration: 'none', color: 'inherit', '&:hover': { textDecoration: 'underline', color: 'inherit' }, cursor: 'pointer' }}>Bartłomiej Pawłowski</Link>
           </Typography>
         </Box>
       </Box>
