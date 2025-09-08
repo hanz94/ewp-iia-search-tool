@@ -125,7 +125,7 @@ function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
         <Typography variant="body2" sx={{ fontWeight: 'bold', mr: 1 }}>
             {t('CSVTH_LANGUAGE_REQUIREMENTS')}:
         </Typography>
-        <Typography variant="body2">{CSVTH_LANGUAGE_REQUIREMENTS ?? '-'}</Typography>
+        <Typography variant="body2">{t(CSVTH_LANGUAGE_REQUIREMENTS) ?? '-'}</Typography>
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

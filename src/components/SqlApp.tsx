@@ -156,7 +156,7 @@ function SqlApp() {
         </Box>
         <Box>
           <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', my: 1 }}>
-            {t('SQL_IRO')} &copy; 2024-2025 <Link href="https://github.com/hanz94" rel="noopener noreferrer" sx={{ textDecoration: 'none', color: 'inherit', '&:hover': { textDecoration: 'underline', color: 'inherit' }, cursor: 'pointer' }}>Bartłomiej Pawłowski</Link>
+            {t('SQL_IRO')} &copy; 2024-2025 <Link href="https://github.com/hanz94" rel="noopener noreferrer" target="_blank" sx={{ textDecoration: 'none', color: 'inherit', '&:hover': { textDecoration: 'underline', color: 'inherit' }, cursor: 'pointer' }}>Bartłomiej Pawłowski</Link>
           </Typography>
         </Box>
       </Box>
