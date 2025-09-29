@@ -135,13 +135,25 @@ useEffect(() => {
 
 //fetch file on load
 useEffect(() => {
-  fetch('./umowy.xlsx')
-    .then((response) => response.blob())
-    .then((blob) => {
-      const file = new File([blob], 'umowy.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      handleFileChange(file);
-    })
-    .catch((error) => console.error("Error loading file:", error));
+  // fetch('./umowy.xlsx')
+  //   .then((response) => response.blob())
+  //   .then((blob) => {
+  //     const file = new File([blob], 'umowy.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  //     handleFileChange(file);
+  //   })
+  //   .catch((error) => console.error("Error loading file:", error));
+
+   fetch('./iias.csv')
+  .then((response) => response.text())
+  .then((csvText) => {
+    // Remove first line if it declares separator (sep=;)
+    const cleanedCsv = csvText.replace(/^sep=.*\r?\n/, "");
+
+    const file = new File([cleanedCsv], 'iias.csv', { type: 'text/csv' });
+    handleFileChange(file);
+  })
+  .catch((error) => console.error("Error loading file:", error));
+
 
   //fetch last update
   fetch('./lastupdate.txt')
@@ -212,9 +224,9 @@ const handleFileChange = (newInputValue) => {
       let tmppath = URL.createObjectURL(file);
 
       setInputFileValue(() => file);
-      setAlasqlQueryBefore('SELECT *');
-      setAlasqlQuerySource(`FROM ${fileExtension}("${tmppath}", {sheetid: "${defaultSheetName}", autoExt: false, range: "${defaultWorksheetRange}"})`);
-      setAlasqlQueryAfter('');
+      setAlasqlQueryBefore('SELECT ROWNUM() AS id, CASE WHEN [partner_1_ec] = "PL LUBLIN02" THEN [partner_2_ec] ELSE [partner_1_ec] END AS CSVTH_ERASMUS_CODE, CASE WHEN [partner_1_hei_name] = "KATOLICKI UNIWERSYTET LUBELSKI JANA PAWLA II" THEN [partner_2_hei_name] ELSE [partner_1_hei_name] END AS CSVTH_INSTITUTION_NAME, CASE WHEN [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_STA" WHEN [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_STA" WHEN [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_STT" WHEN [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_STT" WHEN [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_SMS" WHEN [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_SMS" WHEN [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_SMT" WHEN [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_SMT" END AS CSVTH_MOBILITY_TYPE, CASE WHEN [coop_cond_eqf] IS NOT NULL THEN CAST([coop_cond_eqf] AS STRING) WHEN [coop_cond_eqf] IS NULL AND [coop_cond_type] LIKE "staff%" THEN "CSVTD_NOT_APPLICABLE" ELSE "CSVTD_NULL" END AS CSVTH_EQF, CASE WHEN [coop_cond_blended_mobility] = "YES" THEN "CSVTD_YES" WHEN [coop_cond_blended_mobility] = "NO" THEN "CSVTD_NO" ELSE "CSVTD_NOT_APPLICABLE" END AS CSVTH_BLENDED, [coop_cond_total_people] AS CSVTH_NUMBER_OF_MOBILITIES, CASE WHEN [iia_status] = "approved-by-all" THEN "CSVTD_APPROVED_BY_ALL" WHEN [iia_status] = "approved" AND [partner_1_hei_id] = "kul.pl" THEN "CSVTD_WAITING_FOR_THEIR_SIGNATURE" WHEN [iia_status] = "approved" AND [partner_1_hei_id] != "kul.pl" THEN "CSVTD_WAITING_FOR_OUR_SIGNATURE" WHEN [iia_status] = "submitted" AND [partner_1_hei_id] = "kul.pl" THEN "CSVTD_BEING_VERIFIED_BY_THEM" WHEN [iia_status] = "submitted" AND [partner_1_hei_id] != "kul.pl" THEN "CSVTD_BEING_VERIFIED_BY_US" WHEN [iia_status] = "draft" THEN "CSVTD_DRAFT" END AS CSVTH_STATUS, CASE WHEN [coop_cond_subject_area] IS NULL THEN "CSVTD_NULL" WHEN [coop_cond_subject_area] LIKE "%,%" OR [coop_cond_subject_area] LIKE "0%" THEN [coop_cond_subject_area] ELSE "0" + [coop_cond_subject_area] END AS CSVTH_SUBJECT_AREA, CASE WHEN [coop_cond_subject_area_clarification] IS NULL THEN "CSVTD_NULL" ELSE [coop_cond_subject_area_clarification] END AS CSVTH_SUBJECT_AREA_DESCRIPTION, CASE WHEN [coop_cond_language] IS NULL THEN "CSVTD_NULL" ELSE [coop_cond_language] END AS CSVTH_LANGUAGE_REQUIREMENTS,[coop_cond_academic_year_start] AS CSVTH_FROM, [coop_cond_academic_year_end] AS CSVTH_TO');
+      setAlasqlQuerySource(`FROM ${fileExtension}("${tmppath}", {separator: ";", sheetid: "${defaultSheetName}", autoExt: false, range: "${defaultWorksheetRange}"})`);
+      setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
 
       // Load data into AlaSQL and set state
       alasql.promise(`SELECT * ${alasqlQuerySource}`).then((result) => {
