@@ -71,10 +71,10 @@ function ModuleCsv() {
 
   //merge AlaSQL query
   useEffect(() => {
-    if (alasqlQueryBefore || alasqlQuerySource || alasqlQueryAfter) {
+    if (alasqlQueryBefore && alasqlQuerySource && alasqlQueryAfter) {
       setAlasqlQuery(alasqlQueryBefore + ' ' + alasqlQuerySource + ' ' + alasqlQueryAfter);
     } else {
-      setAlasqlQuery(''); // Reset alasqlQuery when all inputs are empty
+      setAlasqlQuery(''); // Reset only if something is missing
     }
   }, [alasqlQueryBefore, alasqlQuerySource, alasqlQueryAfter]);
 
@@ -229,12 +229,12 @@ const handleFileChange = (newInputValue) => {
       setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
 
       // Load data into AlaSQL and set state
-      alasql.promise(`SELECT * ${alasqlQuerySource}`).then((result) => {
-        setData(() => result);
-        setOriginalData(() => result);
-        let firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
-        setSlicedData(() => result.slice(0, firstEmptyRowIndex));
-      });
+      // alasql.promise(`SELECT * ${alasqlQuerySource}`).then((result) => {
+      //   setData(() => result);
+      //   setOriginalData(() => result);
+      //   let firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
+      //   setSlicedData(() => result.slice(0, firstEmptyRowIndex));
+      // });
     };
 
     reader.readAsBinaryString(file);
