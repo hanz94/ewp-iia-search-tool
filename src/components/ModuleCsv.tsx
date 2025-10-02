@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import '../App.css';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import * as alasql from 'alasql';
 import * as XLSX from 'xlsx';
 import { useThemeContext } from '../contexts/ThemeContext';
@@ -14,6 +14,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import DownloadIcon from '@mui/icons-material/Download';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
 import { useTranslation } from 'react-i18next';
 import ModuleCsvDetailsBtn from './ModuleCsvDetailsBtn';
@@ -21,6 +24,18 @@ import ModuleCsvDetailsBtn from './ModuleCsvDetailsBtn';
 
 alasql.utils.isBrowserify = false;
 alasql.utils.global.XLSX = XLSX;
+
+
+//Download umowy.xlsx  /   alternative: window.location.href = '${base}umowy.xlsx';
+const handleDownloadXLSX = () => {
+  const base = import.meta.env.BASE_URL;
+  const link = document.createElement('a');
+  link.href = `${base}umowy.xlsx`;
+  link.download = 'umowy.xlsx';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 function ModuleCsv() {
 
@@ -227,14 +242,6 @@ const handleFileChange = (newInputValue) => {
       setAlasqlQueryBefore('SELECT ROWNUM() AS id, CASE WHEN [partner_1_ec] = "PL LUBLIN02" THEN [partner_2_ec] ELSE [partner_1_ec] END AS CSVTH_ERASMUS_CODE, CASE WHEN [partner_1_hei_name] = "KATOLICKI UNIWERSYTET LUBELSKI JANA PAWLA II" THEN [partner_2_hei_name] ELSE [partner_1_hei_name] END AS CSVTH_INSTITUTION_NAME, CASE WHEN [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_STA" WHEN [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_STA" WHEN [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_STT" WHEN [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_STT" WHEN [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_SMS" WHEN [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_SMS" WHEN [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_SMT" WHEN [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_SMT" END AS CSVTH_MOBILITY_TYPE, CASE WHEN [coop_cond_eqf] IS NOT NULL AND [coop_cond_eqf] != "" THEN CAST([coop_cond_eqf] AS STRING) WHEN ([coop_cond_eqf] IS NULL OR [coop_cond_eqf] = "") AND [coop_cond_type] LIKE "staff%" THEN "CSVTD_NOT_APPLICABLE" ELSE "CSVTD_NULL" END AS CSVTH_EQF, CASE WHEN [coop_cond_blended_mobility] = "YES" THEN "CSVTD_YES" WHEN [coop_cond_blended_mobility] = "NO" THEN "CSVTD_NO" ELSE "CSVTD_NOT_APPLICABLE" END AS CSVTH_BLENDED, [coop_cond_total_people] AS CSVTH_NUMBER_OF_MOBILITIES, CASE WHEN [iia_status] = "approved-by-all" THEN "CSVTD_APPROVED_BY_ALL" WHEN [iia_status] = "approved" AND [partner_1_hei_id] = "kul.pl" THEN "CSVTD_WAITING_FOR_THEIR_SIGNATURE" WHEN [iia_status] = "approved" AND [partner_1_hei_id] != "kul.pl" THEN "CSVTD_WAITING_FOR_OUR_SIGNATURE" WHEN [iia_status] = "submitted" AND [partner_1_hei_id] = "kul.pl" THEN "CSVTD_BEING_VERIFIED_BY_THEM" WHEN [iia_status] = "submitted" AND [partner_1_hei_id] != "kul.pl" THEN "CSVTD_BEING_VERIFIED_BY_US" WHEN [iia_status] = "draft" THEN "CSVTD_DRAFT" END AS CSVTH_STATUS, CASE WHEN [coop_cond_subject_area] IS NULL OR [coop_cond_subject_area] = "" THEN "CSVTD_NULL" WHEN [coop_cond_subject_area] LIKE "%,%" OR [coop_cond_subject_area] LIKE "0%" THEN [coop_cond_subject_area] ELSE "0" + [coop_cond_subject_area] END AS CSVTH_SUBJECT_AREA, CASE WHEN [coop_cond_subject_area_clarification] IS NULL OR [coop_cond_subject_area_clarification] = "" THEN "CSVTD_NULL" ELSE [coop_cond_subject_area_clarification] END AS CSVTH_SUBJECT_AREA_DESCRIPTION, CASE WHEN [coop_cond_language] IS NULL OR [coop_cond_language] = "" THEN "CSVTD_NULL" ELSE [coop_cond_language] END AS CSVTH_LANGUAGE_REQUIREMENTS, [coop_cond_academic_year_start] AS CSVTH_FROM, [coop_cond_academic_year_end] AS CSVTH_TO');
       setAlasqlQuerySource(`FROM ${fileExtension}("${tmppath}", {separator: ";", sheetid: "${defaultSheetName}", autoExt: false, range: "${defaultWorksheetRange}"})`);
       setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
-
-      // Load data into AlaSQL and set state
-      // alasql.promise(`SELECT * ${alasqlQuerySource}`).then((result) => {
-      //   setData(() => result);
-      //   setOriginalData(() => result);
-      //   let firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
-      //   setSlicedData(() => result.slice(0, firstEmptyRowIndex));
-      // });
     };
 
     reader.readAsBinaryString(file);
@@ -266,7 +273,9 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
 
       {erasmusCodes.length > 0 && institutionNames.length > 0 && data.length > 0 && (
         <>
-          <Autocomplete
+
+        {/* AUTOCOMPLETE - ERASMUS CODE */}
+        <Autocomplete
           disablePortal
           value={selectedErasmusCode}
           options={erasmusCodes}
@@ -291,6 +300,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           }}
         />
 
+        {/* AUTOCOMPLETE - INSTITUTION NAME */}
         <Autocomplete
           disablePortal
           value={selectedInstitutionName}
@@ -316,6 +326,32 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       </>
       )}
 
+      {/* IF AUTOCOMPLETE EMPTY */}
+      {erasmusCodes.length > 0 && institutionNames.length > 0 && !selectedErasmusCode && !selectedInstitutionName && (
+        <>
+            <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+              {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES')}: {erasmusCodes.length}
+            </Typography>
+            <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+              {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES_NOTE')}
+            </Typography>
+
+            <Tooltip title={
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="body2" sx={{ fontSize: 11 }}>
+                  {t('SQL_DOWNLOAD')} {t('SQL_XLSX_FILENAME')}<br />
+                  {t('LAST_UPDATE')}: {lastUpdate}
+                </Typography>
+              </Box>
+            }>
+              <IconButton sx={{ mt: 0.3 }} onClick={handleDownloadXLSX}>
+                <DownloadIcon />
+              </IconButton>
+            </Tooltip>
+          </>
+      )}
+
+      {/* IF AUTOCOMPLETE SELECTED */}
       {(selectedErasmusCode || selectedInstitutionName) && dataFiltered.length > 0 && (
         <>
           <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>

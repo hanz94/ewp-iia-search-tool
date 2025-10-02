@@ -7,9 +7,6 @@ import * as XLSX from 'xlsx';
 import { useThemeContext } from '../contexts/ThemeContext';
 import { useModalContext } from '../contexts/ModalContext';
 import kulLogoBlack from '../assets/kul_logo-black.jpg';
-import DownloadIcon from '@mui/icons-material/Download';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import LinkIcon from '@mui/icons-material/Link';
 import ReactCountryFlag from "react-country-flag"
 
@@ -18,30 +15,16 @@ import newModalContent from '../utils/newModalContent';
 
 import ModuleCsv from './ModuleCsv';
 import ModuleEwp from './ModuleEwp';
-import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
 import { useTranslation } from 'react-i18next';
-
 
 alasql.utils.isBrowserify = false;
 alasql.utils.global.XLSX = XLSX;
-
-//Download umowy.xlsx  /   alternative: window.location.href = '${base}umowy.xlsx';
-const handleDownload = () => {
-  const base = import.meta.env.BASE_URL;
-  const link = document.createElement('a');
-  link.href = `${base}umowy.xlsx`;
-  link.download = 'umowy.xlsx';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
 
 function SqlApp() {
 
   const { t } = useTranslation();
   const { currentAppLanguage, setCurrentAppLanguage, changeAppLanguage, mode, setMode } = useThemeContext();
   // const { modalOpen } = useModalContext();
-  const { erasmusCodes, selectedErasmusCode, lastUpdate } = useModuleCsvContext();
 
   const [currentModule, setCurrentModule] = useState('CSV');
 
@@ -118,29 +101,6 @@ function SqlApp() {
             {currentModule === 'CSV' && <ModuleCsv />}
             {currentModule === 'EWP' && <ModuleEwp />}
         {/* End Page App */}
-        {currentModule === 'CSV' && erasmusCodes.length > 0 && !selectedErasmusCode && (
-          <>
-            <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-              {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES')}: {erasmusCodes.length}
-            </Typography>
-            <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-              {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES_NOTE')}
-            </Typography>
-
-            <Tooltip title={
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2" sx={{ fontSize: 11 }}>
-                  {t('SQL_DOWNLOAD')} {t('SQL_XLSX_FILENAME')}<br />
-                  {t('LAST_UPDATE')}: {lastUpdate}
-                </Typography>
-              </Box>
-            }>
-              <IconButton sx={{ mt: 0.3 }} onClick={handleDownload}>
-                <DownloadIcon />
-              </IconButton>
-            </Tooltip>
-          </>
-        )}
       </Box>
 
       
