@@ -21,20 +21,38 @@ import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
 import { useTranslation } from 'react-i18next';
 import ModuleCsvDetailsBtn from './ModuleCsvDetailsBtn';
 
-
 alasql.utils.isBrowserify = false;
 alasql.utils.global.XLSX = XLSX;
 
+//Export IIAs to XLSX
+const handleDownloadXLSX = (data, t) => {
+  if (!data || !Array.isArray(data)) {
+    console.error('XLSX Download failed: no data');
+    return;
+  }
+  // Translate XLSX data
+  const translatedData = data.map(row => {
+    const newRow = {};
+    Object.entries(row).forEach(([key, value]) => {
+      let newKey = key;
 
-//Download umowy.xlsx  /   alternative: window.location.href = '${base}umowy.xlsx';
-const handleDownloadXLSX = () => {
-  const base = import.meta.env.BASE_URL;
-  const link = document.createElement('a');
-  link.href = `${base}umowy.xlsx`;
-  link.download = 'umowy.xlsx';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+      // translate headers if they start with CSVTH_
+      if (key.startsWith('CSVTH_')) {
+        newKey = t(key);
+      }
+
+      // translate values if they start with CSVTD_
+      if (typeof value === 'string' && value.startsWith('CSVTD_')) {
+        newRow[newKey] = t(value);
+      } else {
+        newRow[newKey] = value;
+      }
+    });
+    return newRow;
+  });
+
+  // Export to XLSX - trigger download
+  alasql.promise(`SELECT * INTO XLSX("${t('SQL_XLSX_FILENAME')}",{headers:true}) FROM ?`, [translatedData]);
 };
 
 function ModuleCsv() {
@@ -117,7 +135,6 @@ function ModuleCsv() {
 
       updateAvailableColumns(currentWorkbook, currentWorksheet, newCurrentWorksheetRange);
       setAlasqlQuerySource(updatedSource);
-      // setCurrentWorksheetRange(newCurrentWorksheetRange);
     }
   }, [currentWorksheet, rowWithColumnNames]);
 
@@ -150,15 +167,7 @@ useEffect(() => {
 
 //fetch file on load
 useEffect(() => {
-  // fetch('./umowy.xlsx')
-  //   .then((response) => response.blob())
-  //   .then((blob) => {
-  //     const file = new File([blob], 'umowy.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  //     handleFileChange(file);
-  //   })
-  //   .catch((error) => console.error("Error loading file:", error));
-
-   fetch('./iias.csv')
+  fetch('./iias.csv')
   .then((response) => response.text())
   .then((csvText) => {
     // Remove first line if it declares separator (sep=;)
@@ -168,7 +177,6 @@ useEffect(() => {
     handleFileChange(file);
   })
   .catch((error) => console.error("Error loading file:", error));
-
 
   //fetch last update
   fetch('./lastupdate.txt')
@@ -270,7 +278,6 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
 
     return ( 
     <Box>
-
       {erasmusCodes.length > 0 && institutionNames.length > 0 && data.length > 0 && (
         <>
 
@@ -344,7 +351,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
                 </Typography>
               </Box>
             }>
-              <IconButton sx={{ mt: 0.3 }} onClick={handleDownloadXLSX}>
+              <IconButton sx={{ mt: 0.3 }} onClick={() => handleDownloadXLSX(data, t)}>
                 <DownloadIcon />
               </IconButton>
             </Tooltip>
