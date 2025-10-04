@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import '../App.css';
 import { Box, TextField, Typography } from '@mui/material';
 import * as alasql from 'alasql';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { useThemeContext } from '../contexts/ThemeContext';
 import { useModalContext } from '../contexts/ModalContext';
 
@@ -37,9 +37,7 @@ const handleDownloadXLSX = (data, t) => {
       let newKey = key;
 
       // translate headers if they start with CSVTH_
-      if (key.startsWith('CSVTH_')) {
-        newKey = t(key);
-      }
+      if (key.startsWith('CSVTH_')) newKey = t(key);
 
       // translate values if they start with CSVTD_
       if (typeof value === 'string' && value.startsWith('CSVTD_')) {
@@ -51,10 +49,47 @@ const handleDownloadXLSX = (data, t) => {
     return newRow;
   });
 
-  // Export to XLSX - trigger download
-  alasql.promise(`SELECT * INTO XLSX("${t('SQL_XLSX_FILENAME')}",{headers:true}) FROM ?`, [translatedData]);
-};
+  // create worksheet directly from JSON
+  const ws = XLSX.utils.json_to_sheet(translatedData);
 
+  // apply styling
+  const headerStyle = {
+    font: { bold: true },
+    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+    fill: { fgColor: { rgb: 'CCCCCC' } }
+  };
+
+  const cellStyle = {
+    alignment: { wrapText: true, vertical: 'top' }
+  };
+
+  // determine worksheet range
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cellRef = XLSX.utils.encode_cell({ r: R, c: C });
+      if (!ws[cellRef]) continue;
+
+      if (R === 0) ws[cellRef].s = headerStyle; // header row
+      else ws[cellRef].s = cellStyle; // data rows
+    }
+  }
+
+  // set row heights (roughly doubled)
+  const totalRows = range.e.r + 1;
+  ws['!rows'] = Array(totalRows).fill({ hpt: 30 });
+
+  // set column widths
+  const widths = [5, 14, 36, 36, 15, 15, 10, 32, 16, 28, 13, 12, 12];
+  ws['!cols'] = widths.map(w => ({ wch: w }));
+
+  // create workbook and export
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'IIAs (PL LUBLIN02)');
+
+  const filename = t('SQL_XLSX_FILENAME') || 'iias.xlsx';
+  XLSX.writeFile(wb, filename);
+};
 function ModuleCsv() {
 
     const { t } = useTranslation();
