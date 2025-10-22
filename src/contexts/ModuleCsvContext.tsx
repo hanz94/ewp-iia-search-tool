@@ -108,6 +108,17 @@ const handleDownloadXLSX = (data, t) => {
   const widths = [5, 14, 36, 36, 15, 15, 10, 32, 16, 28, 13, 12, 12];
   ws['!cols'] = widths.map(w => ({ wch: w }));
 
+  // enable auto-filter for all columns (in metadata)
+  // the user still has to click on the filter icon after opening the file (impossible to activate the arrows by default with pure-JS)
+  const filterRef = XLSX.utils.encode_range({
+    s: { r: range.s.r, c: range.s.c },
+    e: { r: range.s.r, c: range.e.c }
+  });
+  ws['!autofilter'] = { ref: filterRef };
+
+  // freeze header row (needs xlsx-js-style Pro version)
+  ws['!freeze'] = { xSplit: 0, ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft' };
+
   // create workbook and export
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'IIAs (PL LUBLIN02)');
