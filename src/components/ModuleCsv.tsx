@@ -24,79 +24,13 @@ import ModuleCsvDetailsBtn from './ModuleCsvDetailsBtn';
 alasql.utils.isBrowserify = false;
 alasql.utils.global.XLSX = XLSX;
 
-//Export IIAs to XLSX
-const handleDownloadXLSX = (data, t) => {
-  if (!data || !Array.isArray(data)) {
-    console.error('XLSX Download failed: no data');
-    return;
-  }
-  // Translate XLSX data
-  const translatedData = data.map(row => {
-    const newRow = {};
-    Object.entries(row).forEach(([key, value]) => {
-      let newKey = key;
-
-      // translate headers if they start with CSVTH_
-      if (key.startsWith('CSVTH_')) newKey = t(key);
-
-      // translate values if they start with CSVTD_
-      if (typeof value === 'string' && value.startsWith('CSVTD_')) {
-        newRow[newKey] = t(value);
-      } else {
-        newRow[newKey] = value;
-      }
-    });
-    return newRow;
-  });
-
-  // create worksheet directly from JSON
-  const ws = XLSX.utils.json_to_sheet(translatedData);
-
-  // apply styling
-  const headerStyle = {
-    font: { bold: true },
-    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
-    fill: { fgColor: { rgb: 'CCCCCC' } }
-  };
-
-  const cellStyle = {
-    alignment: { wrapText: true, vertical: 'top' }
-  };
-
-  // determine worksheet range
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  for (let R = range.s.r; R <= range.e.r; ++R) {
-    for (let C = range.s.c; C <= range.e.c; ++C) {
-      const cellRef = XLSX.utils.encode_cell({ r: R, c: C });
-      if (!ws[cellRef]) continue;
-
-      if (R === 0) ws[cellRef].s = headerStyle; // header row
-      else ws[cellRef].s = cellStyle; // data rows
-    }
-  }
-
-  // set row heights (roughly doubled)
-  const totalRows = range.e.r + 1;
-  ws['!rows'] = Array(totalRows).fill({ hpt: 30 });
-
-  // set column widths
-  const widths = [5, 14, 36, 36, 15, 15, 10, 32, 16, 28, 13, 12, 12];
-  ws['!cols'] = widths.map(w => ({ wch: w }));
-
-  // create workbook and export
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'IIAs (PL LUBLIN02)');
-
-  const filename = t('SQL_XLSX_FILENAME') || 'iias.xlsx';
-  XLSX.writeFile(wb, filename);
-};
 function ModuleCsv() {
 
     const { t } = useTranslation();
     const { dataGridTableHeight, trimRows, rowWithColumnNames } = useThemeContext();
     const { modalOpen } = useModalContext();
 
-    const  { data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow } = useModuleCsvContext();
+    const  { data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX } = useModuleCsvContext();
 
   //execute AlaSQL query
   useEffect(() => {

@@ -1,4 +1,6 @@
+import { TFunction } from 'i18next';
 import { createContext, useContext, useState } from 'react';
+import * as XLSX from 'xlsx-js-style';
 
 interface ModuleCsvContextType {
     data: any[];
@@ -42,9 +44,77 @@ interface ModuleCsvContextType {
     lastUpdate: string;
     setLastUpdate: (value: string) => void;
     alasqlRemoveDataAfterFirstEmptyRow: (rows: any[]) => any[];
+    handleDownloadXLSX: (data: any, t: TFunction) => void;
 }
 
 const ModuleCsvContext = createContext<ModuleCsvContextType | undefined>(undefined);
+
+//Export IIAs to XLSX
+const handleDownloadXLSX = (data, t) => {
+  if (!data || !Array.isArray(data)) {
+    console.error('XLSX Download failed: no data');
+    return;
+  }
+  // Translate XLSX data
+  const translatedData = data.map(row => {
+    const newRow = {};
+    Object.entries(row).forEach(([key, value]) => {
+      let newKey = key;
+
+      // translate headers if they start with CSVTH_
+      if (key.startsWith('CSVTH_')) newKey = t(key);
+
+      // translate values if they start with CSVTD_
+      if (typeof value === 'string' && value.startsWith('CSVTD_')) {
+        newRow[newKey] = t(value);
+      } else {
+        newRow[newKey] = value;
+      }
+    });
+    return newRow;
+  });
+
+  // create worksheet directly from JSON
+  const ws = XLSX.utils.json_to_sheet(translatedData);
+
+  // apply styling
+  const headerStyle = {
+    font: { bold: true },
+    alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+    fill: { fgColor: { rgb: 'CCCCCC' } }
+  };
+
+  const cellStyle = {
+    alignment: { wrapText: true, vertical: 'top' }
+  };
+
+  // determine worksheet range
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cellRef = XLSX.utils.encode_cell({ r: R, c: C });
+      if (!ws[cellRef]) continue;
+
+      if (R === 0) ws[cellRef].s = headerStyle; // header row
+      else ws[cellRef].s = cellStyle; // data rows
+    }
+  }
+
+  // set row heights (roughly doubled)
+  const totalRows = range.e.r + 1;
+  ws['!rows'] = Array(totalRows).fill({ hpt: 30 });
+
+  // set column widths
+  const widths = [5, 14, 36, 36, 15, 15, 10, 32, 16, 28, 13, 12, 12];
+  ws['!cols'] = widths.map(w => ({ wch: w }));
+
+  // create workbook and export
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'IIAs (PL LUBLIN02)');
+
+  const filename = t('SQL_XLSX_FILENAME') || 'iias.xlsx';
+  XLSX.writeFile(wb, filename);
+};
 
   //remove data after empty rows - fix for group by
   const alasqlRemoveDataAfterFirstEmptyRow = function (rows) {
@@ -85,7 +155,7 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
   const [lastUpdate, setLastUpdate] = useState('');
 
   return (
-    <ModuleCsvContext.Provider value={{ data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow }}>
+    <ModuleCsvContext.Provider value={{ data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX }}>
       {children}
     </ModuleCsvContext.Provider>
   );
