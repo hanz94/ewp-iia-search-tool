@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import '../App.css';
 import { Box, FormControl, InputLabel, Select, MenuItem, Typography, Link } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import * as alasql from 'alasql';
 import * as XLSX from 'xlsx';
 import { useThemeContext } from '../contexts/ThemeContext';
@@ -9,6 +11,8 @@ import { useModalContext } from '../contexts/ModalContext';
 import kulLogoBlack from '../assets/kul_logo-black.jpg';
 import LinkIcon from '@mui/icons-material/Link';
 import ReactCountryFlag from "react-country-flag"
+import FilterListIcon from '@mui/icons-material/FilterList';
+import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 
 import ModalWindow from './ModalWindow';
 import newModalContent from '../utils/newModalContent';
@@ -40,13 +44,13 @@ function SqlApp() {
       {/* Page Header */}
       <Box sx={{ maxHeight: 70, position: 'relative', top: 0, mb: 1, display: 'flex', justifyContent: 'space-between' }}>
         <Box sx={{ width: 225, height: '100%' }}>
-
+          {/* LOGO */}
           <img
             src={kulLogoBlack}
             style={{ position: 'relative', top: '0px', left: '0px', width: 105, height: 32, cursor: 'pointer' }}
             onClick={() => window.location.reload()}
             />
-
+        {/* I18N LANGUAGE SELECTOR */}
         <FormControl sx={{ minWidth: 105 }}>
           <Select
             value={currentAppLanguage}
@@ -69,25 +73,42 @@ function SqlApp() {
         </FormControl>
 
         </Box>
+
+        {/* FILTERS SELECTOR */}
+        <Tooltip title={
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ fontSize: 13 }}>
+              Wybierz filtry
+            </Typography>
+          </Box>
+        }>
+          <IconButton sx={{ mt: 0.3 }} onClick={() => {}}>
+            <FilterListOffIcon />
+            <Typography variant="body2" sx={{ fontSize: 13 }}>
+              FILTRY
+            </Typography>
+          </IconButton>
+        </Tooltip>
+
+        {/* TOP RIGHT PANEL */}
         <Box sx={{ width: 236 }}>
+          {/* MODULE SELECTOR */}
+          <FormControl sx={{ minWidth: 156 }}>
+            <InputLabel id="module-label">{t('SQL_IIA_DATABASE')}</InputLabel>
+            <Select
+              labelId="module-label"
+              id="module-select"
+              value={currentModule}
+              label={t('SQL_IIA_DATABASE')}
+              sx={{ height: 42 }}
+              onChange={(e) => setCurrentModule(e.target.value)}
+            >
+              <MenuItem value={'CSV'}>{t('SQL_IIA_DATABASE_LOCAL')}</MenuItem>
+              <MenuItem value={'EWP'}>{t('SQL_IIA_DATABASE_REMOTE')}</MenuItem>
+            </Select>
+          </FormControl>
 
-        <FormControl sx={{ minWidth: 156 }}>
-          <InputLabel id="module-label">{t('SQL_IIA_DATABASE')}</InputLabel>
-          <Select
-            labelId="module-label"
-            id="module-select"
-            value={currentModule}
-            label={t('SQL_IIA_DATABASE')}
-            sx={{ height: 42 }}
-            onChange={(e) => setCurrentModule(e.target.value)}
-          >
-            <MenuItem value={'CSV'}>{t('SQL_IIA_DATABASE_LOCAL')}</MenuItem>
-            <MenuItem value={'EWP'}>{t('SQL_IIA_DATABASE_REMOTE')}</MenuItem>
-          </Select>
-        </FormControl>
-
-
-          {/* <SettingsIcon sx={{cursor: 'pointer'}} onClick={() => modalOpen(newModalContent.options)} /> */}
+          {/* THEME SWITCH */}
           <DarkModeSwitch checked={mode === 'dark'} onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')} size={24} sunColor='currentColor' moonColor='currentColor'
           style={{position: 'absolute', top: '0px', right: '0px'}}/>
         </Box>
@@ -95,12 +116,10 @@ function SqlApp() {
       {/* End Page Header */}
       </Box>
 
-
+      {/* MODULE App */}
       <Box>
-        {/* Page App */}
             {currentModule === 'CSV' && <ModuleCsv />}
             {currentModule === 'EWP' && <ModuleEwp />}
-        {/* End Page App */}
       </Box>
 
       
