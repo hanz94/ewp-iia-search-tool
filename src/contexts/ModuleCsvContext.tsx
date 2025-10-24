@@ -43,6 +43,11 @@ interface ModuleCsvContextType {
     setDataFiltered: (value: any[]) => void;
     lastUpdate: string;
     setLastUpdate: (value: string) => void;
+    filters: any[];
+    setFilters: (value: any[]) => void;
+    handleFilterChange: (index: number, newValue: string, newOrdinalCounter: number) => void;
+    resetAllFilters: () => void;
+    resetOrdinalFilters: (index: number) => void;
     alasqlRemoveDataAfterFirstEmptyRow: (rows: any[]) => any[];
     handleDownloadXLSX: (data: any, t: TFunction) => void;
 }
@@ -165,8 +170,42 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
   const [dataFiltered, setDataFiltered] = useState([]);
   const [lastUpdate, setLastUpdate] = useState('');
 
+  // create state for each filter {active: BOOLEAN, value: STRING, ordinalCounter: int}
+  const [filters, setFilters] = useState(
+  Array(4).fill({ active: false, value: '', ordinalCounter: 0 })
+  );
+
+  // handle filter change {index: NUMBER, newValue: STRING, newOrdinalCounter: int}
+  const handleFilterChange = (index, newValue, newOrdinalCounter) => {
+  setFilters((prev) =>
+      prev.map((f, i) =>
+      i === index ? { value: newValue, active: Boolean(newValue), ordinalCounter: newOrdinalCounter } : f
+      )
+  );
+  };
+
+  //reset all filters
+  const resetAllFilters = () => {
+    setFilters(Array(4).fill({ active: false, value: '', ordinalCounter: 0 }));
+  };
+
+  //reset all filters with higher ordinal counter than filter with this index (without touching this filter)
+  const resetOrdinalFilters = (index) => {
+  setFilters((prev) => {
+    // get the reference ordinalCounter for the clicked filter
+    const targetCounter = prev[index].ordinalCounter;
+
+    // return a new array with all filters reset
+    return prev.map((f) =>
+      f.ordinalCounter > targetCounter
+        ? { ...f, value: '', active: false, ordinalCounter: 0 }
+        : f
+    );
+  });
+};
+
   return (
-    <ModuleCsvContext.Provider value={{ data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX }}>
+    <ModuleCsvContext.Provider value={{ data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, filters, setFilters, handleFilterChange, resetAllFilters, resetOrdinalFilters, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX }}>
       {children}
     </ModuleCsvContext.Provider>
   );

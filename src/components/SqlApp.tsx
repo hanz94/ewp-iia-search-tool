@@ -13,6 +13,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import ReactCountryFlag from "react-country-flag"
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import ModalFilterSelector from './ModalFilterSelector';
 
 import ModalWindow from './ModalWindow';
 import newModalContent from '../utils/newModalContent';
@@ -28,7 +29,7 @@ function SqlApp() {
 
   const { t } = useTranslation();
   const { currentAppLanguage, setCurrentAppLanguage, changeAppLanguage, mode, setMode } = useThemeContext();
-  // const { modalOpen } = useModalContext();
+  const { modalOpen } = useModalContext();
 
   const [currentModule, setCurrentModule] = useState('CSV');
 
@@ -82,7 +83,7 @@ function SqlApp() {
             </Typography>
           </Box>
         }>
-          <IconButton sx={{ mt: 0.3 }} onClick={() => {}}>
+          <IconButton sx={{ mt: 0.3 }} onClick={() => {modalOpen({ title: 'Filtruj według', content: <ModalFilterSelector /> })}}>
             <FilterListOffIcon />
             <Typography variant="body2" sx={{ fontSize: 13 }}>
               FILTRY
