@@ -46,6 +46,7 @@ interface ModuleCsvContextType {
     filters: any[];
     setFilters: (value: any[]) => void;
     handleFilterChange: (index: number, newValue: string, newOrdinalCounter: number) => void;
+    handleFilterOptionsChange: (index: number, newOptions: any[]) => void;
     resetAllFilters: () => void;
     resetOrdinalFilters: (index: number) => void;
     alasqlRemoveDataAfterFirstEmptyRow: (rows: any[]) => any[];
@@ -184,6 +185,15 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
   );
   };
 
+  // handle filter options change {index: NUMBER, newOptions: ARRAY}
+  const handleFilterOptionsChange = (index, newOptions) => {
+  setFilters((prev) =>
+      prev.map((f, i) =>
+      i === index ? { ...f, options: newOptions } : f
+      )
+  );
+  };
+
   //reset all filters
 const resetAllFilters = () => {
   setFilters((prev) =>
@@ -206,7 +216,7 @@ const resetAllFilters = () => {
 };
 
   return (
-    <ModuleCsvContext.Provider value={{ data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, filters, setFilters, handleFilterChange, resetAllFilters, resetOrdinalFilters, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX }}>
+    <ModuleCsvContext.Provider value={{ data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, filters, setFilters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX }}>
       {children}
     </ModuleCsvContext.Provider>
   );

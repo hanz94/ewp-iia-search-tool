@@ -6,13 +6,14 @@ import Filter3Icon from '@mui/icons-material/Filter3';
 import Filter4Icon from '@mui/icons-material/Filter4';
 import { useTranslation } from 'react-i18next';
 import { useModuleCsvContext } from "../contexts/ModuleCsvContext";
+import { useEffect } from "react";
 
 function ModalFilterSelector() {
 
     const { t } = useTranslation();
     // filters {active: BOOLEAN, value: STRING, ordinalCounter: int}
     // handleFilterChange {index: NUMBER, newValue: STRING, newOrdinalCounter: int}
-    const { filters, handleFilterChange, resetAllFilters, resetOrdinalFilters } = useModuleCsvContext();
+    const { data, filters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters } = useModuleCsvContext();
 
     // SX for Filters and Autocomplete
     const filterBoxSx = { my: 1.9, display: 'flex', alignItems: 'center', gap: 1.9 };
@@ -28,6 +29,23 @@ function ModalFilterSelector() {
         2: <Filter3Icon />,
         3: <Filter4Icon />,
     };
+
+    //watch for data (filtered) to change options for every filter
+    useEffect(() => {
+
+        // Filter 1 options - CSVTH_MOBILITY_TYPE - Z -> A
+        handleFilterOptionsChange(0, [...new Set(data.map(d => t(d.CSVTH_MOBILITY_TYPE)))].sort((a, b) => b.localeCompare(a)));
+
+        // Filter 2 options - CSVTH_NUMBER_OF_MOBILITIES - ASC
+        handleFilterOptionsChange(1, [...new Set(data.map(d => d.CSVTH_NUMBER_OF_MOBILITIES))].sort((a, b) => Number(a) - Number(b)));
+
+        // Filter 3 options - CSVTH_STATUS
+        handleFilterOptionsChange(2, [...new Set(data.map(d => t(d.CSVTH_STATUS)))].sort());
+
+        // Filter 4 options - CSVTH_SUBJECT_AREA
+        handleFilterOptionsChange(3, [...new Set(data.map(d => d.CSVTH_SUBJECT_AREA))].sort());
+        
+    }, [data]);
 
     return ( 
         <>
