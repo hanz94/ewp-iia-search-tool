@@ -37,7 +37,7 @@ function ModalFilterSelector() {
                 <Autocomplete
                     disablePortal
                     value={filters[0].value}
-                    options={['Opcja1', 'Opcja2', 'Opcja3']}
+                    options={filters[0].options}
                     sx={autocompleteSx}
                     renderInput={(params) => <TextField {...params} label={t("CSVTH_MOBILITY_TYPE")} />}
                     onChange={(e, value) => {
@@ -61,7 +61,7 @@ function ModalFilterSelector() {
                 <Autocomplete
                     disablePortal
                     value={filters[1].value}
-                    options={['Opcja1', 'Opcja2', 'Opcja3']}
+                    options={filters[1].options}
                     sx={autocompleteSx}
                     renderInput={(params) => <TextField {...params} label={t("CSVTH_NUMBER_OF_MOBILITIES")} />}
                     onChange={(e, value) => {
@@ -85,7 +85,7 @@ function ModalFilterSelector() {
                 <Autocomplete
                     disablePortal
                     value={filters[2].value}
-                    options={['Opcja1', 'Opcja2', 'Opcja3']}
+                    options={filters[2].options}
                     sx={autocompleteSx}
                     renderInput={(params) => <TextField {...params} label={t("CSVTH_STATUS")} />}
                     onChange={(e, value) => {
@@ -109,7 +109,7 @@ function ModalFilterSelector() {
                 <Autocomplete
                     disablePortal
                     value={filters[3].value}
-                    options={['Opcja1', 'Opcja2', 'Opcja3']}
+                    options={filters[3].options}
                     sx={autocompleteSx}
                     renderInput={(params) => <TextField {...params} label={t("CSVTH_SUBJECT_AREA")} />}
                     onChange={(e, value) => {

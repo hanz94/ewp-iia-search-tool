@@ -170,25 +170,26 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
   const [dataFiltered, setDataFiltered] = useState([]);
   const [lastUpdate, setLastUpdate] = useState('');
 
-  // create state for each filter {active: BOOLEAN, value: STRING, ordinalCounter: int}
+  // create state for each filter {active: BOOLEAN, value: STRING, ordinalCounter: int, options: ARRAY}
   const [filters, setFilters] = useState(
-  Array(4).fill({ active: false, value: '', ordinalCounter: 0 })
+  Array(4).fill({ active: false, value: '', ordinalCounter: 0, options: ['Opcja1', 'Opcja2', 'Opcja3'] })
   );
 
   // handle filter change {index: NUMBER, newValue: STRING, newOrdinalCounter: int}
   const handleFilterChange = (index, newValue, newOrdinalCounter) => {
   setFilters((prev) =>
       prev.map((f, i) =>
-      i === index ? { value: newValue, active: Boolean(newValue), ordinalCounter: newOrdinalCounter } : f
+      i === index ? { ...f, value: newValue, active: Boolean(newValue), ordinalCounter: newOrdinalCounter } : f
       )
   );
   };
 
   //reset all filters
-  const resetAllFilters = () => {
-    setFilters(Array(4).fill({ active: false, value: '', ordinalCounter: 0 }));
-  };
-
+const resetAllFilters = () => {
+  setFilters((prev) =>
+    prev.map((f) => ({ ...f, active: false, value: '', ordinalCounter: 0 }))
+  );
+};
   //reset all filters with higher ordinal counter than filter with this index (without touching this filter)
   const resetOrdinalFilters = (index) => {
   setFilters((prev) => {
