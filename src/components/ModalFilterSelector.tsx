@@ -30,6 +30,16 @@ function ModalFilterSelector() {
         3: <Filter4Icon />,
     };
 
+    // custom order of statuses in useEffect below (Filter 3)
+    const statusOrder = [
+        "CSVTD_APPROVED_BY_ALL",
+        "CSVTD_WAITING_FOR_THEIR_SIGNATURE",
+        "CSVTD_WAITING_FOR_OUR_SIGNATURE",
+        "CSVTD_BEING_VERIFIED_BY_THEM",
+        "CSVTD_BEING_VERIFIED_BY_US",
+        "CSVTD_DRAFT"
+    ];
+
     //watch for data (filtered) to change options for every filter
     useEffect(() => {
 
@@ -40,7 +50,12 @@ function ModalFilterSelector() {
         handleFilterOptionsChange(1, [...new Set(data.map(d => d.CSVTH_NUMBER_OF_MOBILITIES))].sort((a, b) => Number(a) - Number(b)));
 
         // Filter 3 options - CSVTH_STATUS
-        handleFilterOptionsChange(2, [...new Set(data.map(d => t(d.CSVTH_STATUS)))].sort());
+        handleFilterOptionsChange(
+            2,
+            [...new Set(data.map(d => d.CSVTH_STATUS))]
+                .sort((a, b) => statusOrder.indexOf(a) - statusOrder.indexOf(b)) // sort by custom order
+                .map(s => t(s)) // translate after sorting
+        );
 
         // Filter 4 options - CSVTH_SUBJECT_AREA
         handleFilterOptionsChange(3, [...new Set(iscedFCodes.map(codeObj => `${codeObj.code}: ${codeObj.name}`))].sort());
