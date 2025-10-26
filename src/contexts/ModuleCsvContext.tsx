@@ -51,6 +51,7 @@ interface ModuleCsvContextType {
     resetOrdinalFilters: (index: number) => void;
     alasqlRemoveDataAfterFirstEmptyRow: (rows: any[]) => any[];
     handleDownloadXLSX: (data: any, t: TFunction) => void;
+    iscedFCodes: any[];
 }
 
 const ModuleCsvContext = createContext<ModuleCsvContextType | undefined>(undefined);
@@ -215,8 +216,572 @@ const resetAllFilters = () => {
   });
 };
 
+const iscedFCodes = [
+      {
+          "name": "Education, not further defined",
+          "code": "0110"
+      },
+      {
+          "name": "Education science",
+          "code": "0111"
+      },
+      {
+          "name": "Training for pre-school teachers",
+          "code": "0112"
+      },
+      {
+          "name": "Teacher training without subject specialisation",
+          "code": "0113"
+      },
+      {
+          "name": "Teacher training with subject specialisation",
+          "code": "0114"
+      },
+      {
+          "name": "Education, not elsewhere classified",
+          "code": "0119"
+      },
+      {
+          "name": "Education, inter-disciplinary programmes",
+          "code": "0188"
+      },
+      {
+          "name": "Arts, not further defined",
+          "code": "0210"
+      },
+      {
+          "name": "Audio-visual techniques and media production",
+          "code": "0211"
+      },
+      {
+          "name": "Fashion, interior and industrial design",
+          "code": "0212"
+      },
+      {
+          "name": "Fine arts",
+          "code": "0213"
+      },
+      {
+          "name": "Handicrafts",
+          "code": "0214"
+      },
+      {
+          "name": "Music and performing arts",
+          "code": "0215"
+      },
+      {
+          "name": "Arts, not elsewhere classified",
+          "code": "0219"
+      },
+      {
+          "name": "Humanities (except languages), not further defined",
+          "code": "0220"
+      },
+      {
+          "name": "Religion and theology",
+          "code": "0221"
+      },
+      {
+          "name": "History and archaeology",
+          "code": "0222"
+      },
+      {
+          "name": "Philosophy and ethics",
+          "code": "0223"
+      },
+      {
+          "name": "Humanities (except languages), not elsewhere classified",
+          "code": "0229"
+      },
+      {
+          "name": "Languages, not further defined",
+          "code": "0230"
+      },
+      {
+          "name": "Language acquisition",
+          "code": "0231"
+      },
+      {
+          "name": "Literature and linguistics",
+          "code": "0232"
+      },
+      {
+          "name": "Languages, not elsewhere classified",
+          "code": "0239"
+      },
+      {
+          "name": "Arts and humanities, interdisciplinary programmes",
+          "code": "0288"
+      },
+      {
+          "name": "Social and behavioural sciences, not further defined",
+          "code": "0310"
+      },
+      {
+          "name": "Economics",
+          "code": "0311"
+      },
+      {
+          "name": "Political sciences and civics",
+          "code": "0312"
+      },
+      {
+          "name": "Psychology",
+          "code": "0313"
+      },
+      {
+          "name": "Sociology and cultural studies",
+          "code": "0314"
+      },
+      {
+          "name": "Social and behavioural sciences, not elsewhere classified",
+          "code": "0319"
+      },
+      {
+          "name": "Journalism and information, not further defined",
+          "code": "0320"
+      },
+      {
+          "name": "Journalism and reporting",
+          "code": "0321"
+      },
+      {
+          "name": "Library, information and archival studies",
+          "code": "0322"
+      },
+      {
+          "name": "Journalism and information, not elsewhere classified",
+          "code": "0329"
+      },
+      {
+          "name": "Social sciences, journalism and information, inter-disciplinary programmes",
+          "code": "0388"
+      },
+      {
+          "name": "Business and administration, not further defined",
+          "code": "0410"
+      },
+      {
+          "name": "Accounting and taxation",
+          "code": "0411"
+      },
+      {
+          "name": "Finance, banking and insurance",
+          "code": "0412"
+      },
+      {
+          "name": "Management and administration",
+          "code": "0413"
+      },
+      {
+          "name": "Marketing and advertising",
+          "code": "0414"
+      },
+      {
+          "name": "Secretarial and office work",
+          "code": "0415"
+      },
+      {
+          "name": "Wholesale and retail sales",
+          "code": "0416"
+      },
+      {
+          "name": "Work skills",
+          "code": "0417"
+      },
+      {
+          "name": "Business and administration, not elsewhere classified",
+          "code": "0419"
+      },
+      {
+          "name": "Law, not further defined",
+          "code": "0420"
+      },
+      {
+          "name": "Law",
+          "code": "0421"
+      },
+      {
+          "name": "Law, not elsewhere classified",
+          "code": "0429"
+      },
+      {
+          "name": "Business, administration and law, interdisciplinary programmes",
+          "code": "0488"
+      },
+      {
+          "name": "Biological and related sciences, not further defined",
+          "code": "0510"
+      },
+      {
+          "name": "Biology",
+          "code": "0511"
+      },
+      {
+          "name": "Biochemistry",
+          "code": "0512"
+      },
+      {
+          "name": "Biological and related sciences, not elsewhere classifed",
+          "code": "0519"
+      },
+      {
+          "name": "Environment, not further defined",
+          "code": "0520"
+      },
+      {
+          "name": "Environmental sciences",
+          "code": "0521"
+      },
+      {
+          "name": "Natural environments and wildlife",
+          "code": "0522"
+      },
+      {
+          "name": "Environment, not elsewhere classified",
+          "code": "0529"
+      },
+      {
+          "name": "Physical sciences, not further defined",
+          "code": "0530"
+      },
+      {
+          "name": "Chemistry",
+          "code": "0531"
+      },
+      {
+          "name": "Earth sciences",
+          "code": "0532"
+      },
+      {
+          "name": "Physics",
+          "code": "0533"
+      },
+      {
+          "name": "Physical sciences, not elsewhere classified",
+          "code": "0539"
+      },
+      {
+          "name": "Mathematics and statistics, not further define",
+          "code": "0540"
+      },
+      {
+          "name": "Mathematics",
+          "code": "0541"
+      },
+      {
+          "name": "Statistics",
+          "code": "0542"
+      },
+      {
+          "name": "Mathematics and statistics, not elsewhere classified",
+          "code": "0549"
+      },
+      {
+          "name": "Natural sciences, mathematics and statistics, inter-disciplinary programmes",
+          "code": "0588"
+      },
+      {
+          "name": "Information and Communication Technologies (ICTs), not further defined",
+          "code": "0610"
+      },
+      {
+          "name": "Computer use",
+          "code": "0611"
+      },
+      {
+          "name": "Database and network design and administration",
+          "code": "0612"
+      },
+      {
+          "name": "Software and applications development and analysis",
+          "code": "0613"
+      },
+      {
+          "name": "Information and Communication Technologies (ICTs), not elsewhere classified",
+          "code": "0619"
+      },
+      {
+          "name": "Information and Communication Technologies (ICTs), inter-disciplinary programmes",
+          "code": "0688"
+      },
+      {
+          "name": "Engineering and engineering trades, not further defined",
+          "code": "0710"
+      },
+      {
+          "name": "Chemical engineering and processes",
+          "code": "0711"
+      },
+      {
+          "name": "Environmental protection technology",
+          "code": "0712"
+      },
+      {
+          "name": "Electricity and energy",
+          "code": "0713"
+      },
+      {
+          "name": "Electronics and automation",
+          "code": "0714"
+      },
+      {
+          "name": "Mechanics and metal trades",
+          "code": "0715"
+      },
+      {
+          "name": "Motor vehicles, ships and aircraft",
+          "code": "0716"
+      },
+      {
+          "name": "Engineering and engineering trades, not elsewhere classified",
+          "code": "0719"
+      },
+      {
+          "name": "Manufacturing and processing, not further defined",
+          "code": "0720"
+      },
+      {
+          "name": "Food processing",
+          "code": "0721"
+      },
+      {
+          "name": "Materials (glass, paper, plastic and wood)",
+          "code": "0722"
+      },
+      {
+          "name": "Textiles (clothes, footwear and leather)",
+          "code": "0723"
+      },
+      {
+          "name": "Mining and extraction",
+          "code": "0724"
+      },
+      {
+          "name": "Manufacturing and processing, not elsewhere classified",
+          "code": "0729"
+      },
+      {
+          "name": "Architecture and construction, not further defined",
+          "code": "0730"
+      },
+      {
+          "name": "Architecture and town planning",
+          "code": "0731"
+      },
+      {
+          "name": "Building and civil engineering",
+          "code": "0732"
+      },
+      {
+          "name": "Architecture and construction, not elsewhere classified",
+          "code": "0739"
+      },
+      {
+          "name": "Engineering, manufacturing and construction, inter-disciplinary programmes",
+          "code": "0788"
+      },
+      {
+          "name": "Agriculture, not further defined",
+          "code": "0810"
+      },
+      {
+          "name": "Crop and livestock production",
+          "code": "0811"
+      },
+      {
+          "name": "Horticulture",
+          "code": "0812"
+      },
+      {
+          "name": "Agriculture, not elsewhere classified",
+          "code": "0819"
+      },
+      {
+          "name": "Forestry, not further defined",
+          "code": "0820"
+      },
+      {
+          "name": "Forestry",
+          "code": "0821"
+      },
+      {
+          "name": "Forestry, not elsewhere classified",
+          "code": "0829"
+      },
+      {
+          "name": "Fisheries, not further defined",
+          "code": "0830"
+      },
+      {
+          "name": "Fisheries",
+          "code": "0831"
+      },
+      {
+          "name": "Fisheries, not elsewhere classified",
+          "code": "0839"
+      },
+      {
+          "name": "Veterinary, not further defined",
+          "code": "0840"
+      },
+      {
+          "name": "Veterinary",
+          "code": "0841"
+      },
+      {
+          "name": "Veterinary, not elsewhere classified",
+          "code": "0849"
+      },
+      {
+          "name": "Agriculture, forestry, fisheries, veterinary, inter-disciplinary programmes",
+          "code": "0888"
+      },
+      {
+          "name": "Health, not further define",
+          "code": "0910"
+      },
+      {
+          "name": "Dental studies",
+          "code": "0911"
+      },
+      {
+          "name": "Medicine",
+          "code": "0912"
+      },
+      {
+          "name": "Nursing and midwifery",
+          "code": "0913"
+      },
+      {
+          "name": "Medical diagnostic and treatment technology",
+          "code": "0914"
+      },
+      {
+          "name": "Therapy and rehabilitation",
+          "code": "0915"
+      },
+      {
+          "name": "Pharmacy",
+          "code": "0916"
+      },
+      {
+          "name": "Traditional and complementary medicine and therapy",
+          "code": "0917"
+      },
+      {
+          "name": "Health, not elsewhere classified",
+          "code": "0919"
+      },
+      {
+          "name": "Welfare, not further defined",
+          "code": "0920"
+      },
+      {
+          "name": "Care of the elderly and of disabled adults",
+          "code": "0921"
+      },
+      {
+          "name": "Child care and youth services",
+          "code": "0922"
+      },
+      {
+          "name": "Social work and counselling",
+          "code": "0923"
+      },
+      {
+          "name": "Welfare, not elsewhere classified",
+          "code": "0929"
+      },
+      {
+          "name": "Health and Welfare, inter-disciplinary programmes",
+          "code": "0988"
+      },
+      {
+          "name": "Services not further defined",
+          "code": "1000"
+      },
+      {
+          "name": "Personal services, not further defined",
+          "code": "1010"
+      },
+      {
+          "name": "Domestic services",
+          "code": "1011"
+      },
+      {
+          "name": "Hair and beauty services",
+          "code": "1012"
+      },
+      {
+          "name": "Hotel, restaurants and catering",
+          "code": "1013"
+      },
+      {
+          "name": "Sports",
+          "code": "1014"
+      },
+      {
+          "name": "Travel, tourism and leisure",
+          "code": "1015"
+      },
+      {
+          "name": "Personal services, not elsewhere classified",
+          "code": "1019"
+      },
+      {
+          "name": "Hygiene and occupational health services, not further defined",
+          "code": "1020"
+      },
+      {
+          "name": "Community sanitation",
+          "code": "1021"
+      },
+      {
+          "name": "Occupational health and safety",
+          "code": "1022"
+      },
+      {
+          "name": "Hygiene and occupational health services, not elsewhere classified",
+          "code": "1029"
+      },
+      {
+          "name": "Security services, not further defined",
+          "code": "1030"
+      },
+      {
+          "name": "Military and defence",
+          "code": "1031"
+      },
+      {
+          "name": "Protection of persons and property",
+          "code": "1032"
+      },
+      {
+          "name": "Security services, not elsewhere classified",
+          "code": "1039"
+      },
+      {
+          "name": "Transport services, not further defined",
+          "code": "1040"
+      },
+      {
+          "name": "Transport services",
+          "code": "1041"
+      },
+      {
+          "name": "Transport services, not elsewhere classified",
+          "code": "1049"
+      },
+      {
+          "name": "Services, inter-disciplinary programmes",
+          "code": "1088"
+      }
+  ]
+
+
   return (
-    <ModuleCsvContext.Provider value={{ data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, filters, setFilters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX }}>
+    <ModuleCsvContext.Provider value={{ data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, filters, setFilters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX, iscedFCodes }}>
       {children}
     </ModuleCsvContext.Provider>
   );

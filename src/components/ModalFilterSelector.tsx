@@ -13,7 +13,7 @@ function ModalFilterSelector() {
     const { t } = useTranslation();
     // filters {active: BOOLEAN, value: STRING, ordinalCounter: int}
     // handleFilterChange {index: NUMBER, newValue: STRING, newOrdinalCounter: int}
-    const { data, filters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters } = useModuleCsvContext();
+    const { data, filters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters, iscedFCodes } = useModuleCsvContext();
 
     // SX for Filters and Autocomplete
     const filterBoxSx = { my: 1.9, display: 'flex', alignItems: 'center', gap: 1.9 };
@@ -43,7 +43,7 @@ function ModalFilterSelector() {
         handleFilterOptionsChange(2, [...new Set(data.map(d => t(d.CSVTH_STATUS)))].sort());
 
         // Filter 4 options - CSVTH_SUBJECT_AREA
-        handleFilterOptionsChange(3, [...new Set(data.map(d => d.CSVTH_SUBJECT_AREA))].sort());
+        handleFilterOptionsChange(3, [...new Set(iscedFCodes.map(codeObj => `${codeObj.code}: ${codeObj.name}`))].sort());
         
     }, [data]);
 
