@@ -85,8 +85,8 @@ function SqlApp() {
         }>
           <IconButton sx={{ mt: 0.3 }} onClick={() => {modalOpen({ title: 'Filtruj według', content: <ModalFilterSelector /> })}}>
             <FilterListOffIcon />
-            <Typography variant="body2" sx={{ fontSize: 13 }}>
-              FILTRY
+            <Typography variant="body2" sx={{ fontSize: 13, ml: 0.3, mt: 0.4 }}>
+              FILTRUJ
             </Typography>
           </IconButton>
         </Tooltip>
