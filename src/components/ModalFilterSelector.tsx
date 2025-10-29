@@ -40,16 +40,36 @@ function ModalFilterSelector() {
         "CSVTD_DRAFT"
     ];
 
+    //translation of i18n keys to alasqlQueryAfter in 2nd useEffect below (Filter 1)
+    const csvMobilityTypes = {
+        "CSVTD_OUTGOING_STA": `WHERE [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] = "kul.pl"`,
+        "CSVTD_INCOMING_STA": `WHERE [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] != "kul.pl"`,
+        "CSVTD_OUTGOING_STT": `WHERE [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] = "kul.pl"`,
+        "CSVTD_INCOMING_STT": `WHERE [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] != "kul.pl"`,
+        "CSVTD_OUTGOING_SMS": `WHERE [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] = "kul.pl"`,
+        "CSVTD_INCOMING_SMS": `WHERE [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] != "kul.pl"`,
+        "CSVTD_OUTGOING_SMT": `WHERE [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] = "kul.pl"`,
+        "CSVTD_INCOMING_SMT": `WHERE [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] != "kul.pl"`,
+    }
+
     //watch for data (filtered) to change options for every filter
     useEffect(() => {
 
         // Filter 1 options - CSVTH_MOBILITY_TYPE - Z -> A
-        handleFilterOptionsChange(0, [...new Set(data.map(d => t(d.CSVTH_MOBILITY_TYPE)))].sort((a, b) => b.localeCompare(a)));
+        handleFilterOptionsChange(
+            0,
+            [...new Set(
+                ((filters[0].active && filters[0].ordinalCounter === 0) ? originalData : data)
+                .map(d => d.CSVTH_MOBILITY_TYPE)
+            )]
+                .map(key => ({ key, label: t(key) })) // store i18n key + label
+                .sort((a, b) => b.label.localeCompare(a.label))
+        );
 
         // Filter 2 options - CSVTH_NUMBER_OF_MOBILITIES - ASC
         handleFilterOptionsChange(
-        1,
-        [...new Set(((filters[1].active && filters[1].ordinalCounter === 0 ? originalData : data)
+            1,
+            [...new Set(((filters[1].active && filters[1].ordinalCounter === 0 ? originalData : data)
             .map(d => String(d.CSVTH_NUMBER_OF_MOBILITIES))))]
             .sort((a, b) => Number(a) - Number(b))
         );
@@ -72,7 +92,7 @@ function ModalFilterSelector() {
         let newAlasqlQueryAfter = '';
         filters.map((f, i) => {
             if (f.active && f.value && i === 0) {
-                newAlasqlQueryAfter = `WHERE CSVTH_MOBILITY_TYPE = ${f.value} ORDER BY CSVTH_ERASMUS_CODE`;
+                newAlasqlQueryAfter = csvMobilityTypes[f.value] || 'ORDER BY CSVTH_ERASMUS_CODE';
             }
             if (f.active && f.value && i === 1) {
                 newAlasqlQueryAfter = `WHERE [coop_cond_total_people] = ${f.value} ORDER BY CSVTH_ERASMUS_CODE`;
@@ -87,24 +107,31 @@ function ModalFilterSelector() {
         <>
             {/* FILTER 1 - CSVTH_MOBILITY_TYPE */}
             <Box sx={filterBoxSx}>
-                {filters[0].active ? ordinalCounterIconMap[filters[0].ordinalCounter] : <FilterAltOffIcon />}
+                {filters[0].active
+                    ? ordinalCounterIconMap[filters[0].ordinalCounter]
+                    : <FilterAltOffIcon />
+                }
+
                 <Autocomplete
                     disablePortal
-                    value={filters[0].value}
+                    value={
+                    filters[0].options.find(opt => opt.key === filters[0].value) || null
+                    }
                     options={filters[0].options}
+                    getOptionLabel={(option) => option?.label || ''}
+                    isOptionEqualToValue={(opt, val) => opt.key === val.key}
                     sx={autocompleteSx}
-                    renderInput={(params) => <TextField {...params} label={t("CSVTH_MOBILITY_TYPE")} />}
+                    renderInput={(params) => (
+                    <TextField {...params} label={t("CSVTH_MOBILITY_TYPE")} />
+                    )}
                     onChange={(e, value) => {
-                        let newActiveFiltersCount = activeFiltersCount;
-                        if (!value) {
-                            resetOrdinalFilters(0);
-                            newActiveFiltersCount = 0;
-                        }
-                        if (filters[0].value && value) {
-                            resetOrdinalFilters(0);
-                            newActiveFiltersCount = filters[0].ordinalCounter;
-                        }
-                        handleFilterChange(0, value, newActiveFiltersCount);
+                    const newValue = value ? value.key : '';
+                    const newActiveFiltersCount = value
+                        ? filters[0].ordinalCounter || activeFiltersCount
+                        : 0;
+
+                    if (!value) resetOrdinalFilters(0);
+                    handleFilterChange(0, newValue, newActiveFiltersCount);
                     }}
                 />
             </Box>
