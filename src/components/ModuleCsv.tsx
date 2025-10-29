@@ -30,7 +30,7 @@ function ModuleCsv() {
     const { dataGridTableHeight, trimRows, rowWithColumnNames } = useThemeContext();
     const { modalOpen } = useModalContext();
 
-    const  { data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX } = useModuleCsvContext();
+    const  { data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX, filters } = useModuleCsvContext();
 
   //execute AlaSQL query
   useEffect(() => {
@@ -60,7 +60,8 @@ function ModuleCsv() {
         alasql.promise(alasqlQuery)
         .then((result) => {
           setData(result);
-          setOriginalData(result);
+          //keep original data (identical to data only if no filters are active)
+          if (filters.filter(f => f.active).length === 0) setOriginalData(result);
           let firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
           setSlicedData(result.slice(0,firstEmptyRowIndex));
         })
@@ -108,31 +109,31 @@ function ModuleCsv() {
   }, [currentWorksheet, rowWithColumnNames]);
 
   //Group by
-  useEffect(() => {
-    if (!inputFileValue) {
-      return;
-    }
-    if (inputFileValue && useGroupBy && currentGroupByColumn) {
-      setAlasqlQueryBefore(`SELECT [${currentGroupByColumn}], COUNT(*)`);
-      setAlasqlQueryAfter(`WHERE [${currentGroupByColumn}] IS NOT NULL GROUP BY [${currentGroupByColumn}]`);
-    }
-    else {
-      setAlasqlQueryBefore('SELECT *');
-      setAlasqlQueryAfter('');
-    }
-}, [useGroupBy, currentGroupByColumn]);
+  //   useEffect(() => {
+  //     if (!inputFileValue) {
+  //       return;
+  //     }
+  //     if (inputFileValue && useGroupBy && currentGroupByColumn) {
+  //       setAlasqlQueryBefore(`SELECT [${currentGroupByColumn}], COUNT(*)`);
+  //       setAlasqlQueryAfter(`WHERE [${currentGroupByColumn}] IS NOT NULL GROUP BY [${currentGroupByColumn}]`);
+  //     }
+  //     else {
+  //       setAlasqlQueryBefore('SELECT *');
+  //       setAlasqlQueryAfter('');
+  //     }
+  // }, [useGroupBy, currentGroupByColumn]);
 
-//Trim the first empty row and all rows below
-useEffect(() => {
+  //Trim the first empty row and all rows below
+  // useEffect(() => {
 
-  if (inputFileValue && trimRows === 'true') {
-    setData(slicedData);
-  }
-  else if (inputFileValue && trimRows !== 'true') {
-    setData(originalData);
-  }
+  //   if (inputFileValue && trimRows === 'true') {
+  //     setData(slicedData);
+  //   }
+  //   else if (inputFileValue && trimRows !== 'true') {
+  //     setData(originalData);
+  //   }
 
-}, [originalData, slicedData, trimRows]);
+  // }, [originalData, slicedData, trimRows]);
 
 //fetch file on load
 useEffect(() => {

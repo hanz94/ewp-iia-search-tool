@@ -13,7 +13,7 @@ function ModalFilterSelector() {
     const { t } = useTranslation();
     // filters {active: BOOLEAN, value: STRING, ordinalCounter: int}
     // handleFilterChange {index: NUMBER, newValue: STRING, newOrdinalCounter: int}
-    const { data, filters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters, iscedFCodes } = useModuleCsvContext();
+    const { data, filters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters, iscedFCodes, setAlasqlQueryAfter, originalData } = useModuleCsvContext();
 
     // SX for Filters and Autocomplete
     const filterBoxSx = { my: 1.9, display: 'flex', alignItems: 'center', gap: 1.9 };
@@ -47,7 +47,12 @@ function ModalFilterSelector() {
         handleFilterOptionsChange(0, [...new Set(data.map(d => t(d.CSVTH_MOBILITY_TYPE)))].sort((a, b) => b.localeCompare(a)));
 
         // Filter 2 options - CSVTH_NUMBER_OF_MOBILITIES - ASC
-        handleFilterOptionsChange(1, [...new Set(data.map(d => d.CSVTH_NUMBER_OF_MOBILITIES))].sort((a, b) => Number(a) - Number(b)));
+        handleFilterOptionsChange(
+        1,
+        [...new Set(((filters[1].active && filters[1].ordinalCounter === 0 ? originalData : data)
+            .map(d => String(d.CSVTH_NUMBER_OF_MOBILITIES))))]
+            .sort((a, b) => Number(a) - Number(b))
+        );
 
         // Filter 3 options - CSVTH_STATUS
         handleFilterOptionsChange(
@@ -61,6 +66,22 @@ function ModalFilterSelector() {
         handleFilterOptionsChange(3, [...new Set(iscedFCodes.map(codeObj => `${codeObj.code}: ${codeObj.name}`))].sort());
         
     }, [data]);
+
+    //update alasqlQueryAfter based on selected filters
+    useEffect(() => {
+        let newAlasqlQueryAfter = '';
+        filters.map((f, i) => {
+            if (f.active && f.value && i === 0) {
+                newAlasqlQueryAfter = `WHERE CSVTH_MOBILITY_TYPE = ${f.value} ORDER BY CSVTH_ERASMUS_CODE`;
+            }
+            if (f.active && f.value && i === 1) {
+                newAlasqlQueryAfter = `WHERE [coop_cond_total_people] = ${f.value} ORDER BY CSVTH_ERASMUS_CODE`;
+            }
+        });
+        setAlasqlQueryAfter(newAlasqlQueryAfter);
+        // console.log("DATA", data);
+        // console.log("ORIGINAL DATA", originalData);
+    }, [filters]);
 
     return ( 
         <>
@@ -102,6 +123,7 @@ function ModalFilterSelector() {
                         if (!value) {
                             resetOrdinalFilters(1);
                             newActiveFiltersCount = 0;
+                            setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
                         }
                         if (filters[1].value && value) {
                             resetOrdinalFilters(1);

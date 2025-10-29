@@ -200,6 +200,7 @@ const resetAllFilters = () => {
   setFilters((prev) =>
     prev.map((f) => ({ ...f, active: false, value: '', ordinalCounter: 0 }))
   );
+  setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
 };
   //reset all filters with higher ordinal counter than filter with this index (without touching this filter)
   const resetOrdinalFilters = (index) => {
