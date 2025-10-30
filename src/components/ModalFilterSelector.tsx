@@ -102,21 +102,41 @@ function ModalFilterSelector() {
 
     //update alasqlQueryAfter based on selected filters
     useEffect(() => {
-        let newAlasqlQueryAfter = '';
-        filters.map((f, i) => {
-            if (f.active && f.value && i === 0) {
-                newAlasqlQueryAfter = `${csvMobilityTypes[f.value]} ORDER BY CSVTH_ERASMUS_CODE`;
+        //sort filters by ordinalCounter, so they’re applied in the order the user activated them
+        const activeFilters = filters
+            .filter(f => f.active && f.value)
+            .sort((a, b) => a.ordinalCounter - b.ordinalCounter);
+
+        let whereClauses = [];
+
+        activeFilters.forEach(f => {
+            const i = filters.indexOf(f);
+
+            // Filter 1 – CSVTH_MOBILITY_TYPE
+            if (i === 0) {
+            const clause = csvMobilityTypes[f.value.key || f.value];
+            if (clause) whereClauses.push(clause.replace(/^WHERE\s+/i, ''));
             }
-            if (f.active && f.value && i === 1) {
-                newAlasqlQueryAfter = `WHERE [coop_cond_total_people] = ${f.value} ORDER BY CSVTH_ERASMUS_CODE`;
+
+            // Filter 2 – CSVTH_NUMBER_OF_MOBILITIES
+            if (i === 1) {
+            whereClauses.push(`[coop_cond_total_people] = ${f.value}`);
             }
-            if (f.active && f.value && i === 2) {
-                newAlasqlQueryAfter = `${csvStatuses[f.value.key]} ORDER BY CSVTH_ERASMUS_CODE`;
+
+            // Filter 3 – CSVTH_STATUS
+            if (i === 2) {
+            const clause = csvStatuses[f.value.key || f.value];
+            if (clause) whereClauses.push(clause.replace(/^WHERE\s+/i, ''));
             }
         });
+
+        const newAlasqlQueryAfter = whereClauses.length
+            ? `WHERE ${whereClauses.join(' AND ')} ORDER BY CSVTH_ERASMUS_CODE`
+            : `ORDER BY CSVTH_ERASMUS_CODE`;
+
         setAlasqlQueryAfter(newAlasqlQueryAfter);
-        // console.log("DATA", data);
-        // console.log("ORIGINAL DATA", originalData);
+
+        // console.log('ALASQL QUERY AFTER:', newAlasqlQueryAfter);
     }, [filters]);
 
     return ( 
@@ -146,7 +166,10 @@ function ModalFilterSelector() {
                         ? filters[0].ordinalCounter || activeFiltersCount
                         : 0;
 
-                    if (!value) resetOrdinalFilters(0);
+                    if (!value) {
+                        resetOrdinalFilters(0);
+                        setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
+                    }
                     handleFilterChange(0, newValue, newActiveFiltersCount);
                     }}
                 />
@@ -197,6 +220,7 @@ function ModalFilterSelector() {
                     if (!value) {
                         resetOrdinalFilters(2);
                         newActiveFiltersCount = 0;
+                        setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
                     }
                     if (filters[2].value && value) {
                         resetOrdinalFilters(2);

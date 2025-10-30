@@ -174,7 +174,7 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
 
   // create state for each filter {active: BOOLEAN, value: STRING, ordinalCounter: int, options: ARRAY}
   const [filters, setFilters] = useState(
-  Array(4).fill({ active: false, value: '', ordinalCounter: 0, options: ['Opcja1', 'Opcja2', 'Opcja3'] })
+  Array(4).fill({ active: false, value: '', ordinalCounter: 0, options: [] })
   );
 
   // handle filter change {index: NUMBER, newValue: STRING, newOrdinalCounter: int}
