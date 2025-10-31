@@ -98,15 +98,31 @@ function ModalFilterSelector() {
         // Filter 4 options - CSVTH_SUBJECT_AREA
         handleFilterOptionsChange(
             3,
-            [...new Set(iscedFCodes.map(codeObj => codeObj.code))]
-                .map(code => ({
-                key: code,
-                label: `${code}: ${iscedFCodes.find(c => c.code === code)?.name || ''}`,
-                }))        // store isced-f code key + label
-                .sort((a, b) => a.key.localeCompare(b.key))
-        );
+            (() => {
+                //choose source data based on ordinal counter logic
+                const source =
+                filters[3].active && filters[3].ordinalCounter === 0 ? originalData : data;
 
-        
+                //get all unique subject area codes from the processed data
+                const availableCodes = new Set(
+                source
+                    .map(d => String(d.CSVTH_SUBJECT_AREA).trim())
+                    .filter(v => v && v !== 'CSVTD_NULL')
+                );
+
+                //keep only those ISCED-F codes that exist in data
+                const filteredIscedCodes = iscedFCodes.filter(c =>
+                availableCodes.has(c.code)
+                );
+
+                return filteredIscedCodes
+                .map(c => ({
+                    key: c.code,
+                    label: `${c.code}: ${c.name}`,
+                }))
+                .sort((a, b) => a.key.localeCompare(b.key));
+            })()
+        );
     }, [data]);
 
     //update alasqlQueryAfter based on selected filters
