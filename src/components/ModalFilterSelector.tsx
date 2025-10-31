@@ -96,7 +96,16 @@ function ModalFilterSelector() {
         );
 
         // Filter 4 options - CSVTH_SUBJECT_AREA
-        handleFilterOptionsChange(3, [...new Set(iscedFCodes.map(codeObj => `${codeObj.code}: ${codeObj.name}`))].sort());
+        handleFilterOptionsChange(
+            3,
+            [...new Set(iscedFCodes.map(codeObj => codeObj.code))]
+                .map(code => ({
+                key: code,
+                label: `${code}: ${iscedFCodes.find(c => c.code === code)?.name || ''}`,
+                }))        // store isced-f code key + label
+                .sort((a, b) => a.key.localeCompare(b.key))
+        );
+
         
     }, [data]);
 
@@ -127,6 +136,20 @@ function ModalFilterSelector() {
             if (i === 2) {
             const clause = csvStatuses[f.value.key || f.value];
             if (clause) whereClauses.push(clause.replace(/^WHERE\s+/i, ''));
+            }
+
+            // Filter 4 – CSVTH_SUBJECT_AREA
+            if (i === 3) {
+                const code = f.value?.key || f.value;
+                if (code) {
+                    // if code starts with 0, create version without leading zero
+                    const rawCode = code.startsWith("0") ? code.slice(1) : code;
+
+                    // match either version: with or without the leading 0
+                    whereClauses.push(
+                    `([coop_cond_subject_area] LIKE "%${code}%" OR [coop_cond_subject_area] LIKE "%${rawCode}%")`
+                    );
+                }
             }
         });
 
