@@ -140,16 +140,25 @@ function ModalFilterSelector() {
 
             // Filter 4 – CSVTH_SUBJECT_AREA
             if (i === 3) {
-                const code = f.value?.key || f.value;
-                if (code) {
-                    // if code starts with 0, create version without leading zero
-                    const rawCode = code.startsWith("0") ? code.slice(1) : code;
+            const code = f.value?.key || f.value;
+            if (code) {
+                const rawCode = code.startsWith("0") ? code.slice(1) : code;
+                const variants = [code, rawCode];
 
-                    // match either version: with or without the leading 0
-                    whereClauses.push(
-                    `([coop_cond_subject_area] LIKE "%${code}%" OR [coop_cond_subject_area] LIKE "%${rawCode}%")`
-                    );
+                // if code ends with 0, also include the 3-digit parent version
+                if (code.endsWith("0")) {
+                const parentCode = code.slice(0, -1); // e.g. "0230" → "023"
+                const parentRaw = rawCode.slice(0, -1); // e.g. "230" → "23"
+                variants.push(parentCode, parentRaw);
                 }
+
+                // build precise LIKE conditions (anchored at start or after comma)
+                const likeConditions = variants.map(v => 
+                `([coop_cond_subject_area] LIKE "${v}%" OR [coop_cond_subject_area] LIKE "%,${v}%")`
+                );
+
+                whereClauses.push(`(${likeConditions.join(" OR ")})`);
+            }
             }
         });
 
