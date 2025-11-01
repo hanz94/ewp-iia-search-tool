@@ -17,6 +17,7 @@ import Paper from '@mui/material/Paper';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
 import { useTranslation } from 'react-i18next';
 import ModuleCsvDetailsBtn from './ModuleCsvDetailsBtn';
@@ -315,13 +316,27 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       {/* IF AUTOCOMPLETE EMPTY */}
       {erasmusCodes.length > 0 && institutionNames.length > 0 && !selectedErasmusCode && !selectedInstitutionName && (
         <>
+            {/* SHOW ACTIVE FILTERS COUNTER (if any) */}
+            {filters.filter(f => f.active).length > 0 && (
+              <>
+              <Box sx={{ display: 'flex', justifyContent: 'center'}}>
+                <FilterAltIcon sx={{ fontSize: '1.13rem', mt: 0.26, mr: 0.23 }} />
+                <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5, fontWeight: 'bold' }}>
+                  Aktywne filtry: {filters.filter(f => f.active).length}
+                </Typography>
+              </Box>
+              </>
+            )}
+            {/* SHOW NUMBER OF PARTNER UNIVERSITIES (reduced if filters active) */}
             <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
               {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES')}: {erasmusCodes.length}
             </Typography>
+            {/* PARTNER UNIVERSITIES NOTE */}
             <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
               {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES_NOTE')}
             </Typography>
 
+            {/* DOWNLOAD XLSX BUTTON */}
             <Tooltip title={
               <Box sx={{ textAlign: 'center' }}>
                 <Typography variant="body2" sx={{ fontSize: 11 }}>
