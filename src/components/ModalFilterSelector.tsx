@@ -5,15 +5,17 @@ import Filter2Icon from '@mui/icons-material/Filter2';
 import Filter3Icon from '@mui/icons-material/Filter3';
 import Filter4Icon from '@mui/icons-material/Filter4';
 import { useTranslation } from 'react-i18next';
+import { useThemeContext } from "../contexts/ThemeContext";
 import { useModuleCsvContext } from "../contexts/ModuleCsvContext";
 import { useEffect } from "react";
 
 function ModalFilterSelector() {
 
     const { t } = useTranslation();
+    const { mode } = useThemeContext();
     // filters {active: BOOLEAN, value: STRING, ordinalCounter: int}
     // handleFilterChange {index: NUMBER, newValue: STRING, newOrdinalCounter: int}
-    const { data, filters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters, iscedFCodes, setAlasqlQueryAfter, originalData } = useModuleCsvContext();
+    const { data, erasmusCodes, filters, handleFilterChange, handleFilterOptionsChange, resetAllFilters, resetOrdinalFilters, iscedFCodes, setAlasqlQueryAfter, originalData } = useModuleCsvContext();
 
     // SX for Filters and Autocomplete
     const filterBoxSx = { my: 1.9, display: 'flex', alignItems: 'center', gap: 1.9 };
@@ -213,6 +215,16 @@ function ModalFilterSelector() {
         // console.log('ALASQL QUERY AFTER:', newAlasqlQueryAfter);
     }, [filters]);
 
+    // Filtering - partners counter helper function (sg, paucal, plural)
+    const getPartnerUniversityLabel = (count) => {
+    if (count === 1) return 'uczelnię partnerską';
+    const lastDigit = count % 10;
+    const lastTwoDigits = count % 100;
+    if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14))
+        return 'uczelnie partnerskie';
+    return 'uczelni partnerskich';
+};
+
     return ( 
         <>
             {/* FILTER 1 - CSVTH_MOBILITY_TYPE */}
@@ -328,12 +340,48 @@ function ModalFilterSelector() {
                     }}
                 />
             </Box>
+            
+            {/* FILTERS - SUMMARY */}
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                {/* FILTERING - ON/OFF */}
+                <Typography sx={{ my: 0.2, fontSize: '0.9rem' }}>
+                    Filtrowanie:{' '}
+                    <Box
+                    component="span"
+                    sx={{
+                        color:
+                        activeFiltersCount > 0
+                            ? mode === 'light'
+                            ? 'green'
+                            : 'lightgreen'
+                            : mode === 'light'
+                            ? 'red'
+                            : '#f28b82',
+                        fontWeight: 500,
+                    }}
+                    >
+                    {activeFiltersCount > 0 ? 'Wł.' : 'Wył.'}
+                    </Box>
+                </Typography>
+                {/* FILTERING - PARTNERS COUNTER */}
+                <Typography sx={{ my: 0.2, fontSize: '0.9rem' }}>
+                    Znaleziono {erasmusCodes.length} {getPartnerUniversityLabel(erasmusCodes.length)}
+                </Typography>
+            </Box>
+
 
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
                     variant="contained"
                     disabled={activeFiltersCount === 0}
-                    sx={{ mt: 1, mb: 0.3 }}
+                    sx={{ mt: 1.5, mb: 0.3 }}
                     onClick={resetAllFilters}
                 >
                     Resetuj filtry
