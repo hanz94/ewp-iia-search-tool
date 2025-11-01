@@ -248,13 +248,17 @@ function ModalFilterSelector() {
                     )}
                     onChange={(e, value) => {
                     const newValue = value ? value.key : '';
-                    const newActiveFiltersCount = value
+                    let newActiveFiltersCount = value
                         ? filters[0].ordinalCounter || activeFiltersCount
                         : 0;
 
                     if (!value) {
                         resetOrdinalFilters(0);
                         setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
+                    }
+                    if (filters[0].value && value) {
+                        resetOrdinalFilters(0);
+                        newActiveFiltersCount = filters[0].ordinalCounter;
                     }
                     handleFilterChange(0, newValue, newActiveFiltersCount);
                     }}
