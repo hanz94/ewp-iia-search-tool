@@ -147,7 +147,13 @@ const handleDownloadXLSX = (data, t) => {
 const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [data, setData] = useState([]);
-  const [originalData, setOriginalData] = useState([]);
+  const [originalData, setOriginalData] = useState({
+    base: [],   // SNAP: unfiltered
+    f1: [],     // SNAP: after filter 1
+    f2: [],     // SNAP: after filter 2
+    f3: [],     // SNAP: after filter 3
+    f4: [],     // SNAP: after filter 4
+  });
   const [slicedData, setSlicedData] = useState([]);
 
   const [alasqlQuery, setAlasqlQuery] = useState('');
@@ -196,26 +202,36 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
   };
 
   //reset all filters
-const resetAllFilters = () => {
-  setFilters((prev) =>
-    prev.map((f) => ({ ...f, active: false, value: '', ordinalCounter: 0 }))
-  );
-  setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
-};
+    const resetAllFilters = () => {
+    setFilters((prev) =>
+        prev.map((f) => ({ ...f, active: false, value: '', ordinalCounter: 0 }))
+    );
+    setOriginalData(prev => ({ ...prev, f1: [], f2: [], f3: [], f4: [] }));
+    setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
+    };
+
   //reset all filters with higher ordinal counter than filter with this index (without touching this filter)
   const resetOrdinalFilters = (index) => {
-  setFilters((prev) => {
-    // get the reference ordinalCounter for the clicked filter
-    const targetCounter = prev[index].ordinalCounter;
+    setFilters((prev) => {
+        // get the reference ordinalCounter for the clicked filter
+        const targetCounter = prev[index].ordinalCounter;
 
-    // return a new array with all filters reset
-    return prev.map((f) =>
-      f.ordinalCounter > targetCounter
-        ? { ...f, value: '', active: false, ordinalCounter: 0 }
-        : f
-    );
-  });
-};
+        // return a new array with all filters reset
+        return prev.map((f) =>
+        f.ordinalCounter > targetCounter
+            ? { ...f, value: '', active: false, ordinalCounter: 0 }
+            : f
+        );
+    });
+    // Clear subsequent originalData stages
+    setOriginalData((prev) => {
+        const updated = { ...prev };
+        for (let i = index + 1; i <= 4; i++) {
+        updated[`f${i}`] = [];
+        }
+        return updated;
+    });
+    };
 
 const iscedFCodes = [
       {

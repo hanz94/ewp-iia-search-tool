@@ -58,12 +58,21 @@ function ModuleCsv() {
       }
       else if (inputFileValue && alasqlQuery) {
         alasql.promise(alasqlQuery)
-        .then((result) => {
-          setData(result);
-          //keep original data (identical to data only if no filters are active)
-          if (filters.filter(f => f.active).length === 0) setOriginalData(result);
-          let firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
-          setSlicedData(result.slice(0,firstEmptyRowIndex));
+          .then((result) => {
+            setData(result);
+            setSlicedData(() => {
+              const firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
+              return result.slice(0, firstEmptyRowIndex);
+            });
+            //keep snapshots for each stage of filtering (base, f1, f2, f3, f4)
+            setOriginalData(prev => {
+              const activeCount = filters.filter(f => f.active).length;
+              return {
+                ...prev,
+                base: prev?.base?.length ? prev.base : result,
+                [`f${activeCount}`]: result,
+              };
+          });
         })
         .catch((error) => {
           console.error('Error fetching data:', error);

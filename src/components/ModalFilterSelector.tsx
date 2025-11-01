@@ -64,23 +64,50 @@ function ModalFilterSelector() {
 
     //watch for data (filtered) to change options for every filter
     useEffect(() => {
+        //utility: pick data source for a given filter index (originalData: base, f1, f2, f3, f4)
+        const getSourceDataForFilter = (filterIndex) => {
+            const currentFilter = filters[filterIndex];
+
+            //no active filters at all
+            if (filters.every(f => !f.active)) {
+                return originalData.base || [];
+            }
+
+            //filter is active
+            if (currentFilter.active) {
+                if (currentFilter.ordinalCounter === 0) {
+                return originalData.base || [];
+                } else {
+                // ordinalCounter > 0 -> use the previous stage
+                const prevStageKey = `f${currentFilter.ordinalCounter}`;
+                return originalData[prevStageKey] || [];
+                }
+            }
+
+            //filter is inactive -> use data from the latest active stage
+            if (!currentFilter.active && activeFiltersCount > 0) {
+                return originalData[`f${activeFiltersCount}`] || [];
+            }
+
+            return originalData.base || [];
+        };
 
         // Filter 1 options - CSVTH_MOBILITY_TYPE - Z -> A
         handleFilterOptionsChange(
             0,
             [...new Set(
-                ((filters[0].active && filters[0].ordinalCounter === 0) ? originalData : data)
-                .map(d => d.CSVTH_MOBILITY_TYPE)
+            getSourceDataForFilter(0).map(d => d.CSVTH_MOBILITY_TYPE)
             )]
-                .map(key => ({ key, label: t(key) })) // store i18n key + label
-                .sort((a, b) => b.label.localeCompare(a.label))
+            .map(key => ({ key, label: t(key) }))
+            .sort((a, b) => b.label.localeCompare(a.label))
         );
 
         // Filter 2 options - CSVTH_NUMBER_OF_MOBILITIES - ASC
         handleFilterOptionsChange(
             1,
-            [...new Set(((filters[1].active && filters[1].ordinalCounter === 0 ? originalData : data)
-            .map(d => String(d.CSVTH_NUMBER_OF_MOBILITIES))))]
+            [...new Set(
+            getSourceDataForFilter(1).map(d => String(d.CSVTH_NUMBER_OF_MOBILITIES))
+            )]
             .sort((a, b) => Number(a) - Number(b))
         );
 
@@ -88,41 +115,40 @@ function ModalFilterSelector() {
         handleFilterOptionsChange(
             2,
             [...new Set(
-                ((filters[2].active && filters[2].ordinalCounter === 0 ? originalData : data)
-                .map(d => d.CSVTH_STATUS))
+            getSourceDataForFilter(2).map(d => d.CSVTH_STATUS)
             )]
-                .sort((a, b) => statusOrder.indexOf(a) - statusOrder.indexOf(b))  // sort by custom order
-                .map(key => ({ key, label: t(key) }))  // store i18n key + label
+            .sort((a, b) => statusOrder.indexOf(a) - statusOrder.indexOf(b))
+            .map(key => ({ key, label: t(key) }))
         );
 
         // Filter 4 options - CSVTH_SUBJECT_AREA
         handleFilterOptionsChange(
             3,
             (() => {
-                //choose source data based on ordinal counter logic
-                const source =
-                filters[3].active && filters[3].ordinalCounter === 0 ? originalData : data;
+            //choose source data based on ordinal counter logic
+            const source = getSourceDataForFilter(3);
 
-                //get all unique subject area codes from the processed data
-                const availableCodes = new Set(
+            //get all unique subject area codes from the processed data
+            const availableCodes = new Set(
                 source
-                    .map(d => String(d.CSVTH_SUBJECT_AREA).trim())
-                    .filter(v => v && v !== 'CSVTD_NULL')
-                );
+                .map(d => String(d.CSVTH_SUBJECT_AREA).trim())
+                .filter(v => v && v !== "CSVTD_NULL")
+            );
 
-                //keep only those ISCED-F codes that exist in data
-                const filteredIscedCodes = iscedFCodes.filter(c =>
+            //keep only those ISCED-F codes that exist in data
+            const filteredIscedCodes = iscedFCodes.filter(c =>
                 availableCodes.has(c.code)
-                );
+            );
 
-                return filteredIscedCodes
+            return filteredIscedCodes
                 .map(c => ({
-                    key: c.code,
-                    label: `${c.code}: ${c.name}`,
+                key: c.code,
+                label: `${c.code}: ${c.name}`,
                 }))
                 .sort((a, b) => a.key.localeCompare(b.key));
             })()
         );
+        // console.log(originalData);
     }, [data]);
 
     //update alasqlQueryAfter based on selected filters
