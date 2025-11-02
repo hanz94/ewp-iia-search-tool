@@ -190,6 +190,9 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
       i === index ? { ...f, value: newValue, active: Boolean(newValue), ordinalCounter: newOrdinalCounter } : f
       )
   );
+  //reset selected erasmus code and institution name
+  setSelectedErasmusCode(null);
+  setSelectedInstitutionName(null);
   };
 
   // handle filter options change {index: NUMBER, newOptions: ARRAY}
@@ -208,6 +211,9 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
     );
     setOriginalData(prev => ({ ...prev, f1: [], f2: [], f3: [], f4: [] }));
     setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
+    //reset selected erasmus code and institution name
+    setSelectedErasmusCode(null);
+    setSelectedInstitutionName(null);
     };
 
   //reset all filters with higher ordinal counter than filter with this index (without touching this filter)
