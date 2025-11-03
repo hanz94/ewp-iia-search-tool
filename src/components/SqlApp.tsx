@@ -66,10 +66,10 @@ function SqlApp() {
               <ReactCountryFlag countryCode="GB" svg style={{ marginRight: 8 }} />
               EN
             </MenuItem>
-            {/* <MenuItem value={"tr"} sx={{ height: localisationMenuItemHeight }}>
+            <MenuItem value={"tr"} sx={{ height: localisationMenuItemHeight }}>
               <ReactCountryFlag countryCode="TR" svg style={{ marginRight: 8 }} />
               TR
-            </MenuItem> */}
+            </MenuItem>
           </Select>
         </FormControl>
 

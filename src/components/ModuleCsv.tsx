@@ -20,6 +20,7 @@ import Tooltip from '@mui/material/Tooltip';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useModuleCsvContext } from '../contexts/ModuleCsvContext';
 import { useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import ModuleCsvDetailsBtn from './ModuleCsvDetailsBtn';
 
 alasql.utils.isBrowserify = false;
@@ -356,11 +357,19 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
       {(selectedErasmusCode || selectedInstitutionName) && dataFiltered.length > 0 && (
         <>
           <Typography sx={{ fontSize: 12, textAlign: 'center', mt: 1 }}>
-            <b>{t('THIS_INSTITUTION_NAME')}&nbsp;({t('THIS_INSTITUTION_EC')})&nbsp;</b>{t('CSV_INSTITUTION_HAS_IIA_WITH_PARTNER')} <b>{selectedInstitutionName && selectedInstitutionName.replace(/ /g, '\u00A0')}&nbsp;({selectedErasmusCode && selectedErasmusCode.replace(/ /g, '\u00A0')})</b> {t('CSV_IN_SCOPE')}:
+            <b>{t('THIS_INSTITUTION_NAME')}&nbsp;({t('THIS_INSTITUTION_EC')})&nbsp;</b>
+            <Trans
+              i18nKey="CSV_INSTITUTION_HAS_IIA_WITH_PARTNER"
+              values={{
+                partner: `${selectedInstitutionName.replace(/ /g, '\u00A0')} (${selectedErasmusCode.replace(/ /g, '\u00A0')})`
+              }}
+              components={{ b: <b /> }}
+            />
+            &nbsp;{t('CSV_IN_SCOPE')}:
           </Typography>
 
           <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
-            ({t('AS_OF')}&nbsp;{lastUpdate})
+            ({t('AS_OF', {time: lastUpdate})})
           </Typography>
           <TableContainer
             component={Paper}

@@ -294,7 +294,7 @@ function ModuleEwp() {
             <b>{t('THIS_INSTITUTION_NAME')}&nbsp;({t('THIS_INSTITUTION_EC')})</b> {t('EWP_HAS')} {dataFiltered.length} {getAgreementLabel(t, dataFiltered.length)} {t('EWP_WITH')} <b>{selectedInstitutionName.replace(/ /g, '\u00A0')} ({selectedErasmusCode.replace(/ /g, '\u00A0')})</b>:
         </Typography>
         <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
-            {t('AS_OF')} {new Date(selectedHeiTimestamp).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '').replace(/\./g, '-')}
+            {t('AS_OF', {time: new Date(selectedHeiTimestamp).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '').replace(/\./g, '-')})}
         </Typography>
 
         {dataFiltered.map((item, index) => {
@@ -319,7 +319,7 @@ function ModuleEwp() {
             >
                 <Box component="span" sx={{ width: '50%' }}>
                 <Typography sx={{ mb: 0.3 }}>
-                    {t('EWP_AGREEMENT_WITH')} {selectedHeiID.toUpperCase()} ({index+1})
+                    {t('EWP_AGREEMENT_WITH', {hei: selectedHeiID.toUpperCase()})} ({index+1})
                 </Typography>
                 {dataFilteredDetails.length > 0 && (
                     <>
