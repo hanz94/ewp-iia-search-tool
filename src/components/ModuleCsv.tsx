@@ -361,7 +361,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
             <Trans
               i18nKey="CSV_INSTITUTION_HAS_IIA_WITH_PARTNER"
               values={{
-                partner: `${selectedInstitutionName.replace(/ /g, '\u00A0')} (${selectedErasmusCode.replace(/ /g, '\u00A0')})`
+                partner: `${selectedInstitutionName?.replace(/ /g, '\u00A0')} (${selectedErasmusCode?.replace(/ /g, '\u00A0')})`
               }}
               components={{ b: <b /> }}
             />
