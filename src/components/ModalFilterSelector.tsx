@@ -217,12 +217,12 @@ function ModalFilterSelector() {
 
     // Filtering - partners counter helper function (sg, paucal, plural)
     const getPartnerUniversityLabel = (count) => {
-    if (count === 1) return 'uczelnię partnerską';
+    if (count === 1) return t('MFS_PARTNER_UNIVERSITY_SINGULAR');
     const lastDigit = count % 10;
     const lastTwoDigits = count % 100;
     if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14))
-        return 'uczelnie partnerskie';
-    return 'uczelni partnerskich';
+        return t('MFS_PARTNER_UNIVERSITIES_PAUCAL_2_4');
+    return t('MFS_PARTNER_UNIVERSITIES_PLURAL_5');
 };
 
     return ( 
@@ -356,7 +356,7 @@ function ModalFilterSelector() {
             >
                 {/* FILTERING - ON/OFF */}
                 <Typography sx={{ my: 0.2, fontSize: '0.9rem' }}>
-                    Filtrowanie:{' '}
+                    {t('MFS_FILTERING')}:{' '}
                     <Box
                     component="span"
                     sx={{
@@ -371,12 +371,12 @@ function ModalFilterSelector() {
                         fontWeight: 500,
                     }}
                     >
-                    {activeFiltersCount > 0 ? 'Wł.' : 'Wył.'}
+                    {activeFiltersCount > 0 ? t('MFS_FILTERING_ON') : t('MFS_FILTERING_OFF')}
                     </Box>
                 </Typography>
                 {/* FILTERING - PARTNERS COUNTER */}
                 <Typography sx={{ my: 0.2, fontSize: '0.9rem' }}>
-                    Znaleziono {erasmusCodes.length} {getPartnerUniversityLabel(erasmusCodes.length)}
+                    {t('MFS_FOUND')} {erasmusCodes.length} {getPartnerUniversityLabel(erasmusCodes.length)}
                 </Typography>
             </Box>
 
@@ -388,7 +388,7 @@ function ModalFilterSelector() {
                     sx={{ mt: 1.5, mb: 0.3 }}
                     onClick={resetAllFilters}
                 >
-                    Resetuj filtry
+                    {t('MFS_RESET_FILTERS')}
                 </Button>
             </Box>
         </>

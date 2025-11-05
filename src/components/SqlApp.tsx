@@ -79,14 +79,14 @@ function SqlApp() {
         <Tooltip title={
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body2" sx={{ fontSize: 13 }}>
-              Wybierz filtry
+              {t('SQL_SELECT_FILTERS')}
             </Typography>
           </Box>
         }>
-          <IconButton sx={{ mt: 0.3 }} onClick={() => {modalOpen({ title: 'Filtruj według', content: <ModalFilterSelector /> })}}>
+          <IconButton sx={{ mt: 0.3 }} onClick={() => {modalOpen({ title: t('SQL_FILTER_BY'), content: <ModalFilterSelector /> })}}>
             <FilterListOffIcon />
             <Typography variant="body2" sx={{ fontSize: 13, ml: 0.3, mt: 0.4 }}>
-              FILTRUJ
+              {t('SQL_FILTER')}
             </Typography>
           </IconButton>
         </Tooltip>

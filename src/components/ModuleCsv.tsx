@@ -323,7 +323,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
               <Box sx={{ display: 'flex', justifyContent: 'center'}}>
                 <FilterAltIcon sx={{ fontSize: '1.13rem', mt: 0.26, mr: 0.23 }} />
                 <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5, fontWeight: 'bold' }}>
-                  Aktywne filtry: {filters.filter(f => f.active).length}
+                  {t('CSV_ACTIVE_FILTERS')}: {filters.filter(f => f.active).length}
                 </Typography>
               </Box>
               </>
