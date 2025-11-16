@@ -125,30 +125,48 @@ function ModalFilterSelector() {
 
         // Filter 4 options - CSVTH_SUBJECT_AREA
         handleFilterOptionsChange(
-            3,
-            (() => {
-            //choose source data based on ordinal counter logic
+        3,
+        (() => {
             const source = getSourceDataForFilter(3);
 
-            //get all unique subject area codes from the processed data
-            const availableCodes = new Set(
-                source
-                .map(d => String(d.CSVTH_SUBJECT_AREA).trim())
-                .filter(v => v && v !== "CSVTD_NULL")
+            // STEP 1: Extract all raw, split codes
+            const rawCodes = new Set(
+                source.flatMap(d =>
+                    String(d.CSVTH_SUBJECT_AREA || "")
+                        .split(",")
+                        .map(v => v.trim())
+                        .filter(v => v && v !== "CSVTD_NULL")
+                )
             );
 
-            //keep only those ISCED-F codes that exist in data
+            // STEP 2: Build a set containing both original codes
+            // and their inferred 2-digit prefixes.
+            const expandedCodes = new Set(rawCodes);
+
+            rawCodes.forEach(code => {
+                if (code.length === 4) {
+                    // Example: "0421" → add "04"
+                    expandedCodes.add(code.slice(0, 2));
+                }
+                if (code.length === 3) {
+                    // Rare but safe: "421" → "42"
+                    expandedCodes.add(code.slice(0, 2));
+                }
+            });
+
+            // STEP 3: Filter ISCED table to keep only codes that appear
+            // (either directly or as inferred 2-digit prefixes).
             const filteredIscedCodes = iscedFCodes.filter(c =>
-                availableCodes.has(c.code)
+                expandedCodes.has(c.code)
             );
 
             return filteredIscedCodes
                 .map(c => ({
-                key: c.code,
-                label: `${c.code}: ${c.name}`,
+                    key: c.code,
+                    label: `${c.code}: ${c.name}`,
                 }))
                 .sort((a, b) => a.key.localeCompare(b.key));
-            })()
+        })()
         );
         // console.log(originalData);
     }, [data]);
@@ -185,23 +203,76 @@ function ModalFilterSelector() {
             // Filter 4 – CSVTH_SUBJECT_AREA
             if (i === 3) {
             const code = f.value?.key || f.value;
-            if (code) {
-                const rawCode = code.startsWith("0") ? code.slice(1) : code;
-                const variants = [code, rawCode];
+            if (!code) return;
 
-                // if code ends with 0, also include the 3-digit parent version
+            const rawNoZero = code.startsWith("0") ? code.slice(1) : code;
+            const len = code.length;
+            const variants = new Set();
+
+            // --- 4-digit selected ---
+            if (len === 4) {
+                // always match exact + raw form
+                variants.add(code);      // "0110"
+                variants.add(rawNoZero); // "110"
+
+                // if ends with 0 → also match parent 3-digit
                 if (code.endsWith("0")) {
-                const parentCode = code.slice(0, -1); // e.g. "0230" → "023"
-                const parentRaw = rawCode.slice(0, -1); // e.g. "230" → "23"
-                variants.push(parentCode, parentRaw);
+                    const parent3 = code.slice(0, 3);                  // "011"
+                    const parent3Raw = parent3.replace(/^0+/, "");     // "11"
+                    variants.add(parent3);                             // "011"
+                    variants.add(parent3Raw);                          // "11"
                 }
+            }
 
-                // build precise LIKE conditions (anchored at start or after comma)
-                const likeConditions = variants.map(v => 
-                `([coop_cond_subject_area] LIKE "${v}%" OR [coop_cond_subject_area] LIKE "%,${v}%")`
-                );
+            // --- 3-digit selected (fallback, even if not used by UI) ---
+            else if (len === 3) {
+                variants.add(code);
+                variants.add(rawNoZero);
+                variants.add(code + "0");      // "023" → "0230"
+                variants.add(rawNoZero + "0"); // "23" → "230"
+            }
 
-                whereClauses.push(`(${likeConditions.join(" OR ")})`);
+            // --- 2-digit selected ---
+            else if (len === 2) {
+                variants.add(code);      // "02"
+                variants.add(rawNoZero); // "2"
+                // also match padded 3-digit broken CSV form ("11" → "011")
+                variants.add(code.padStart(3, "0"));
+            }
+
+            const clauses = [];
+
+            // === 2-digit: broad prefix searching ===
+            if (len === 2) {
+                const padded = code.padStart(3, "0"); // "02" → "002" (safe)
+
+                const twoDigitPatterns = [code, rawNoZero, padded];
+
+                twoDigitPatterns.forEach(v => {
+                    clauses.push(
+                        `(CAST([coop_cond_subject_area] AS STRING) LIKE "${v}%" ` +
+                        `OR CAST([coop_cond_subject_area] AS STRING) LIKE "%,${v}%")`
+                    );
+                });
+            }
+
+            // === 3- and 4-digit: exact + comma-aware matching ===
+            else {
+                variants.forEach(v => {
+                    if (!v) return;
+                    clauses.push(
+                        `(` +
+                        `CAST([coop_cond_subject_area] AS STRING) = "${v}" ` +
+                        `OR CAST([coop_cond_subject_area] AS STRING) LIKE "${v},%" ` +
+                        `OR CAST([coop_cond_subject_area] AS STRING) LIKE "%,${v},%" ` +
+                        `OR CAST([coop_cond_subject_area] AS STRING) LIKE "%,${v}"` +
+                        `)`
+                    );
+                });
+            }
+
+            if (clauses.length) {
+                whereClauses.push(`(${clauses.join(" OR ")})`);
             }
             }
         });

@@ -242,6 +242,10 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
 const iscedFCodes = [
       {
           "name": "Education, not further defined",
+          "code": "01"
+      },
+      {
+          "name": "Education, not further defined",
           "code": "0110"
       },
       {
@@ -267,6 +271,10 @@ const iscedFCodes = [
       {
           "name": "Education, inter-disciplinary programmes",
           "code": "0188"
+      },
+      {
+          "name": "Arts and Humanities",
+          "code": "02"
       },
       {
           "name": "Arts, not further defined",
@@ -337,6 +345,10 @@ const iscedFCodes = [
           "code": "0288"
       },
       {
+          "name": "Social Sciences, Journalism and Information",
+          "code": "03"
+      },
+      {
           "name": "Social and behavioural sciences, not further defined",
           "code": "0310"
       },
@@ -379,6 +391,10 @@ const iscedFCodes = [
       {
           "name": "Social sciences, journalism and information, inter-disciplinary programmes",
           "code": "0388"
+      },
+      {
+          "name": "Business, Administration and Law",
+          "code": "04"
       },
       {
           "name": "Business and administration, not further defined",
@@ -431,6 +447,10 @@ const iscedFCodes = [
       {
           "name": "Business, administration and law, interdisciplinary programmes",
           "code": "0488"
+      },
+      {
+          "name": "Natural Sciences, Mathematics and Statistics",
+          "code": "05"
       },
       {
           "name": "Biological and related sciences, not further defined",
@@ -505,6 +525,10 @@ const iscedFCodes = [
           "code": "0588"
       },
       {
+          "name": "Information and Communication Technologies",
+          "code": "06"
+      },
+      {
           "name": "Information and Communication Technologies (ICTs), not further defined",
           "code": "0610"
       },
@@ -527,6 +551,10 @@ const iscedFCodes = [
       {
           "name": "Information and Communication Technologies (ICTs), inter-disciplinary programmes",
           "code": "0688"
+      },
+      {
+          "name": "Engineering, Manufacturing and Construction",
+          "code": "07"
       },
       {
           "name": "Engineering and engineering trades, not further defined",
@@ -605,6 +633,10 @@ const iscedFCodes = [
           "code": "0788"
       },
       {
+          "name": "Agriculture, Forestry, Fisheries and Veterinary",
+          "code": "08"
+      },
+      {
           "name": "Agriculture, not further defined",
           "code": "0810"
       },
@@ -659,6 +691,10 @@ const iscedFCodes = [
       {
           "name": "Agriculture, forestry, fisheries, veterinary, inter-disciplinary programmes",
           "code": "0888"
+      },
+      {
+          "name": "Health and Welfare",
+          "code": "09"
       },
       {
           "name": "Health, not further define",
@@ -719,6 +755,10 @@ const iscedFCodes = [
       {
           "name": "Health and Welfare, inter-disciplinary programmes",
           "code": "0988"
+      },
+      {
+          "name": "Services",
+          "code": "10"
       },
       {
           "name": "Services not further defined",
