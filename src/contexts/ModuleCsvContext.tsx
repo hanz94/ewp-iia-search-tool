@@ -241,7 +241,7 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
 
 const iscedFCodes = [
       {
-          "name": "Education, not further defined",
+          "name": "Education",
           "code": "01"
       },
       {

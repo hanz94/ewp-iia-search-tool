@@ -129,33 +129,47 @@ function ModalFilterSelector() {
         (() => {
             const source = getSourceDataForFilter(3);
 
-            // STEP 1: Extract all raw, split codes
+            //extract all raw, split codes
             const rawCodes = new Set(
-                source.flatMap(d =>
-                    String(d.CSVTH_SUBJECT_AREA || "")
+                source.flatMap(d => {
+                    const parts = String(d.CSVTH_SUBJECT_AREA || "")
                         .split(",")
                         .map(v => v.trim())
-                        .filter(v => v && v !== "CSVTD_NULL")
-                )
+                        .filter(v => v && v !== "CSVTD_NULL");
+
+                    const mapped = [];
+
+                    parts.forEach(code => {
+                        mapped.push(code); // always include original
+
+                        //if 3-digit code -> also include padded 4-digit (version with 0 as the last digit)
+                        if (/^\d{3}$/.test(code)) {
+                            mapped.push(code + "0");
+                        }
+                    });
+
+                    return mapped;
+                })
             );
 
-            // STEP 2: Build a set containing both original codes
-            // and their inferred 2-digit prefixes.
+            //build a set containing both original codes and their inferred 2-digit prefixes.
             const expandedCodes = new Set(rawCodes);
+            console.log(expandedCodes);
 
             rawCodes.forEach(code => {
                 if (code.length === 4) {
                     // Example: "0421" → add "04"
                     expandedCodes.add(code.slice(0, 2));
+                    // console.log("Added length 4:", code.slice(0, 2), "from", code);
                 }
                 if (code.length === 3) {
                     // Rare but safe: "421" → "42"
                     expandedCodes.add(code.slice(0, 2));
+                    // console.log("Added length 3:", code.slice(0, 2), "from", code);
                 }
             });
 
-            // STEP 3: Filter ISCED table to keep only codes that appear
-            // (either directly or as inferred 2-digit prefixes).
+            //filter ISCED table to keep only codes that appear (either directly or as inferred 2-digit prefixes).
             const filteredIscedCodes = iscedFCodes.filter(c =>
                 expandedCodes.has(c.code)
             );
@@ -236,7 +250,7 @@ function ModalFilterSelector() {
             else if (len === 2) {
                 variants.add(code);      // "02"
                 variants.add(rawNoZero); // "2"
-                // also match padded 3-digit broken CSV form ("11" → "011")
+                // also match padded 3-digit ("11" → "011")
                 variants.add(code.padStart(3, "0"));
             }
 
