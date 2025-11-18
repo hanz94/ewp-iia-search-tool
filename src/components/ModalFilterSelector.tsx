@@ -154,18 +154,15 @@ function ModalFilterSelector() {
 
             //build a set containing both original codes and their inferred 2-digit prefixes.
             const expandedCodes = new Set(rawCodes);
-            console.log(expandedCodes);
 
             rawCodes.forEach(code => {
                 if (code.length === 4) {
-                    // Example: "0421" → add "04"
+                    //"0421" → add "04"
                     expandedCodes.add(code.slice(0, 2));
-                    // console.log("Added length 4:", code.slice(0, 2), "from", code);
                 }
                 if (code.length === 3) {
                     // Rare but safe: "421" → "42"
                     expandedCodes.add(code.slice(0, 2));
-                    // console.log("Added length 3:", code.slice(0, 2), "from", code);
                 }
             });
 
@@ -223,7 +220,7 @@ function ModalFilterSelector() {
             const len = code.length;
             const variants = new Set();
 
-            // --- 4-digit selected ---
+            // 4-digit selected
             if (len === 4) {
                 // always match exact + raw form
                 variants.add(code);      // "0110"
@@ -238,7 +235,7 @@ function ModalFilterSelector() {
                 }
             }
 
-            // --- 3-digit selected (fallback, even if not used by UI) ---
+            // 3-digit selected (fallback, even if not used by UI)
             else if (len === 3) {
                 variants.add(code);
                 variants.add(rawNoZero);
@@ -246,7 +243,7 @@ function ModalFilterSelector() {
                 variants.add(rawNoZero + "0"); // "23" → "230"
             }
 
-            // --- 2-digit selected ---
+            // 2-digit selected
             else if (len === 2) {
                 variants.add(code);      // "02"
                 variants.add(rawNoZero); // "2"
@@ -256,7 +253,7 @@ function ModalFilterSelector() {
 
             const clauses = [];
 
-            // === 2-digit: broad prefix searching ===
+            // 2-digit: broad prefix searching
             if (len === 2) {
                 const padded = code.padStart(3, "0"); // "02" → "002" (safe)
 
@@ -270,7 +267,7 @@ function ModalFilterSelector() {
                 });
             }
 
-            // === 3- and 4-digit: exact + comma-aware matching ===
+            // 3- and 4-digit: exact + comma-aware matching
             else {
                 variants.forEach(v => {
                     if (!v) return;
