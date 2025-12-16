@@ -78,11 +78,11 @@ function ModalFilterSelector() {
             //filter is active
             if (currentFilter.active) {
                 if (currentFilter.ordinalCounter === 0) {
-                return originalData.base || [];
+                    return originalData.base || [];
                 } else {
-                // ordinalCounter > 0 -> use the previous stage
-                const prevStageKey = `f${currentFilter.ordinalCounter}`;
-                return originalData[prevStageKey] || [];
+                    // ordinalCounter > 0 -> use the previous stage
+                    const prevStageKey = `f${currentFilter.ordinalCounter}`;
+                    return originalData[prevStageKey] || [];
                 }
             }
 
@@ -98,86 +98,86 @@ function ModalFilterSelector() {
         handleFilterOptionsChange(
             0,
             [...new Set(
-            getSourceDataForFilter(0).map(d => d.CSVTH_MOBILITY_TYPE)
+                getSourceDataForFilter(0).map(d => d.CSVTH_MOBILITY_TYPE)
             )]
-            .map(key => ({ key, label: t(key) }))
-            .sort((a, b) => b.label.localeCompare(a.label))
+                .map(key => ({ key, label: t(key) }))
+                .sort((a, b) => b.label.localeCompare(a.label))
         );
 
         // Filter 2 options - CSVTH_NUMBER_OF_MOBILITIES - ASC
         handleFilterOptionsChange(
             1,
             [...new Set(
-            getSourceDataForFilter(1).map(d => String(d.CSVTH_NUMBER_OF_MOBILITIES))
+                getSourceDataForFilter(1).map(d => String(d.CSVTH_NUMBER_OF_MOBILITIES))
             )]
-            .sort((a, b) => Number(a) - Number(b))
+                .sort((a, b) => Number(a) - Number(b))
         );
 
         // Filter 3 options - CSVTH_STATUS
         handleFilterOptionsChange(
             2,
             [...new Set(
-            getSourceDataForFilter(2).map(d => d.CSVTH_STATUS)
+                getSourceDataForFilter(2).map(d => d.CSVTH_STATUS)
             )]
-            .sort((a, b) => statusOrder.indexOf(a) - statusOrder.indexOf(b))
-            .map(key => ({ key, label: t(key) }))
+                .sort((a, b) => statusOrder.indexOf(a) - statusOrder.indexOf(b))
+                .map(key => ({ key, label: t(key) }))
         );
 
         // Filter 4 options - CSVTH_SUBJECT_AREA
         handleFilterOptionsChange(
-        3,
-        (() => {
-            const source = getSourceDataForFilter(3);
+            3,
+            (() => {
+                const source = getSourceDataForFilter(3);
 
-            //extract all raw, split codes
-            const rawCodes = new Set(
-                source.flatMap(d => {
-                    const parts = String(d.CSVTH_SUBJECT_AREA || "")
-                        .split(",")
-                        .map(v => v.trim())
-                        .filter(v => v && v !== "CSVTD_NULL");
+                //extract all raw, split codes
+                const rawCodes = new Set(
+                    source.flatMap(d => {
+                        const parts = String(d.CSVTH_SUBJECT_AREA || "")
+                            .split(",")
+                            .map(v => v.trim())
+                            .filter(v => v && v !== "CSVTD_NULL");
 
-                    const mapped = [];
+                        const mapped = [];
 
-                    parts.forEach(code => {
-                        mapped.push(code); // always include original
+                        parts.forEach(code => {
+                            mapped.push(code); // always include original
 
-                        //if 3-digit code -> also include padded 4-digit (version with 0 as the last digit)
-                        if (/^\d{3}$/.test(code)) {
-                            mapped.push(code + "0");
-                        }
-                    });
+                            //if 3-digit code -> also include padded 4-digit (version with 0 as the last digit)
+                            if (/^\d{3}$/.test(code)) {
+                                mapped.push(code + "0");
+                            }
+                        });
 
-                    return mapped;
-                })
-            );
+                        return mapped;
+                    })
+                );
 
-            //build a set containing both original codes and their inferred 2-digit prefixes.
-            const expandedCodes = new Set(rawCodes);
+                //build a set containing both original codes and their inferred 2-digit prefixes.
+                const expandedCodes = new Set(rawCodes);
 
-            rawCodes.forEach(code => {
-                if (code.length === 4) {
-                    //"0421" → add "04"
-                    expandedCodes.add(code.slice(0, 2));
-                }
-                if (code.length === 3) {
-                    // Rare but safe: "421" → "42"
-                    expandedCodes.add(code.slice(0, 2));
-                }
-            });
+                rawCodes.forEach(code => {
+                    if (code.length === 4) {
+                        //"0421" → add "04"
+                        expandedCodes.add(code.slice(0, 2));
+                    }
+                    if (code.length === 3) {
+                        // Rare but safe: "421" → "42"
+                        expandedCodes.add(code.slice(0, 2));
+                    }
+                });
 
-            //filter ISCED table to keep only codes that appear (either directly or as inferred 2-digit prefixes).
-            const filteredIscedCodes = iscedFCodes.filter(c =>
-                expandedCodes.has(c.code)
-            );
+                //filter ISCED table to keep only codes that appear (either directly or as inferred 2-digit prefixes).
+                const filteredIscedCodes = iscedFCodes.filter(c =>
+                    expandedCodes.has(c.code)
+                );
 
-            return filteredIscedCodes
-                .map(c => ({
-                    key: c.code,
-                    label: `${c.code}: ${c.name}`,
-                }))
-                .sort((a, b) => a.key.localeCompare(b.key));
-        })()
+                return filteredIscedCodes
+                    .map(c => ({
+                        key: c.code,
+                        label: `${c.code}: ${c.name}`,
+                    }))
+                    .sort((a, b) => a.key.localeCompare(b.key));
+            })()
         );
         // console.log(originalData);
     }, [data]);
@@ -196,95 +196,95 @@ function ModalFilterSelector() {
 
             // Filter 1 – CSVTH_MOBILITY_TYPE
             if (i === 0) {
-            const clause = csvMobilityTypes[f.value.key || f.value];
-            if (clause) whereClauses.push(clause.replace(/^WHERE\s+/i, ''));
+                const clause = csvMobilityTypes[f.value.key || f.value];
+                if (clause) whereClauses.push(clause.replace(/^WHERE\s+/i, ''));
             }
 
             // Filter 2 – CSVTH_NUMBER_OF_MOBILITIES
             if (i === 1) {
-            whereClauses.push(`[coop_cond_total_people] = ${f.value}`);
+                whereClauses.push(`[coop_cond_total_people] = ${f.value}`);
             }
 
             // Filter 3 – CSVTH_STATUS
             if (i === 2) {
-            const clause = csvStatuses[f.value.key || f.value];
-            if (clause) whereClauses.push(clause.replace(/^WHERE\s+/i, ''));
+                const clause = csvStatuses[f.value.key || f.value];
+                if (clause) whereClauses.push(clause.replace(/^WHERE\s+/i, ''));
             }
 
             // Filter 4 – CSVTH_SUBJECT_AREA
             if (i === 3) {
-            const code = f.value?.key || f.value;
-            if (!code) return;
+                const code = f.value?.key || f.value;
+                if (!code) return;
 
-            const rawNoZero = code.startsWith("0") ? code.slice(1) : code;
-            const len = code.length;
-            const variants = new Set();
+                const rawNoZero = code.startsWith("0") ? code.slice(1) : code;
+                const len = code.length;
+                const variants = new Set();
 
-            // 4-digit selected
-            if (len === 4) {
-                // always match exact + raw form
-                variants.add(code);      // "0110"
-                variants.add(rawNoZero); // "110"
+                // 4-digit selected
+                if (len === 4) {
+                    // always match exact + raw form
+                    variants.add(code);      // "0110"
+                    variants.add(rawNoZero); // "110"
 
-                // if ends with 0 → also match parent 3-digit
-                if (code.endsWith("0")) {
-                    const parent3 = code.slice(0, 3);                  // "011"
-                    const parent3Raw = parent3.replace(/^0+/, "");     // "11"
-                    variants.add(parent3);                             // "011"
-                    variants.add(parent3Raw);                          // "11"
+                    // if ends with 0 → also match parent 3-digit
+                    if (code.endsWith("0")) {
+                        const parent3 = code.slice(0, 3);                  // "011"
+                        const parent3Raw = parent3.replace(/^0+/, "");     // "11"
+                        variants.add(parent3);                             // "011"
+                        variants.add(parent3Raw);                          // "11"
+                    }
                 }
-            }
 
-            // 3-digit selected (fallback, even if not used by UI)
-            else if (len === 3) {
-                variants.add(code);
-                variants.add(rawNoZero);
-                variants.add(code + "0");      // "023" → "0230"
-                variants.add(rawNoZero + "0"); // "23" → "230"
-            }
+                // 3-digit selected (fallback, even if not used by UI)
+                else if (len === 3) {
+                    variants.add(code);
+                    variants.add(rawNoZero);
+                    variants.add(code + "0");      // "023" → "0230"
+                    variants.add(rawNoZero + "0"); // "23" → "230"
+                }
 
-            // 2-digit selected
-            else if (len === 2) {
-                variants.add(code);      // "02"
-                variants.add(rawNoZero); // "2"
-                // also match padded 3-digit ("11" → "011")
-                variants.add(code.padStart(3, "0"));
-            }
+                // 2-digit selected
+                else if (len === 2) {
+                    variants.add(code);      // "02"
+                    variants.add(rawNoZero); // "2"
+                    // also match padded 3-digit ("11" → "011")
+                    variants.add(code.padStart(3, "0"));
+                }
 
-            const clauses = [];
+                const clauses = [];
 
-            // 2-digit: broad prefix searching
-            if (len === 2) {
-                const padded = code.padStart(3, "0"); // "02" → "002" (safe)
+                // 2-digit: broad prefix searching
+                if (len === 2) {
+                    const padded = code.padStart(3, "0"); // "02" → "002" (safe)
 
-                const twoDigitPatterns = [code, rawNoZero, padded];
+                    const twoDigitPatterns = [code, rawNoZero, padded];
 
-                twoDigitPatterns.forEach(v => {
-                    clauses.push(
-                        `(CAST([coop_cond_subject_area] AS STRING) LIKE "${v}%" ` +
-                        `OR CAST([coop_cond_subject_area] AS STRING) LIKE "%,${v}%")`
-                    );
-                });
-            }
+                    twoDigitPatterns.forEach(v => {
+                        clauses.push(
+                            `(CAST([coop_cond_subject_area] AS STRING) LIKE "${v}%" ` +
+                            `OR CAST([coop_cond_subject_area] AS STRING) LIKE "%,${v}%")`
+                        );
+                    });
+                }
 
-            // 3- and 4-digit: exact + comma-aware matching
-            else {
-                variants.forEach(v => {
-                    if (!v) return;
-                    clauses.push(
-                        `(` +
-                        `CAST([coop_cond_subject_area] AS STRING) = "${v}" ` +
-                        `OR CAST([coop_cond_subject_area] AS STRING) LIKE "${v},%" ` +
-                        `OR CAST([coop_cond_subject_area] AS STRING) LIKE "%,${v},%" ` +
-                        `OR CAST([coop_cond_subject_area] AS STRING) LIKE "%,${v}"` +
-                        `)`
-                    );
-                });
-            }
+                // 3- and 4-digit: exact + comma-aware matching
+                else {
+                    variants.forEach(v => {
+                        if (!v) return;
+                        clauses.push(
+                            `(` +
+                            `CAST([coop_cond_subject_area] AS STRING) = "${v}" ` +
+                            `OR CAST([coop_cond_subject_area] AS STRING) LIKE "${v},%" ` +
+                            `OR CAST([coop_cond_subject_area] AS STRING) LIKE "%,${v},%" ` +
+                            `OR CAST([coop_cond_subject_area] AS STRING) LIKE "%,${v}"` +
+                            `)`
+                        );
+                    });
+                }
 
-            if (clauses.length) {
-                whereClauses.push(`(${clauses.join(" OR ")})`);
-            }
+                if (clauses.length) {
+                    whereClauses.push(`(${clauses.join(" OR ")})`);
+                }
             }
         });
 
@@ -299,15 +299,15 @@ function ModalFilterSelector() {
 
     // Filtering - partners counter helper function (sg, paucal, plural)
     const getPartnerUniversityLabel = (count) => {
-    if (count === 1) return t('MFS_PARTNER_UNIVERSITY_SINGULAR');
-    const lastDigit = count % 10;
-    const lastTwoDigits = count % 100;
-    if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14))
-        return t('MFS_PARTNER_UNIVERSITIES_PAUCAL_2_4');
-    return t('MFS_PARTNER_UNIVERSITIES_PLURAL_5');
-};
+        if (count === 1) return t('MFS_PARTNER_UNIVERSITY_SINGULAR');
+        const lastDigit = count % 10;
+        const lastTwoDigits = count % 100;
+        if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14))
+            return t('MFS_PARTNER_UNIVERSITIES_PAUCAL_2_4');
+        return t('MFS_PARTNER_UNIVERSITIES_PLURAL_5');
+    };
 
-    return ( 
+    return (
         <>
             {/* FILTER 1 - CSVTH_MOBILITY_TYPE */}
             <Box sx={filterBoxSx}>
@@ -319,30 +319,30 @@ function ModalFilterSelector() {
                 <Autocomplete
                     disablePortal
                     value={
-                    filters[0].options.find(opt => opt.key === filters[0].value) || null
+                        filters[0].options.find(opt => opt.key === filters[0].value) || null
                     }
                     options={filters[0].options}
                     getOptionLabel={(option) => option?.label || ''}
                     isOptionEqualToValue={(opt, val) => opt.key === val.key}
                     sx={autocompleteSx}
                     renderInput={(params) => (
-                    <TextField {...params} label={t("CSVTH_MOBILITY_TYPE")} />
+                        <TextField {...params} label={t("CSVTH_MOBILITY_TYPE")} />
                     )}
                     onChange={(e, value) => {
-                    const newValue = value ? value.key : '';
-                    let newActiveFiltersCount = value
-                        ? filters[0].ordinalCounter || activeFiltersCount
-                        : 0;
+                        const newValue = value ? value.key : '';
+                        let newActiveFiltersCount = value
+                            ? filters[0].ordinalCounter || activeFiltersCount
+                            : 0;
 
-                    if (!value) {
-                        resetOrdinalFilters(0);
-                        setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
-                    }
-                    if (filters[0].value && value) {
-                        resetOrdinalFilters(0);
-                        newActiveFiltersCount = filters[0].ordinalCounter;
-                    }
-                    handleFilterChange(0, newValue, newActiveFiltersCount);
+                        if (!value) {
+                            resetOrdinalFilters(0);
+                            setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
+                        }
+                        if (filters[0].value && value) {
+                            resetOrdinalFilters(0);
+                            newActiveFiltersCount = filters[0].ordinalCounter;
+                        }
+                        handleFilterChange(0, newValue, newActiveFiltersCount);
                     }}
                 />
             </Box>
@@ -385,20 +385,20 @@ function ModalFilterSelector() {
                     isOptionEqualToValue={(opt, val) => opt.key === val?.key}
                     sx={autocompleteSx}
                     renderInput={(params) => (
-                    <TextField {...params} label={t("CSVTH_STATUS")} />
+                        <TextField {...params} label={t("CSVTH_STATUS")} />
                     )}
                     onChange={(e, value) => {
-                    let newActiveFiltersCount = activeFiltersCount;
-                    if (!value) {
-                        resetOrdinalFilters(2);
-                        newActiveFiltersCount = 0;
-                        setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
-                    }
-                    if (filters[2].value && value) {
-                        resetOrdinalFilters(2);
-                        newActiveFiltersCount = filters[2].ordinalCounter;
-                    }
-                    handleFilterChange(2, value, newActiveFiltersCount);
+                        let newActiveFiltersCount = activeFiltersCount;
+                        if (!value) {
+                            resetOrdinalFilters(2);
+                            newActiveFiltersCount = 0;
+                            setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
+                        }
+                        if (filters[2].value && value) {
+                            resetOrdinalFilters(2);
+                            newActiveFiltersCount = filters[2].ordinalCounter;
+                        }
+                        handleFilterChange(2, value, newActiveFiltersCount);
                     }}
                 />
             </Box>
@@ -426,7 +426,7 @@ function ModalFilterSelector() {
                     }}
                 />
             </Box>
-            
+
             {/* FILTERS - SUMMARY */}
             <Box
                 sx={{
@@ -440,20 +440,20 @@ function ModalFilterSelector() {
                 <Typography sx={{ my: 0.2, fontSize: '0.9rem' }}>
                     {t('MFS_FILTERING')}:{' '}
                     <Box
-                    component="span"
-                    sx={{
-                        color:
-                        activeFiltersCount > 0
-                            ? mode === 'light'
-                            ? 'green'
-                            : 'lightgreen'
-                            : mode === 'light'
-                            ? 'red'
-                            : '#f28b82',
-                        fontWeight: 500,
-                    }}
+                        component="span"
+                        sx={{
+                            color:
+                                activeFiltersCount > 0
+                                    ? mode === 'light'
+                                        ? 'green'
+                                        : 'lightgreen'
+                                    : mode === 'light'
+                                        ? 'red'
+                                        : '#f28b82',
+                            fontWeight: 500,
+                        }}
                     >
-                    {activeFiltersCount > 0 ? t('MFS_FILTERING_ON') : t('MFS_FILTERING_OFF')}
+                        {activeFiltersCount > 0 ? t('MFS_FILTERING_ON') : t('MFS_FILTERING_OFF')}
                     </Box>
                 </Typography>
                 {/* FILTERING - PARTNERS COUNTER */}
@@ -474,7 +474,7 @@ function ModalFilterSelector() {
                 </Button>
             </Box>
         </>
-     );
+    );
 }
 
 export default ModalFilterSelector;

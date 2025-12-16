@@ -28,59 +28,59 @@ alasql.utils.global.XLSX = XLSX;
 
 function ModuleCsv() {
 
-    const { t } = useTranslation();
-    const { dataGridTableHeight, trimRows, rowWithColumnNames } = useThemeContext();
-    const { modalOpen } = useModalContext();
+  const { t } = useTranslation();
+  const { dataGridTableHeight, trimRows, rowWithColumnNames } = useThemeContext();
+  const { modalOpen } = useModalContext();
 
-    const  { data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX, filters } = useModuleCsvContext();
+  const { data, setData, originalData, setOriginalData, slicedData, setSlicedData, alasqlQuery, setAlasqlQuery, alasqlQueryBefore, setAlasqlQueryBefore, alasqlQuerySource, setAlasqlQuerySource, alasqlQueryAfter, setAlasqlQueryAfter, inputFileValue, setInputFileValue, currentWorkbook, setCurrentWorkbook, availableWorkSheets, setAvailableWorkSheets, currentWorksheet, setCurrentWorksheet, availableColumns, setAvailableColumns, currentGroupByColumn, setCurrentGroupByColumn, useGroupBy, setUseGroupBy, erasmusCodes, setErasmusCodes, institutionNames, setInstitutionNames, selectedErasmusCode, setSelectedErasmusCode, selectedInstitutionName, setSelectedInstitutionName, dataFiltered, setDataFiltered, lastUpdate, setLastUpdate, alasqlRemoveDataAfterFirstEmptyRow, handleDownloadXLSX, filters } = useModuleCsvContext();
 
   //execute AlaSQL query
   useEffect(() => {
     if (inputFileValue && alasqlQuery && useGroupBy && trimRows === 'true') {
-        alasql.promise('SELECT * ' + alasqlQuerySource)
+      alasql.promise('SELECT * ' + alasqlQuerySource)
         .then((result) => {
           let tmpData = result;
           tmpData = alasqlRemoveDataAfterFirstEmptyRow(tmpData);
 
           alasql.promise(alasqlQueryBefore + ' FROM ? ' + alasqlQueryAfter, [tmpData])
-          .then((result) => {
-            setData(() => result);
-            setOriginalData(() => result);
-            setSlicedData(() => result);
-          })
-          .catch((error) => {
-            console.error('Error fetching data:', error);
-            setData([]);
-          });
-        })
-        .catch((error) => {
-          console.error('Error fetching data:', error);
-          setData([]);
-        });
-      }
-      else if (inputFileValue && alasqlQuery) {
-        alasql.promise(alasqlQuery)
-          .then((result) => {
-            setData(result);
-            setSlicedData(() => {
-              const firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
-              return result.slice(0, firstEmptyRowIndex);
+            .then((result) => {
+              setData(() => result);
+              setOriginalData(() => result);
+              setSlicedData(() => result);
+            })
+            .catch((error) => {
+              console.error('Error fetching data:', error);
+              setData([]);
             });
-            //keep snapshots for each stage of filtering (base, f1, f2, f3, f4)
-            setOriginalData(prev => {
-              const activeCount = filters.filter(f => f.active).length;
-              return {
-                ...prev,
-                base: prev?.base?.length ? prev.base : result,
-                [`f${activeCount}`]: result,
-              };
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+          setData([]);
+        });
+    }
+    else if (inputFileValue && alasqlQuery) {
+      alasql.promise(alasqlQuery)
+        .then((result) => {
+          setData(result);
+          setSlicedData(() => {
+            const firstEmptyRowIndex = result.findIndex(obj => Object.keys(obj).length === 0);
+            return result.slice(0, firstEmptyRowIndex);
+          });
+          //keep snapshots for each stage of filtering (base, f1, f2, f3, f4)
+          setOriginalData(prev => {
+            const activeCount = filters.filter(f => f.active).length;
+            return {
+              ...prev,
+              base: prev?.base?.length ? prev.base : result,
+              [`f${activeCount}`]: result,
+            };
           });
         })
         .catch((error) => {
           console.error('Error fetching data:', error);
           setData([]);
         });
-      }
+    }
   }, [alasqlQuery, useGroupBy, trimRows]);
 
   //merge AlaSQL query
@@ -146,211 +146,211 @@ function ModuleCsv() {
 
   // }, [originalData, slicedData, trimRows]);
 
-//fetch file on load
-useEffect(() => {
-  fetch('./iias.csv')
-  .then((response) => response.text())
-  .then((csvText) => {
-    // Remove first line if it declares separator (sep=;)
-    const cleanedCsv = csvText.replace(/^sep=.*\r?\n/, "");
+  //fetch file on load
+  useEffect(() => {
+    fetch('./iias.csv')
+      .then((response) => response.text())
+      .then((csvText) => {
+        // Remove first line if it declares separator (sep=;)
+        const cleanedCsv = csvText.replace(/^sep=.*\r?\n/, "");
 
-    const file = new File([cleanedCsv], 'iias.csv', { type: 'text/csv' });
-    handleFileChange(file);
-  })
-  .catch((error) => console.error("Error loading file:", error));
+        const file = new File([cleanedCsv], 'iias.csv', { type: 'text/csv' });
+        handleFileChange(file);
+      })
+      .catch((error) => console.error("Error loading file:", error));
 
-  //fetch last update
-  fetch('./lastupdate.txt')
-    .then((response) => response.text())
-    .then((text) => {
-      setLastUpdate(text);
-    })
-    .catch((error) => console.error("Error loading last update:", error));
-}, []);
+    //fetch last update
+    fetch('./lastupdate.txt')
+      .then((response) => response.text())
+      .then((text) => {
+        setLastUpdate(text);
+      })
+      .catch((error) => console.error("Error loading last update:", error));
+  }, []);
 
-//watch for data to update erasmuscodes and institutionnames
-useEffect(() => {
-  alasql.promise('SELECT DISTINCT [CSVTH_ERASMUS_CODE] FROM ? WHERE [CSVTH_STATUS] != "CSVTD_DRAFT" ORDER BY [CSVTH_ERASMUS_CODE]', [data]).then((codes) => {
-    const newErasmusCodes = codes.map((item) => item["CSVTH_ERASMUS_CODE"]);
-    setErasmusCodes(() => newErasmusCodes);
-  });
-
-  alasql.promise('SELECT DISTINCT [CSVTH_INSTITUTION_NAME] FROM ? WHERE [CSVTH_STATUS] != "CSVTD_DRAFT" ORDER BY [CSVTH_INSTITUTION_NAME]', [data]).then((institutions) => {
-    const newInstitutionNames = institutions.map((item) => item["CSVTH_INSTITUTION_NAME"]);
-    setInstitutionNames(() => newInstitutionNames);
-  });
-}, [data])
-
-//CSV TABLE - COLUMNS VISIBLE IN TABLE
-const visibleColumns = ['CSVTH_MOBILITY_TYPE', 'CSVTH_NUMBER_OF_MOBILITIES', 'CSVTH_STATUS', 'CSVTH_SUBJECT_AREA', 'CSVTH_SUBJECT_AREA_DESCRIPTION', 'CSVTH_OPTIONS'];
-
-//watch for changes: selectedErasmusCode, selectedInstitutionName
-useEffect(() => {
-  if (selectedErasmusCode && selectedInstitutionName) {
-    alasql.promise(
-      'SELECT *, CSVTH_OPTIONS FROM ? WHERE [CSVTH_ERASMUS_CODE] = ? AND [CSVTH_STATUS] != "CSVTD_DRAFT"',
-      [data, selectedErasmusCode]
-    ).then((result) => {
-      // Reorder keys so CSVTH_OPTIONS is last
-      const reordered = result.map(row => {
-        const { CSVTH_OPTIONS, ...rest } = row;
-        return { ...rest, CSVTH_OPTIONS }; // put it at the end
-      });
-      setDataFiltered(() => reordered);
+  //watch for data to update erasmuscodes and institutionnames
+  useEffect(() => {
+    alasql.promise('SELECT DISTINCT [CSVTH_ERASMUS_CODE] FROM ? WHERE [CSVTH_STATUS] != "CSVTD_DRAFT" ORDER BY [CSVTH_ERASMUS_CODE]', [data]).then((codes) => {
+      const newErasmusCodes = codes.map((item) => item["CSVTH_ERASMUS_CODE"]);
+      setErasmusCodes(() => newErasmusCodes);
     });
 
-  }
-}, [selectedErasmusCode, selectedInstitutionName]);
+    alasql.promise('SELECT DISTINCT [CSVTH_INSTITUTION_NAME] FROM ? WHERE [CSVTH_STATUS] != "CSVTD_DRAFT" ORDER BY [CSVTH_INSTITUTION_NAME]', [data]).then((institutions) => {
+      const newInstitutionNames = institutions.map((item) => item["CSVTH_INSTITUTION_NAME"]);
+      setInstitutionNames(() => newInstitutionNames);
+    });
+  }, [data])
 
-const handleFileChange = (newInputValue) => {
-  const file = newInputValue;
-  const fileName = file.name;
-  const fileExtension = fileName.split('.').pop()?.toLowerCase();
+  //CSV TABLE - COLUMNS VISIBLE IN TABLE
+  const visibleColumns = ['CSVTH_MOBILITY_TYPE', 'CSVTH_NUMBER_OF_MOBILITIES', 'CSVTH_STATUS', 'CSVTH_SUBJECT_AREA', 'CSVTH_SUBJECT_AREA_DESCRIPTION', 'CSVTH_OPTIONS'];
 
-  if (fileExtension === 'csv' || fileExtension === 'xls' || fileExtension === 'xlsx') {
-    const reader = new FileReader();
+  //watch for changes: selectedErasmusCode, selectedInstitutionName
+  useEffect(() => {
+    if (selectedErasmusCode && selectedInstitutionName) {
+      alasql.promise(
+        'SELECT *, CSVTH_OPTIONS FROM ? WHERE [CSVTH_ERASMUS_CODE] = ? AND [CSVTH_STATUS] != "CSVTD_DRAFT"',
+        [data, selectedErasmusCode]
+      ).then((result) => {
+        // Reorder keys so CSVTH_OPTIONS is last
+        const reordered = result.map(row => {
+          const { CSVTH_OPTIONS, ...rest } = row;
+          return { ...rest, CSVTH_OPTIONS }; // put it at the end
+        });
+        setDataFiltered(() => reordered);
+      });
 
-    reader.onload = (e) => {
-      let data = e.target.result; // Binary string or array buffer
-      let workbook = XLSX.read(data, { type: 'binary' });
+    }
+  }, [selectedErasmusCode, selectedInstitutionName]);
 
-      setCurrentWorkbook(() => workbook);
-      setAvailableWorkSheets(() => workbook.SheetNames);
+  const handleFileChange = (newInputValue) => {
+    const file = newInputValue;
+    const fileName = file.name;
+    const fileExtension = fileName.split('.').pop()?.toLowerCase();
 
-      const defaultSheetName = workbook.SheetNames[workbook.SheetNames.length - 1];
-      setCurrentWorksheet(() => defaultSheetName);
+    if (fileExtension === 'csv' || fileExtension === 'xls' || fileExtension === 'xlsx') {
+      const reader = new FileReader();
 
-      let defaultWorksheetRange = workbook.Sheets[defaultSheetName]["!ref"];
-      defaultWorksheetRange = defaultWorksheetRange.replace('A1', `A${rowWithColumnNames}`);
+      reader.onload = (e) => {
+        let data = e.target.result; // Binary string or array buffer
+        let workbook = XLSX.read(data, { type: 'binary' });
 
-      updateAvailableColumns(workbook, defaultSheetName, defaultWorksheetRange);
+        setCurrentWorkbook(() => workbook);
+        setAvailableWorkSheets(() => workbook.SheetNames);
 
-      let tmppath = URL.createObjectURL(file);
+        const defaultSheetName = workbook.SheetNames[workbook.SheetNames.length - 1];
+        setCurrentWorksheet(() => defaultSheetName);
 
-      setInputFileValue(() => file);
-      setAlasqlQueryBefore('SELECT ROWNUM() AS id, CASE WHEN [partner_1_ec] = "PL LUBLIN02" THEN [partner_2_ec] ELSE [partner_1_ec] END AS CSVTH_ERASMUS_CODE, CASE WHEN [partner_1_hei_name] = "KATOLICKI UNIWERSYTET LUBELSKI JANA PAWLA II" THEN [partner_2_hei_name] ELSE [partner_1_hei_name] END AS CSVTH_INSTITUTION_NAME, CASE WHEN [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_STA" WHEN [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_STA" WHEN [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_STT" WHEN [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_STT" WHEN [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_SMS" WHEN [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_SMS" WHEN [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_SMT" WHEN [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_SMT" END AS CSVTH_MOBILITY_TYPE, CASE WHEN [coop_cond_eqf] IS NOT NULL AND [coop_cond_eqf] != "" THEN CAST([coop_cond_eqf] AS STRING) WHEN ([coop_cond_eqf] IS NULL OR [coop_cond_eqf] = "") AND [coop_cond_type] LIKE "staff%" THEN "CSVTD_NOT_APPLICABLE" ELSE "CSVTD_NULL" END AS CSVTH_EQF, CASE WHEN [coop_cond_blended_mobility] = "YES" THEN "CSVTD_YES" WHEN [coop_cond_blended_mobility] = "NO" THEN "CSVTD_NO" ELSE "CSVTD_NOT_APPLICABLE" END AS CSVTH_BLENDED, [coop_cond_total_people] AS CSVTH_NUMBER_OF_MOBILITIES, CASE WHEN [iia_status] = "approved-by-all" THEN "CSVTD_APPROVED_BY_ALL" WHEN [iia_status] = "approved" AND [partner_1_hei_id] = "kul.pl" THEN "CSVTD_WAITING_FOR_THEIR_SIGNATURE" WHEN [iia_status] = "approved" AND [partner_1_hei_id] != "kul.pl" THEN "CSVTD_WAITING_FOR_OUR_SIGNATURE" WHEN [iia_status] = "submitted" AND [partner_1_hei_id] = "kul.pl" THEN "CSVTD_BEING_VERIFIED_BY_THEM" WHEN [iia_status] = "submitted" AND [partner_1_hei_id] != "kul.pl" THEN "CSVTD_BEING_VERIFIED_BY_US" WHEN [iia_status] = "draft" THEN "CSVTD_DRAFT" END AS CSVTH_STATUS, CASE WHEN [coop_cond_subject_area] IS NULL OR [coop_cond_subject_area] = "" THEN "CSVTD_NULL" WHEN [coop_cond_subject_area] LIKE "%,%" OR [coop_cond_subject_area] LIKE "0%" THEN [coop_cond_subject_area] WHEN CAST([coop_cond_subject_area] AS INT) IN (1000, 1010, 1011, 1012, 1013, 1014, 1015, 1019, 1020, 1021, 1022, 1029, 1030, 1031, 1032, 1039, 1040, 1041, 1049, 1088) THEN [coop_cond_subject_area] ELSE "0" + [coop_cond_subject_area] END AS CSVTH_SUBJECT_AREA, CASE WHEN [coop_cond_subject_area_clarification] IS NULL OR [coop_cond_subject_area_clarification] = "" THEN "CSVTD_NULL" ELSE [coop_cond_subject_area_clarification] END AS CSVTH_SUBJECT_AREA_DESCRIPTION, CASE WHEN [coop_cond_language] IS NULL OR [coop_cond_language] = "" THEN "CSVTD_NULL" ELSE [coop_cond_language] END AS CSVTH_LANGUAGE_REQUIREMENTS, [coop_cond_academic_year_start] AS CSVTH_FROM, [coop_cond_academic_year_end] AS CSVTH_TO');
-      setAlasqlQuerySource(`FROM ${fileExtension}("${tmppath}", {separator: ";", sheetid: "${defaultSheetName}", autoExt: false, range: "${defaultWorksheetRange}"})`);
-      setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
-    };
+        let defaultWorksheetRange = workbook.Sheets[defaultSheetName]["!ref"];
+        defaultWorksheetRange = defaultWorksheetRange.replace('A1', `A${rowWithColumnNames}`);
 
-    reader.readAsBinaryString(file);
-  } else {
-    setInputFileValue('');
-    alert('Invalid file type! Please upload a CSV, XLS, or XLSX file.');
-  }
-};
+        updateAvailableColumns(workbook, defaultSheetName, defaultWorksheetRange);
 
-const updateAvailableColumns = (workbook, sheetName, range) => {
-  const worksheet = workbook.Sheets[sheetName];
-  const sheetRange = XLSX.utils.decode_range(range);
-  // const sheetRange = XLSX.utils.decode_range(worksheet["!ref"]);
+        let tmppath = URL.createObjectURL(file);
 
-  // Extract column headers (first row values)
-  const columnHeaders = [];
-  for (let colIndex = sheetRange.s.c; colIndex <= sheetRange.e.c; colIndex++) {
-    const cellAddress = XLSX.utils.encode_cell({ r: rowWithColumnNames - 1, c: colIndex }); // Get the cell address in the first row
-    const cellValue = worksheet[cellAddress]?.v; // Retrieve the cell's value
-    if (cellValue) columnHeaders.push(cellValue);
-  }
+        setInputFileValue(() => file);
+        setAlasqlQueryBefore('SELECT ROWNUM() AS id, CASE WHEN [partner_1_ec] = "PL LUBLIN02" THEN [partner_2_ec] ELSE [partner_1_ec] END AS CSVTH_ERASMUS_CODE, CASE WHEN [partner_1_hei_name] = "KATOLICKI UNIWERSYTET LUBELSKI JANA PAWLA II" THEN [partner_2_hei_name] ELSE [partner_1_hei_name] END AS CSVTH_INSTITUTION_NAME, CASE WHEN [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_STA" WHEN [coop_cond_type] = "staff_teachers" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_STA" WHEN [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_STT" WHEN [coop_cond_type] = "staff_training" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_STT" WHEN [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_SMS" WHEN [coop_cond_type] = "student_studies" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_SMS" WHEN [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] = "kul.pl" THEN "CSVTD_OUTGOING_SMT" WHEN [coop_cond_type] = "student_traineeship" AND [coop_cond_sending_hei_id] != "kul.pl" THEN "CSVTD_INCOMING_SMT" END AS CSVTH_MOBILITY_TYPE, CASE WHEN [coop_cond_eqf] IS NOT NULL AND [coop_cond_eqf] != "" THEN CAST([coop_cond_eqf] AS STRING) WHEN ([coop_cond_eqf] IS NULL OR [coop_cond_eqf] = "") AND [coop_cond_type] LIKE "staff%" THEN "CSVTD_NOT_APPLICABLE" ELSE "CSVTD_NULL" END AS CSVTH_EQF, CASE WHEN [coop_cond_blended_mobility] = "YES" THEN "CSVTD_YES" WHEN [coop_cond_blended_mobility] = "NO" THEN "CSVTD_NO" ELSE "CSVTD_NOT_APPLICABLE" END AS CSVTH_BLENDED, [coop_cond_total_people] AS CSVTH_NUMBER_OF_MOBILITIES, CASE WHEN [iia_status] = "approved-by-all" THEN "CSVTD_APPROVED_BY_ALL" WHEN [iia_status] = "approved" AND [partner_1_hei_id] = "kul.pl" THEN "CSVTD_WAITING_FOR_THEIR_SIGNATURE" WHEN [iia_status] = "approved" AND [partner_1_hei_id] != "kul.pl" THEN "CSVTD_WAITING_FOR_OUR_SIGNATURE" WHEN [iia_status] = "submitted" AND [partner_1_hei_id] = "kul.pl" THEN "CSVTD_BEING_VERIFIED_BY_THEM" WHEN [iia_status] = "submitted" AND [partner_1_hei_id] != "kul.pl" THEN "CSVTD_BEING_VERIFIED_BY_US" WHEN [iia_status] = "draft" THEN "CSVTD_DRAFT" END AS CSVTH_STATUS, CASE WHEN [coop_cond_subject_area] IS NULL OR [coop_cond_subject_area] = "" THEN "CSVTD_NULL" WHEN [coop_cond_subject_area] LIKE "%,%" OR [coop_cond_subject_area] LIKE "0%" THEN [coop_cond_subject_area] WHEN CAST([coop_cond_subject_area] AS INT) IN (1000, 1010, 1011, 1012, 1013, 1014, 1015, 1019, 1020, 1021, 1022, 1029, 1030, 1031, 1032, 1039, 1040, 1041, 1049, 1088) THEN [coop_cond_subject_area] ELSE "0" + [coop_cond_subject_area] END AS CSVTH_SUBJECT_AREA, CASE WHEN [coop_cond_subject_area_clarification] IS NULL OR [coop_cond_subject_area_clarification] = "" THEN "CSVTD_NULL" ELSE [coop_cond_subject_area_clarification] END AS CSVTH_SUBJECT_AREA_DESCRIPTION, CASE WHEN [coop_cond_language] IS NULL OR [coop_cond_language] = "" THEN "CSVTD_NULL" ELSE [coop_cond_language] END AS CSVTH_LANGUAGE_REQUIREMENTS, [coop_cond_academic_year_start] AS CSVTH_FROM, [coop_cond_academic_year_end] AS CSVTH_TO');
+        setAlasqlQuerySource(`FROM ${fileExtension}("${tmppath}", {separator: ";", sheetid: "${defaultSheetName}", autoExt: false, range: "${defaultWorksheetRange}"})`);
+        setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
+      };
 
-  setAvailableColumns(columnHeaders); // Set the available columns
-  setCurrentGroupByColumn(columnHeaders[0]); // Default group by column - first column
-};
+      reader.readAsBinaryString(file);
+    } else {
+      setInputFileValue('');
+      alert('Invalid file type! Please upload a CSV, XLS, or XLSX file.');
+    }
+  };
 
-    return ( 
+  const updateAvailableColumns = (workbook, sheetName, range) => {
+    const worksheet = workbook.Sheets[sheetName];
+    const sheetRange = XLSX.utils.decode_range(range);
+    // const sheetRange = XLSX.utils.decode_range(worksheet["!ref"]);
+
+    // Extract column headers (first row values)
+    const columnHeaders = [];
+    for (let colIndex = sheetRange.s.c; colIndex <= sheetRange.e.c; colIndex++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: rowWithColumnNames - 1, c: colIndex }); // Get the cell address in the first row
+      const cellValue = worksheet[cellAddress]?.v; // Retrieve the cell's value
+      if (cellValue) columnHeaders.push(cellValue);
+    }
+
+    setAvailableColumns(columnHeaders); // Set the available columns
+    setCurrentGroupByColumn(columnHeaders[0]); // Default group by column - first column
+  };
+
+  return (
     <Box>
       {erasmusCodes.length > 0 && institutionNames.length > 0 && data.length > 0 && (
         <>
 
-        {/* AUTOCOMPLETE - ERASMUS CODE */}
-        <Autocomplete
-          disablePortal
-          value={selectedErasmusCode}
-          options={erasmusCodes}
-          sx={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} label={t('ERASMUS_CODE')} />}
-          onChange={(e, value) => {
-            setSelectedErasmusCode(value ? value : null)
-            if (value) {
-              //find matching institution name
-              alasql.promise(`SELECT DISTINCT [CSVTH_INSTITUTION_NAME] FROM ? WHERE [CSVTH_ERASMUS_CODE] = ?`, [data, value]).then((result) => {
-                if (result.length > 0) {
-                  setSelectedInstitutionName(() => result[0]['CSVTH_INSTITUTION_NAME']);
-                }
-                else {
-                  setSelectedInstitutionName(() => null);
-                }
-              })
-            }
-            else {
-              setSelectedInstitutionName(() => null);
-            }
-          }}
-        />
+          {/* AUTOCOMPLETE - ERASMUS CODE */}
+          <Autocomplete
+            disablePortal
+            value={selectedErasmusCode}
+            options={erasmusCodes}
+            sx={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} label={t('ERASMUS_CODE')} />}
+            onChange={(e, value) => {
+              setSelectedErasmusCode(value ? value : null)
+              if (value) {
+                //find matching institution name
+                alasql.promise(`SELECT DISTINCT [CSVTH_INSTITUTION_NAME] FROM ? WHERE [CSVTH_ERASMUS_CODE] = ?`, [data, value]).then((result) => {
+                  if (result.length > 0) {
+                    setSelectedInstitutionName(() => result[0]['CSVTH_INSTITUTION_NAME']);
+                  }
+                  else {
+                    setSelectedInstitutionName(() => null);
+                  }
+                })
+              }
+              else {
+                setSelectedInstitutionName(() => null);
+              }
+            }}
+          />
 
-        {/* AUTOCOMPLETE - INSTITUTION NAME */}
-        <Autocomplete
-          disablePortal
-          value={selectedInstitutionName}
-          options={institutionNames}
-          sx={{ minWidth: 500 }}
-          renderInput={(params) => <TextField {...params} label={t('INSTITUTION_NAME')} />}
-          onChange={(e, value) => {
-            setSelectedInstitutionName(value ? value : null);
-            if (value) {
-              // find matching Erasmus code
-              alasql.promise(`SELECT DISTINCT [CSVTH_ERASMUS_CODE] FROM ? WHERE [CSVTH_INSTITUTION_NAME] = ?`, [data, value]).then((result) => {
-                if (result.length > 0) {
-                  setSelectedErasmusCode(() => result[0]['CSVTH_ERASMUS_CODE']);
-                } else {
-                  setSelectedErasmusCode(() => null);
-                }
-              });
-            } else {
-              setSelectedErasmusCode(() => null);
-            }
-          }}
-        />
-      </>
+          {/* AUTOCOMPLETE - INSTITUTION NAME */}
+          <Autocomplete
+            disablePortal
+            value={selectedInstitutionName}
+            options={institutionNames}
+            sx={{ minWidth: 500 }}
+            renderInput={(params) => <TextField {...params} label={t('INSTITUTION_NAME')} />}
+            onChange={(e, value) => {
+              setSelectedInstitutionName(value ? value : null);
+              if (value) {
+                // find matching Erasmus code
+                alasql.promise(`SELECT DISTINCT [CSVTH_ERASMUS_CODE] FROM ? WHERE [CSVTH_INSTITUTION_NAME] = ?`, [data, value]).then((result) => {
+                  if (result.length > 0) {
+                    setSelectedErasmusCode(() => result[0]['CSVTH_ERASMUS_CODE']);
+                  } else {
+                    setSelectedErasmusCode(() => null);
+                  }
+                });
+              } else {
+                setSelectedErasmusCode(() => null);
+              }
+            }}
+          />
+        </>
       )}
 
       {/* IF AUTOCOMPLETE EMPTY */}
       {erasmusCodes.length > 0 && institutionNames.length > 0 && !selectedErasmusCode && !selectedInstitutionName && (
         <>
-            {/* SHOW ACTIVE FILTERS COUNTER (if any) */}
-            {filters.filter(f => f.active).length > 0 && (
-              <>
-              <Box sx={{ display: 'flex', justifyContent: 'center'}}>
+          {/* SHOW ACTIVE FILTERS COUNTER (if any) */}
+          {filters.filter(f => f.active).length > 0 && (
+            <>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <FilterAltIcon sx={{ fontSize: '1.13rem', mt: 0.26, mr: 0.23 }} />
                 <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5, fontWeight: 'bold' }}>
                   {t('CSV_ACTIVE_FILTERS')}: {filters.filter(f => f.active).length}
                 </Typography>
               </Box>
-              </>
-            )}
-            {/* SHOW NUMBER OF PARTNER UNIVERSITIES (reduced if filters active) */}
-            <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-              {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES')}: {erasmusCodes.length}
-            </Typography>
-            {/* PARTNER UNIVERSITIES NOTE */}
-            <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
-              {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES_NOTE')}
-            </Typography>
+            </>
+          )}
+          {/* SHOW NUMBER OF PARTNER UNIVERSITIES (reduced if filters active) */}
+          <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+            {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES')}: {erasmusCodes.length}
+          </Typography>
+          {/* PARTNER UNIVERSITIES NOTE */}
+          <Typography component="div" sx={{ fontSize: 12, textAlign: 'center', mt: 0.5 }}>
+            {t('SQL_NUMBER_OF_PARTNER_UNIVERSITIES_NOTE')}
+          </Typography>
 
-            {/* DOWNLOAD XLSX BUTTON */}
-            <Tooltip title={
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2" sx={{ fontSize: 11 }}>
-                  {t('SQL_DOWNLOAD')} {t('SQL_XLSX_FILENAME')}<br />
-                  {t('LAST_UPDATE')}: {lastUpdate}
-                </Typography>
-              </Box>
-            }>
-              <IconButton sx={{ mt: 0.3 }} onClick={() => handleDownloadXLSX(data, t)}>
-                <DownloadIcon />
-              </IconButton>
-            </Tooltip>
-          </>
+          {/* DOWNLOAD XLSX BUTTON */}
+          <Tooltip title={
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body2" sx={{ fontSize: 11 }}>
+                {t('SQL_DOWNLOAD')} {t('SQL_XLSX_FILENAME')}<br />
+                {t('LAST_UPDATE')}: {lastUpdate}
+              </Typography>
+            </Box>
+          }>
+            <IconButton sx={{ mt: 0.3 }} onClick={() => handleDownloadXLSX(data, t)}>
+              <DownloadIcon />
+            </IconButton>
+          </Tooltip>
+        </>
       )}
 
       {/* IF AUTOCOMPLETE SELECTED */}
@@ -369,7 +369,7 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
           </Typography>
 
           <Typography sx={{ fontSize: 12, textAlign: 'center', mb: 2 }}>
-            ({t('AS_OF', {time: lastUpdate})})
+            ({t('AS_OF', { time: lastUpdate })})
           </Typography>
           <TableContainer
             component={Paper}
@@ -396,10 +396,10 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
                         {row[key] instanceof Date
                           ? row[key].toLocaleDateString()
                           : row[key]
-                          ? String(row[key]).startsWith('CSVTD_')
-                            ? t(String(row[key]))
-                            : String(row[key])
-                          : <ModuleCsvDetailsBtn data={data} rowId={row.id} />}
+                            ? String(row[key]).startsWith('CSVTD_')
+                              ? t(String(row[key]))
+                              : String(row[key])
+                            : <ModuleCsvDetailsBtn data={data} rowId={row.id} />}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -410,8 +410,8 @@ const updateAvailableColumns = (workbook, sheetName, range) => {
         </>
       )}
 
-      </Box>
-     );
+    </Box>
+  );
 }
 
 export default ModuleCsv;
