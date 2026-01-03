@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import '../App.css';
 import { Box, FormControl, InputLabel, Select, MenuItem, Typography, Link } from '@mui/material';
@@ -8,12 +8,15 @@ import * as alasql from 'alasql';
 import * as XLSX from 'xlsx';
 import { useThemeContext } from '../contexts/ThemeContext';
 import { useModalContext } from '../contexts/ModalContext';
+import { usePWAContext } from '../contexts/PWAContext';
 import kulLogoBlack from '../assets/kul_logo-black.jpg';
 import LinkIcon from '@mui/icons-material/Link';
 import ReactCountryFlag from "react-country-flag"
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import ModalFilterSelector from './ModalFilterSelector';
+import PWAInstallConfirmation from './PWAInstallConfirmation';
 
 import ModalWindow from './ModalWindow';
 import newModalContent from '../utils/newModalContent';
@@ -30,10 +33,21 @@ function SqlApp() {
   const { t } = useTranslation();
   const { currentAppLanguage, setCurrentAppLanguage, changeAppLanguage, mode, setMode } = useThemeContext();
   const { modalOpen } = useModalContext();
+  const { showInstallPWAButton, handleInstallPWA, isInIframe } = usePWAContext();
 
   const [currentModule, setCurrentModule] = useState('CSV');
 
   const localisationMenuItemHeight = 32;
+
+  //PWA Button states, functions and effects
+  useEffect(() => {
+    //Check if installPWA=true is in URL - if true, open Modal Window with PWA install confirmation
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('installPWA') === 'true') {
+      modalOpen({ title: 'KUL IIAs Search', content: <PWAInstallConfirmation /> });
+    }
+  }, []);
+  // END PWA Button states, functions and effects 
 
   return (
     <>
@@ -125,7 +139,7 @@ function SqlApp() {
 
 
         {/* Page Footer */}
-        <Box>
+        <Box sx={{ position: 'relative' }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.2, fontSize: 12 }}>
             <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', mt: 1.2, mb: 0.5 }}>
               <Link href="https://www.kul.pl/uczelnie-partnerskie-kul,art_90613.html" target="_blank" rel="noopener noreferrer" sx={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none', color: 'inherit', fontSize: 12, '&:hover': { color: 'primary.light', textDecoration: 'underline' }, cursor: 'pointer' }}>
@@ -136,8 +150,25 @@ function SqlApp() {
           </Box>
           <Box>
             <Typography variant="div" sx={{ fontSize: 10, textAlign: 'center', my: 1 }}>
-              {t('SQL_IRO')} &copy; 2026. <Link href="https://github.com/hanz94" rel="noopener noreferrer" target="_blank" sx={{ textDecoration: 'none', color: 'inherit', '&:hover': { textDecoration: 'underline', color: 'inherit' }, cursor: 'pointer' }}>Bartłomiej Pawłowski</Link>
+              {t('SQL_IRO')} &copy; 2026 <Link href="https://github.com/hanz94" rel="noopener noreferrer" target="_blank" sx={{ textDecoration: 'none', color: 'inherit', '&:hover': { textDecoration: 'underline', color: 'inherit' }, cursor: 'pointer' }}>Bartłomiej Pawłowski</Link>
             </Typography>
+          </Box>
+          {/* PWA Button Box */}
+          <Box sx={{ position: 'absolute', bottom: '0px', right: '0px' }}>
+            {/* Install PWA Button (if not in iframe - show install button (if visible), if in iframe - redirect to new tab outside iframe) */}
+            {((!isInIframe && showInstallPWAButton) || isInIframe) && (
+              <Tooltip title="Zainstaluj aplikację" placement="left">
+                <IconButton
+                  onClick={
+                    !isInIframe
+                      ? handleInstallPWA
+                      : () => window.open(window.location.href + '?installPWA=true', '_blank')
+                  }
+                >
+                  <BrowserUpdatedIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         </Box>
 
