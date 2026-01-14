@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import '../App.css';
-import { Box, FormControl, InputLabel, Select, MenuItem, Typography, Link } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, Select, MenuItem, Typography, Link } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import * as alasql from 'alasql';
@@ -12,8 +12,7 @@ import { usePWAContext } from '../contexts/PWAContext';
 import kulLogoBlack from '../assets/kul_logo-black.jpg';
 import LinkIcon from '@mui/icons-material/Link';
 import ReactCountryFlag from "react-country-flag"
-import FilterListIcon from '@mui/icons-material/FilterList';
-import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import FilterAltIcon from '@mui/icons-material/FilterAlt'
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import ModalFilterSelector from './ModalFilterSelector';
 import PWAInstallConfirmation from './PWAInstallConfirmation';
@@ -97,12 +96,11 @@ function SqlApp() {
               </Typography>
             </Box>
           }>
-            <IconButton sx={{ mt: 0.3 }} onClick={() => { modalOpen({ title: t('SQL_FILTER_BY'), content: <ModalFilterSelector /> }) }}>
-              <FilterListOffIcon />
+            <Button startIcon={<FilterAltIcon />} disableRipple sx={{ mt: 0.3, color: mode === 'light' ? 'black' : 'white', border: '1px solid', borderColor: 'transparent', '&:hover': { borderColor: mode === 'light' ? 'black' : 'white', backgroundColor: 'transparent' } }} onClick={() => { modalOpen({ title: t('SQL_FILTER_BY'), content: <ModalFilterSelector /> }) }}>
               <Typography variant="body2" sx={{ fontSize: 13, ml: 0.3, mt: 0.4 }}>
                 {t('SQL_FILTER')}
               </Typography>
-            </IconButton>
+            </Button>
           </Tooltip>
 
           {/* TOP RIGHT PANEL */}
