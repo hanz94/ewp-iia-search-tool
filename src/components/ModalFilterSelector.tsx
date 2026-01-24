@@ -373,7 +373,8 @@ function ModalFilterSelector() {
             </Box>
 
             {/* FILTER 3 - CSVTH_STATUS */}
-            <Box sx={filterBoxSx}>
+            {/* TEMPORARILY HIDDEN */}
+            {/* <Box sx={filterBoxSx}>
                 {filters[2].active
                     ? ordinalCounterIconMap[filters[2].ordinalCounter]
                     : <FilterAltOffIcon />}
@@ -401,7 +402,7 @@ function ModalFilterSelector() {
                         handleFilterChange(2, value, newActiveFiltersCount);
                     }}
                 />
-            </Box>
+            </Box> */}
 
             {/* FILTER 4 - CSVTH_SUBJECT_AREA */}
             <Box sx={filterBoxSx}>

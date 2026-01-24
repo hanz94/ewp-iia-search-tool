@@ -183,7 +183,7 @@ function ModuleCsv() {
   }, [data])
 
   //CSV TABLE - COLUMNS VISIBLE IN TABLE
-  const visibleColumns = ['CSVTH_MOBILITY_TYPE', 'CSVTH_NUMBER_OF_MOBILITIES', 'CSVTH_STATUS', 'CSVTH_SUBJECT_AREA', 'CSVTH_SUBJECT_AREA_DESCRIPTION', 'CSVTH_OPTIONS'];
+  const visibleColumns = ['CSVTH_MOBILITY_TYPE', 'CSVTH_NUMBER_OF_MOBILITIES', 'CSVTH_SUBJECT_AREA', 'CSVTH_SUBJECT_AREA_DESCRIPTION', 'CSVTH_OPTIONS'];
 
   //watch for changes: selectedErasmusCode, selectedInstitutionName
   useEffect(() => {
