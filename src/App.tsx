@@ -1,11 +1,17 @@
+import { useEffect } from 'react'
 import { ThemeContextProvider } from './contexts/ThemeContext';
 import { ModalContextProvider } from './contexts/ModalContext';
 import { ModuleCsvContextProvider } from './contexts/ModuleCsvContext';
 import { ModuleEwpContextProvider } from './contexts/ModuleEwpContext';
 import { PWAContextProvider } from './contexts/PWAContext';
+import { registerPWAUpdates } from './contexts/pwaUpdate';
 import SqlApp from './components/SqlApp';
 
 function App() {
+
+  useEffect(() => {
+    registerPWAUpdates()
+  }, [])
 
   return (
     <ThemeContextProvider>
