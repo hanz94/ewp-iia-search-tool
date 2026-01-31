@@ -112,7 +112,7 @@ const handleDownloadXLSX = (data, t) => {
     ws['!rows'] = Array(totalRows).fill({ hpt: 30 });
 
     // set column widths
-    const widths = [5, 14, 36, 36, 15, 15, 10, 32, 16, 28, 13, 12, 12];
+    const widths = [5, 14, 36, 36, 15, 15, 10, 32, 16, 28, 13, 12, 12, 24];
     ws['!cols'] = widths.map(w => ({ wch: w }));
 
     // enable auto-filter for all columns (in metadata)
