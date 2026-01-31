@@ -107,5 +107,15 @@
     "MFS_PARTNER_UNIVERSITY_SINGULAR": "partner university",
     "MFS_PARTNER_UNIVERSITIES_PAUCAL_2_4": "partner universities",
     "MFS_PARTNER_UNIVERSITIES_PLURAL_5": "partner universities",
-    "MFS_RESET_FILTERS": "Reset filters"
+    "MFS_RESET_FILTERS": "Reset filters",
+    "PWA_INSTALL_APP": "Install app",
+    "PWA_APP_HAS_BEEN_INSTALLED": "App has been installed.",
+    "PWA_APP_ALREADY_INSTALLED_AND_RUNNING": "App is already installed and running.",
+    "PWA_INSTALL_PROMPT": "Do you want to install the app \"{{appName}}\"?",
+    "PWA_LI_ASSET_1": "faster access to inter-institutional agreements",
+    "PWA_LI_ASSET_2": "app icon on the home screen",
+    "PWA_LI_ASSET_3": "automatic updates",
+    "PWA_BUTTON_INSTALL": "Install",
+    "PWA_BUTTON_NOT_NOW": "Not now",
+    "PWA_INSTALLATION_NOT_SUPPORTED": "The app has already been installed or your browser does not support installation."
 }

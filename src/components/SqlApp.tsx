@@ -38,7 +38,7 @@ function SqlApp() {
 
   const localisationMenuItemHeight = 32;
 
-  //PWA Button states, functions and effects
+  //PWA logic
   useEffect(() => {
     //Check if installPWA=true is in URL - if true, open Modal Window with PWA install confirmation
     const urlParams = new URLSearchParams(window.location.search);
@@ -46,7 +46,7 @@ function SqlApp() {
       modalOpen({ title: 'KUL IIAs Search', content: <PWAInstallConfirmation /> });
     }
   }, []);
-  // END PWA Button states, functions and effects 
+  // END PWA logic 
 
   return (
     <>
@@ -151,11 +151,11 @@ function SqlApp() {
               {t('SQL_IRO')} &copy; 2026 <Link href="https://github.com/hanz94" rel="noopener noreferrer" target="_blank" sx={{ textDecoration: 'none', color: 'inherit', '&:hover': { textDecoration: 'underline', color: 'inherit' }, cursor: 'pointer' }}>Bartłomiej Pawłowski</Link>
             </Typography>
           </Box>
-          {/* PWA Button Box */}
+          {/* PWA Button */}
           <Box sx={{ position: 'absolute', bottom: '0px', right: '0px' }}>
             {/* Install PWA Button (if not in iframe - show install button (if visible), if in iframe - redirect to new tab outside iframe) */}
             {((!isInIframe && showInstallPWAButton) || isInIframe) && (
-              <Tooltip title="Zainstaluj aplikację" placement="left">
+              <Tooltip title={t('PWA_INSTALL_APP')} placement="left">
                 <IconButton
                   onClick={
                     !isInIframe

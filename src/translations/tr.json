@@ -107,5 +107,15 @@
     "MFS_PARTNER_UNIVERSITY_SINGULAR": "partner üniversite",
     "MFS_PARTNER_UNIVERSITIES_PAUCAL_2_4": "partner üniversiteler",
     "MFS_PARTNER_UNIVERSITIES_PLURAL_5": "partner üniversiteler",
-    "MFS_RESET_FILTERS": "Filtreleri sıfırla"
+    "MFS_RESET_FILTERS": "Filtreleri sıfırla",
+    "PWA_INSTALL_APP": "Uygulamayı kur",
+    "PWA_APP_HAS_BEEN_INSTALLED": "Uygulama kuruldu.",
+    "PWA_APP_ALREADY_INSTALLED_AND_RUNNING": "Uygulama zaten kurulu ve çalışıyor.",
+    "PWA_INSTALL_PROMPT": "Uygulamayı \"{{appName}}\" kurmak istiyorsunuz?",
+    "PWA_LI_ASSET_1": "kurumlar arası anlaşmalara daha hızlı erişim",
+    "PWA_LI_ASSET_2": "ana ekranda uygulama simgesi",
+    "PWA_LI_ASSET_3": "otomatik güncellemeler",
+    "PWA_BUTTON_INSTALL": "Yükle",
+    "PWA_BUTTON_NOT_NOW": "Şimdi değil",
+    "PWA_INSTALLATION_NOT_SUPPORTED": "Uygulama zaten kurulu veya Tarayıcınız uygulama kurulumunu desteklemiyor."
 }
