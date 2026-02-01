@@ -153,6 +153,7 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
         f2: [],     // SNAP: after filter 2
         f3: [],     // SNAP: after filter 3
         f4: [],     // SNAP: after filter 4
+        f5: [],     // SNAP: after filter 5
     });
     const [slicedData, setSlicedData] = useState([]);
 
@@ -180,7 +181,7 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
 
     // create state for each filter {active: BOOLEAN, value: STRING, ordinalCounter: int, options: ARRAY}
     const [filters, setFilters] = useState(
-        Array(4).fill({ active: false, value: '', ordinalCounter: 0, options: [] })
+        Array(5).fill({ active: false, value: '', ordinalCounter: 0, options: [] })
     );
 
     // handle filter change {index: NUMBER, newValue: STRING, newOrdinalCounter: int}
@@ -209,7 +210,7 @@ const ModuleCsvContextProvider = ({ children }: { children: React.ReactNode }) =
         setFilters((prev) =>
             prev.map((f) => ({ ...f, active: false, value: '', ordinalCounter: 0 }))
         );
-        setOriginalData(prev => ({ ...prev, f1: [], f2: [], f3: [], f4: [] }));
+        setOriginalData(prev => ({ ...prev, f1: [], f2: [], f3: [], f4: [], f5: [] }));
         setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
         //reset selected erasmus code and institution name
         setSelectedErasmusCode(null);

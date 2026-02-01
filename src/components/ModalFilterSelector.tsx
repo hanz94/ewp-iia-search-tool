@@ -4,6 +4,7 @@ import Filter1Icon from '@mui/icons-material/Filter1';
 import Filter2Icon from '@mui/icons-material/Filter2';
 import Filter3Icon from '@mui/icons-material/Filter3';
 import Filter4Icon from '@mui/icons-material/Filter4';
+import Filter5Icon from '@mui/icons-material/Filter5';
 import { useTranslation } from 'react-i18next';
 import { useThemeContext } from "../contexts/ThemeContext";
 import { useModuleCsvContext } from "../contexts/ModuleCsvContext";
@@ -30,6 +31,7 @@ function ModalFilterSelector() {
         1: <Filter2Icon />,
         2: <Filter3Icon />,
         3: <Filter4Icon />,
+        4: <Filter5Icon />,
     };
 
     // custom order of statuses in 1st useEffect below (Filter 3)
@@ -114,20 +116,30 @@ function ModalFilterSelector() {
         );
 
         // Filter 3 options - CSVTH_STATUS
-        handleFilterOptionsChange(
-            2,
-            [...new Set(
-                getSourceDataForFilter(2).map(d => d.CSVTH_STATUS)
-            )]
-                .sort((a, b) => statusOrder.indexOf(a) - statusOrder.indexOf(b))
-                .map(key => ({ key, label: t(key) }))
-        );
+        // handleFilterOptionsChange(
+        //     2,
+        //     [...new Set(
+        //         getSourceDataForFilter(2).map(d => d.CSVTH_STATUS)
+        //     )]
+        //         .sort((a, b) => statusOrder.indexOf(a) - statusOrder.indexOf(b))
+        //         .map(key => ({ key, label: t(key) }))
+        // );
 
-        // Filter 4 options - CSVTH_SUBJECT_AREA
+        // Filter 4 options - CSVTH_PARTNER_WWW
         handleFilterOptionsChange(
             3,
+            [...new Set(
+                getSourceDataForFilter(3).map(d => d.CSVTH_PARTNER_WWW)
+            )]
+                .sort((a, b) => a.localeCompare(b))
+                .map(key => ({ key, label: key }))
+        );
+
+        // Filter 5 options - CSVTH_SUBJECT_AREA
+        handleFilterOptionsChange(
+            4,
             (() => {
-                const source = getSourceDataForFilter(3);
+                const source = getSourceDataForFilter(4);
 
                 //extract all raw, split codes
                 const rawCodes = new Set(
@@ -206,13 +218,18 @@ function ModalFilterSelector() {
             }
 
             // Filter 3 – CSVTH_STATUS
-            if (i === 2) {
-                const clause = csvStatuses[f.value.key || f.value];
-                if (clause) whereClauses.push(clause.replace(/^WHERE\s+/i, ''));
+            // if (i === 2) {
+            //     const clause = csvStatuses[f.value.key || f.value];
+            //     if (clause) whereClauses.push(clause.replace(/^WHERE\s+/i, ''));
+            // }
+
+            // Filter 4 – CSVTH_PARTNER_WWW
+            if (i === 3) {
+                whereClauses.push(`([partner_1_hei_id] = "${f.value.key}" OR [partner_2_hei_id] = "${f.value.key}")`);
             }
 
-            // Filter 4 – CSVTH_SUBJECT_AREA
-            if (i === 3) {
+            // Filter 5 – CSVTH_SUBJECT_AREA
+            if (i === 4) {
                 const code = f.value?.key || f.value;
                 if (!code) return;
 
@@ -404,7 +421,7 @@ function ModalFilterSelector() {
                 />
             </Box> */}
 
-            {/* FILTER 4 - CSVTH_SUBJECT_AREA */}
+            {/* FILTER 4 - CSVTH_PARTNER_WWW */}
             <Box sx={filterBoxSx}>
                 {filters[3].active ? ordinalCounterIconMap[filters[3].ordinalCounter] : <FilterAltOffIcon />}
                 <Autocomplete
@@ -412,18 +429,44 @@ function ModalFilterSelector() {
                     value={filters[3].value}
                     options={filters[3].options}
                     sx={autocompleteSx}
-                    renderInput={(params) => <TextField {...params} label={t("CSVTH_SUBJECT_AREA")} />}
+                    renderInput={(params) => <TextField {...params} label={t("CSVTH_PARTNER_WWW")} />}
                     onChange={(e, value) => {
                         let newActiveFiltersCount = activeFiltersCount;
                         if (!value) {
                             resetOrdinalFilters(3);
                             newActiveFiltersCount = 0;
+                            setAlasqlQueryAfter('ORDER BY CSVTH_ERASMUS_CODE');
                         }
                         if (filters[3].value && value) {
                             resetOrdinalFilters(3);
                             newActiveFiltersCount = filters[3].ordinalCounter;
                         }
                         handleFilterChange(3, value, newActiveFiltersCount);
+                    }}
+                />
+            </Box>
+
+
+            {/* FILTER 5 - CSVTH_SUBJECT_AREA */}
+            <Box sx={filterBoxSx}>
+                {filters[4].active ? ordinalCounterIconMap[filters[4].ordinalCounter] : <FilterAltOffIcon />}
+                <Autocomplete
+                    disablePortal
+                    value={filters[4].value}
+                    options={filters[4].options}
+                    sx={autocompleteSx}
+                    renderInput={(params) => <TextField {...params} label={t("CSVTH_SUBJECT_AREA")} />}
+                    onChange={(e, value) => {
+                        let newActiveFiltersCount = activeFiltersCount;
+                        if (!value) {
+                            resetOrdinalFilters(4);
+                            newActiveFiltersCount = 0;
+                        }
+                        if (filters[4].value && value) {
+                            resetOrdinalFilters(4);
+                            newActiveFiltersCount = filters[4].ordinalCounter;
+                        }
+                        handleFilterChange(4, value, newActiveFiltersCount);
                     }}
                 />
             </Box>
