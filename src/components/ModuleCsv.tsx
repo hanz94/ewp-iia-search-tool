@@ -394,7 +394,7 @@ function ModuleCsv() {
                 {dataFiltered.map((row, rowIndex) => (
                   <TableRow key={rowIndex}>
                     {visibleColumns.map((key, colIndex) => (
-                      <TableCell key={colIndex}>
+                      <TableCell key={colIndex} sx={{ textAlign: 'center' }}>
                         {row[key] instanceof Date
                           ? row[key].toLocaleDateString()
                           : row[key]
