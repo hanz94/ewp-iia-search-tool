@@ -68,7 +68,7 @@ function ModalFilterSelector() {
 
     //watch for data (filtered) to change options for every filter
     useEffect(() => {
-        //utility: pick data source for a given filter index (originalData: base, f1, f2, f3, f4)
+        //utility: pick data source for a given filter index (originalData: base, f1, f2, f3, f4, f5)
         const getSourceDataForFilter = (filterIndex) => {
             const currentFilter = filters[filterIndex];
 

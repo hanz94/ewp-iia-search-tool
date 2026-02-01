@@ -46,6 +46,7 @@ function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
       CSVTH_ERASMUS_CODE,
       CSVTH_INSTITUTION_NAME,
       CSVTH_MOBILITY_TYPE,
+      CSVTH_STATUS,
       CSVTH_EQF,
       CSVTH_BLENDED,
       CSVTH_LANGUAGE_REQUIREMENTS,
@@ -53,6 +54,22 @@ function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
       CSVTH_TO,
       CSVTH_PARTNER_WWW,
     } = selectedRow;
+
+    // convert CSVTH_STATUS to digit - for modal title (rowId / csvStatusToDigit)
+    // 5 - approved by all
+    // 4 - waiting for their signature
+    // 3 - waiting for our signature
+    // 2 - being verified by them
+    // 1 - being verified by us
+    // 0 - draft
+    const csvStatusToDigit = {
+      "CSVTD_APPROVED_BY_ALL": 5,
+      "CSVTD_WAITING_FOR_THEIR_SIGNATURE": 4,
+      "CSVTD_WAITING_FOR_OUR_SIGNATURE": 3,
+      "CSVTD_BEING_VERIFIED_BY_THEM": 2,
+      "CSVTD_BEING_VERIFIED_BY_US": 1,
+      "CSVTD_DRAFT": 0,
+    }
 
     // MODAL CONTENT
     const content = (
@@ -164,7 +181,7 @@ function ModuleCsvDetailsBtn({ data, rowId }: ModuleCsvDetailsBtnProps) {
 
     );
 
-    modalOpen({ title: `${t('CSVTHD_SHOW_DETAILS')} (${rowId})`, content });
+    modalOpen({ title: `${t('CSVTHD_SHOW_DETAILS')} (${rowId}/${csvStatusToDigit[CSVTH_STATUS]})`, content });
   };
 
   return (
